@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+yarn-error.log
+npm-debug.log*
+
+# Environment variables
+.env
+.env.local
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Hardhat
+web3/cache/
+web3/artifacts/
+coverage/
+coverage.json
+typechain-types/
+
+# Logs
+*.log
