@@ -1,286 +1,375 @@
 <template>
-  <div class="max-w-6xl mx-auto p-4 md:p-6">
-    <!-- Header Component -->
-    <AppHeader :network-name="networkName" />
-
-    <!-- Wallet Component -->
-    <WalletCard 
-      :account="account"
-      :avax-balance="avaxBalance"
-      :is-registered-for-privacy="isRegisteredForPrivacy"
-      :connecting="connecting"
-      @connect="connectWallet"
-      @register-privacy="registerForPrivacy"
-    />
-
-    <!-- Alerts -->
-    <div v-if="alert.message" 
-         class="p-4 rounded-lg mb-6 font-medium slide-up"
-         :class="{
-           'bg-green-100 text-green-800 border-l-4 border-green-500': alert.type === 'success',
-           'bg-red-100 text-red-800 border-l-4 border-red-500': alert.type === 'error',
-           'bg-yellow-100 text-yellow-800 border-l-4 border-yellow-500': alert.type === 'warning'
-         }"
-    >
-      <i :class="alertIcon" class="mr-2"></i> {{ alert.message }}
+  <!-- Task Manager adaptado al nuevo layout -->
+  <div class="h-screen flex flex-col bg-gray-50">
+    <!-- Header -->
+    <div class="bg-white shadow-sm border-b px-6 py-4 flex-none">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">Gestión de Tareas</h1>
+          <p class="text-sm text-gray-600 mt-1">
+            Crea, gestiona y completa tareas usando contratos inteligentes
+          </p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <!-- Network indicator -->
+          <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+            {{ networkName }}
+          </div>
+          <!-- Balance display -->
+          <div class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
+            {{ avaxBalance }} ETH
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Main Interface -->
-    <div v-if="account" class="rounded-3xl p-6 mb-6 card-gradient slide-up">
-      <!-- Tabs con Tailwind + efectos custom -->
-      <div class="flex bg-white bg-opacity-10 rounded-2xl p-1 mb-6">
-        <div 
-          v-for="tab in tabs" 
-          :key="tab.id"
-          class="flex-1 px-4 py-3 text-center rounded-xl cursor-pointer transition-all duration-300 font-semibold"
-          :class="activeTab === tab.id ? 'bg-white text-blue-600 shadow-lg' : 'text-gray-600 hover:text-gray-800'"
-          @click="activeTab = tab.id"
-        >
-          <i :class="tab.icon" class="mr-2"></i>{{ tab.label }}
-        </div>
-      </div>
-
-      <!-- Create Task Tab -->
-      <div v-if="activeTab === 'create'" class="fade-in">
-        <div class="text-2xl font-bold mb-5 text-blue-600 flex items-center gap-3">
-          <i class="fas fa-plus"></i> Crear Nueva Tarea
-        </div>
-
-        <!-- Privacy Toggle con diseño mejorado -->
-        <div class="flex items-center justify-center gap-4 mb-6 p-4 bg-gray-50 rounded-xl">
-          <span class="font-medium text-gray-700">Tarea Pública</span>
-          <div 
-            class="relative w-14 h-7 rounded-full cursor-pointer transition-colors duration-300"
-            :class="createForm.isPrivate ? 'bg-blue-500' : 'bg-gray-300'"
-            @click="togglePrivacy"
-          >
-            <div 
-              class="absolute w-6 h-6 bg-white rounded-full top-0.5 transition-transform duration-300 shadow-md"
-              :class="createForm.isPrivate ? 'translate-x-7' : 'translate-x-0.5'"
-            ></div>
+    <!-- Main content area -->
+    <div class="flex-1 overflow-y-auto">
+      <div class="max-w-6xl mx-auto p-6">
+        <!-- Wallet connection card -->
+        <div v-if="!account" class="bg-white rounded-2xl shadow-lg p-8 text-center">
+          <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-wallet text-white text-2xl"></i>
           </div>
-          <span class="font-medium text-gray-700">Tarea Privada</span>
-          <i v-if="createForm.isPrivate" class="fas fa-shield-alt text-blue-500"></i>
-        </div>
-
-        <!-- Formulario con Tailwind + validación visual -->
-        <div class="space-y-6">
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">
-              Ejecutor de la Tarea (Dirección)
-            </label>
-            <input 
-              type="text" 
-              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-300"
-              v-model="createForm.beneficiary" 
-              placeholder="0x... (quien realizará la tarea)"
-            />
-          </div>
-
-          <div v-if="!createForm.isPrivate">
-            <label class="block text-sm font-semibold text-gray-700 mb-2">
-              Cantidad (AVAX)
-            </label>
-            <input 
-              type="number" 
-              step="0.01" 
-              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-300"
-              v-model="createForm.amount" 
-              placeholder="0.00"
-            />
-          </div>
-
-          <div v-if="createForm.isPrivate">
-            <label class="block text-sm font-semibold text-gray-700 mb-2">
-              Cantidad Encriptada (Hex)
-            </label>
-            <input 
-              type="text" 
-              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-300"
-              v-model="createForm.encryptedAmount" 
-              placeholder="0x..."
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">
-              Descripción de la Tarea
-            </label>
-            <textarea 
-              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-300 min-h-[100px] resize-y"
-              v-model="createForm.taskDescription" 
-              placeholder="Describe la tarea que debe completarse..."
-            ></textarea>
-          </div>
-
-          <div v-if="createForm.isPrivate">
-            <label class="block text-sm font-semibold text-gray-700 mb-2">
-              Prueba Zero-Knowledge (Hex)
-            </label>
-            <textarea 
-              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-300 min-h-[100px] resize-y"
-              v-model="createForm.zkProof" 
-              placeholder="0x..."
-            ></textarea>
-          </div>
-
+          <h3 class="text-xl font-semibold text-gray-900 mb-2">Conecta tu Wallet</h3>
+          <p class="text-gray-600 mb-6">Para gestionar tareas necesitas conectar tu wallet primero</p>
           <button 
-            class="w-full px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover-lift"
-            :class="creating ? 'opacity-60 cursor-not-allowed' : ''"
-            :disabled="creating"
-            @click="createEscrow"
-            style="background: var(--gradient-primary); color: white;"
+            @click="connectWallet"
+            :disabled="connecting"
+            class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3 rounded-xl font-medium hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 disabled:opacity-50"
           >
-            <i class="fas fa-plus mr-2"></i>
-            {{ creating ? 'Creando...' : (createForm.isPrivate ? 'Crear Tarea Privada' : 'Crear Tarea Pública') }}
+            <i class="fas fa-plug mr-2"></i>
+            {{ connecting ? 'Conectando...' : 'Conectar Wallet' }}
           </button>
         </div>
-      </div>
 
-      <!-- Manage Tab -->
-      <div v-if="activeTab === 'manage'" class="fade-in">
-        <div class="text-2xl font-bold mb-5 text-blue-600 flex items-center gap-3">
-          <i class="fas fa-tasks"></i> Gestionar Tareas
-        </div>
-
-        <div class="space-y-6">
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">
-              ID de la Tarea
-            </label>
-            <input 
-              type="number" 
-              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-300"
-              v-model="manageForm.escrowId" 
-              placeholder="0"
-            />
-          </div>
-
-          <!-- Botones de acción con diseño mejorado -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button 
-              class="px-4 py-3 rounded-xl font-semibold transition-all duration-300 hover-lift"
-              :disabled="managing"
-              @click="markCompleted"
-              style="background: var(--gradient-success); color: white;"
-            >
-              <i class="fas fa-check mr-2"></i> Marcar Completada
-            </button>
-            <button 
-              class="px-4 py-3 rounded-xl font-semibold transition-all duration-300 hover-lift"
-              :disabled="managing"
-              @click="releaseFunds"
-              style="background: var(--gradient-primary); color: white;"
-            >
-              <i class="fas fa-coins mr-2"></i> Liberar Pago
-            </button>
-            <button 
-              class="px-4 py-3 rounded-xl font-semibold transition-all duration-300 hover-lift"
-              :disabled="managing"
-              @click="cancelEscrow"
-              style="background: var(--gradient-danger); color: white;"
-            >
-              <i class="fas fa-times mr-2"></i> Cancelar Tarea
-            </button>
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-2">
-              Prueba ZK para Liberación/Cancelación (opcional)
-            </label>
-            <textarea 
-              class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-300 min-h-[100px] resize-y"
-              v-model="manageForm.zkProof" 
-              placeholder="0x... (requerido para tareas privadas)"
-            ></textarea>
-          </div>
-        </div>
-      </div>
-
-      <!-- List Tab -->
-      <div v-if="activeTab === 'list'" class="fade-in">
-        <div class="text-2xl font-bold mb-5 text-blue-600 flex items-center gap-3">
-          <i class="fas fa-list"></i> Mis Tareas
-        </div>
-
-        <button 
-          class="px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover-lift mb-6"
-          :disabled="loading" 
-          @click="loadUserEscrows"
-          style="background: var(--gradient-primary); color: white;"
-        >
-          <i class="fas fa-refresh mr-2"></i> 
-          {{ loading ? 'Cargando...' : 'Actualizar Lista' }}
-        </button>
-
-        <!-- Loading state -->
-        <div v-if="loading" class="flex items-center justify-center py-12 text-gray-600">
-          <div class="w-8 h-8 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin mr-4"></div>
-          Cargando tareas...
-        </div>
-
-        <!-- Empty state -->
-        <div v-else-if="!loading && userEscrows.length === 0" class="text-center py-12 text-gray-500">
-          <i class="fas fa-inbox text-6xl mb-4 opacity-30"></i>
-          <p class="text-lg">No tienes tareas creadas aún.</p>
-        </div>
-
-        <!-- Escrow list -->
-        <div v-else-if="!loading && userEscrows.length > 0" class="space-y-4">
-          <div 
-            v-for="escrow in userEscrows" 
-            :key="escrow.id"
-            class="bg-white rounded-2xl p-6 border-l-4 border-blue-500 hover-slide transition-all duration-300"
+        <!-- Main interface when wallet is connected -->
+        <div v-else class="space-y-6">
+          <!-- Alerts -->
+          <div v-if="alert.message" 
+               class="p-4 rounded-xl font-medium slide-up flex items-center"
+               :class="{
+                 'bg-green-100 text-green-800 border border-green-200': alert.type === 'success',
+                 'bg-red-100 text-red-800 border border-red-200': alert.type === 'error',
+                 'bg-yellow-100 text-yellow-800 border border-yellow-200': alert.type === 'warning'
+               }"
           >
-            <!-- Escrow header -->
-            <div class="flex justify-between items-center mb-4">
-              <div class="text-xl font-bold text-blue-600">Tarea #{{ escrow.id }}</div>
-              <div class="flex gap-2">
-                <span v-if="escrow.isPrivate" 
-                      class="px-3 py-1 rounded-full text-xs font-medium text-white"
-                      style="background: var(--gradient-danger);"
-                >
-                  <i class="fas fa-shield-alt mr-1"></i> Privada
-                </span>
-                <span 
-                  class="px-3 py-1 rounded-full text-xs font-medium"
-                  :class="{
-                    'bg-purple-500 text-white': escrow.isReleased,
-                    'bg-green-500 text-white': escrow.isCompleted && !escrow.isReleased,
-                    'bg-yellow-500 text-gray-900': !escrow.isCompleted
-                  }"
-                >
-                  {{ escrow.isReleased ? 'Pagada' : escrow.isCompleted ? 'Completada' : 'Pendiente' }}
-                </span>
-              </div>
+            <i :class="alertIcon" class="mr-3 text-lg"></i> 
+            <span>{{ alert.message }}</span>
+          </div>
+
+          <!-- Tab navigation -->
+          <div class="bg-white rounded-2xl shadow-lg">
+            <div class="flex bg-gray-50 rounded-t-2xl">
+              <button 
+                v-for="tab in tabs" 
+                :key="tab.id"
+                class="flex-1 px-6 py-4 text-center font-medium transition-all duration-300 first:rounded-tl-2xl last:rounded-tr-2xl"
+                :class="activeTab === tab.id 
+                  ? 'bg-white text-indigo-600 shadow-sm border-b-2 border-indigo-600' 
+                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'"
+                @click="activeTab = tab.id"
+              >
+                <i :class="tab.icon" class="mr-2"></i>{{ tab.label }}
+              </button>
             </div>
 
-            <!-- Escrow details grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <div class="bg-blue-50 rounded-lg p-3">
-                <div class="text-sm text-gray-600 mb-1">Ejecutor</div>
-                <div class="font-semibold break-all">
-                  {{ escrow.beneficiary.slice(0,6) }}...{{ escrow.beneficiary.slice(-4) }}
+            <!-- Tab content -->
+            <div class="p-6">
+              <!-- Create Task Tab -->
+              <div v-if="activeTab === 'create'" class="space-y-6">
+                <div class="text-center mb-6">
+                  <h2 class="text-2xl font-bold text-gray-900 mb-2">
+                    <i class="fas fa-plus text-indigo-600 mr-3"></i>Crear Nueva Tarea
+                  </h2>
+                  <p class="text-gray-600">Define una tarea y establece los términos del contrato</p>
+                </div>
+
+                <!-- Privacy Toggle -->
+                <div class="bg-gray-50 rounded-xl p-6 text-center">
+                  <div class="flex items-center justify-center gap-4">
+                    <span class="font-medium text-gray-700">Tarea Pública</span>
+                    <div 
+                      class="relative w-14 h-7 rounded-full cursor-pointer transition-colors duration-300"
+                      :class="createForm.isPrivate ? 'bg-indigo-600' : 'bg-gray-300'"
+                      @click="togglePrivacy"
+                    >
+                      <div 
+                        class="absolute w-6 h-6 bg-white rounded-full top-0.5 transition-transform duration-300 shadow-md"
+                        :class="createForm.isPrivate ? 'translate-x-7' : 'translate-x-0.5'"
+                      ></div>
+                    </div>
+                    <span class="font-medium text-gray-700">Tarea Privada</span>
+                    <i v-if="createForm.isPrivate" class="fas fa-shield-alt text-indigo-600 text-lg"></i>
+                  </div>
+                  <div class="mt-3 text-sm text-gray-500">
+                    {{ createForm.isPrivate ? 'Los detalles serán encriptados' : 'Los detalles serán públicos' }}
+                  </div>
+                </div>
+
+                <!-- Form -->
+                <div class="grid grid-cols-1 gap-6">
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">
+                      <i class="fas fa-user mr-2"></i>Ejecutor de la Tarea
+                    </label>
+                    <input 
+                      type="text" 
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors duration-300 font-mono text-sm"
+                      v-model="createForm.beneficiary" 
+                      placeholder="0x... (dirección de quien realizará la tarea)"
+                    />
+                  </div>
+
+                  <div v-if="!createForm.isPrivate">
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">
+                      <i class="fas fa-coins mr-2"></i>Cantidad (ETH)
+                    </label>
+                    <input 
+                      type="number" 
+                      step="0.001" 
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors duration-300"
+                      v-model="createForm.amount" 
+                      placeholder="0.000"
+                    />
+                  </div>
+
+                  <div v-if="createForm.isPrivate">
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">
+                      <i class="fas fa-lock mr-2"></i>Cantidad Encriptada (Hex)
+                    </label>
+                    <input 
+                      type="text" 
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors duration-300 font-mono text-sm"
+                      v-model="createForm.encryptedAmount" 
+                      placeholder="0x..."
+                    />
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">
+                      <i class="fas fa-clipboard-list mr-2"></i>Descripción de la Tarea
+                    </label>
+                    <textarea 
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors duration-300 min-h-[120px] resize-y"
+                      v-model="createForm.taskDescription" 
+                      placeholder="Describe detalladamente la tarea que debe completarse..."
+                    ></textarea>
+                  </div>
+
+                  <div v-if="createForm.isPrivate">
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">
+                      <i class="fas fa-key mr-2"></i>Prueba Zero-Knowledge (Hex)
+                    </label>
+                    <textarea 
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors duration-300 min-h-[100px] resize-y font-mono text-sm"
+                      v-model="createForm.zkProof" 
+                      placeholder="0x..."
+                    ></textarea>
+                  </div>
+
+                  <button 
+                    class="w-full px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+                    :class="creating ? 'opacity-60 cursor-not-allowed' : ''"
+                    :disabled="creating"
+                    @click="createEscrow"
+                  >
+                    <i class="fas fa-plus mr-3"></i>
+                    {{ creating ? 'Creando...' : (createForm.isPrivate ? 'Crear Tarea Privada' : 'Crear Tarea Pública') }}
+                  </button>
                 </div>
               </div>
-              <div class="bg-blue-50 rounded-lg p-3" v-if="!escrow.isPrivate">
-                <div class="text-sm text-gray-600 mb-1">Pago</div>
-                <div class="font-semibold">{{ escrow.publicAmount }} AVAX</div>
+
+              <!-- Manage Tab -->
+              <div v-if="activeTab === 'manage'" class="space-y-6">
+                <div class="text-center mb-6">
+                  <h2 class="text-2xl font-bold text-gray-900 mb-2">
+                    <i class="fas fa-tasks text-indigo-600 mr-3"></i>Gestionar Tareas
+                  </h2>
+                  <p class="text-gray-600">Actualiza el estado de las tareas existentes</p>
+                </div>
+
+                <div class="bg-gray-50 rounded-xl p-6">
+                  <label class="block text-sm font-semibold text-gray-700 mb-3">
+                    <i class="fas fa-hashtag mr-2"></i>ID de la Tarea
+                  </label>
+                  <input 
+                    type="number" 
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors duration-300"
+                    v-model="manageForm.escrowId" 
+                    placeholder="Ingresa el ID de la tarea"
+                  />
+                </div>
+
+                <!-- Action buttons -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <button 
+                    class="px-6 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold transition-all duration-300 hover:from-green-600 hover:to-green-700 transform hover:scale-105"
+                    :disabled="managing || !manageForm.escrowId"
+                    @click="markCompleted"
+                  >
+                    <i class="fas fa-check mr-2"></i> Marcar Completada
+                  </button>
+                  <button 
+                    class="px-6 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-semibold transition-all duration-300 hover:from-indigo-600 hover:to-purple-700 transform hover:scale-105"
+                    :disabled="managing || !manageForm.escrowId"
+                    @click="releaseFunds"
+                  >
+                    <i class="fas fa-coins mr-2"></i> Liberar Pago
+                  </button>
+                  <button 
+                    class="px-6 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold transition-all duration-300 hover:from-red-600 hover:to-red-700 transform hover:scale-105"
+                    :disabled="managing || !manageForm.escrowId"
+                    @click="cancelEscrow"
+                  >
+                    <i class="fas fa-times mr-2"></i> Cancelar Tarea
+                  </button>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-semibold text-gray-700 mb-3">
+                    <i class="fas fa-shield-alt mr-2"></i>Prueba ZK (opcional para tareas privadas)
+                  </label>
+                  <textarea 
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors duration-300 min-h-[100px] resize-y font-mono text-sm"
+                    v-model="manageForm.zkProof" 
+                    placeholder="0x... (requerido para tareas privadas)"
+                  ></textarea>
+                </div>
               </div>
-              <div class="bg-blue-50 rounded-lg p-3" v-if="escrow.isPrivate">
-                <div class="text-sm text-gray-600 mb-1">Pago Encriptado</div>
-                <div class="font-semibold break-all">{{ escrow.encryptedAmount.slice(0,10) }}...</div>
-              </div>
-              <div class="bg-blue-50 rounded-lg p-3">
-                <div class="text-sm text-gray-600 mb-1">Fecha</div>
-                <div class="font-semibold">{{ formatDate(escrow.timestamp) }}</div>
+
+              <!-- List Tab -->
+              <div v-if="activeTab === 'list'" class="space-y-6">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h2 class="text-2xl font-bold text-gray-900">
+                      <i class="fas fa-list text-indigo-600 mr-3"></i>Mis Tareas
+                    </h2>
+                    <p class="text-gray-600 mt-1">Todas las tareas que has creado</p>
+                  </div>
+                  <button 
+                    class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-medium transition-all duration-300 hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105"
+                    :disabled="loading" 
+                    @click="loadUserEscrows"
+                  >
+                    <i class="fas fa-refresh mr-2" :class="{ 'animate-spin': loading }"></i> 
+                    {{ loading ? 'Actualizando...' : 'Actualizar Lista' }}
+                  </button>
+                </div>
+
+                <!-- Loading state -->
+                <div v-if="loading" class="flex items-center justify-center py-16">
+                  <div class="text-center">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                    <p class="text-gray-600 font-medium">Cargando tareas...</p>
+                  </div>
+                </div>
+
+                <!-- Empty state -->
+                <div v-else-if="!loading && userEscrows.length === 0" class="text-center py-16">
+                  <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-inbox text-3xl text-gray-400"></i>
+                  </div>
+                  <h3 class="text-xl font-semibold text-gray-700 mb-2">No hay tareas creadas</h3>
+                  <p class="text-gray-500 mb-6">¡Crea tu primera tarea usando la pestaña "Crear Tarea"!</p>
+                  <button 
+                    @click="activeTab = 'create'"
+                    class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-medium hover:from-indigo-700 hover:to-purple-700 transition-all duration-300"
+                  >
+                    <i class="fas fa-plus mr-2"></i> Crear Primera Tarea
+                  </button>
+                </div>
+
+                <!-- Tasks list -->
+                <div v-else-if="!loading && userEscrows.length > 0" class="grid gap-4">
+                  <div 
+                    v-for="escrow in userEscrows" 
+                    :key="escrow.id"
+                    class="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300"
+                  >
+                    <!-- Task header -->
+                    <div class="flex justify-between items-start mb-4">
+                      <div>
+                        <div class="text-xl font-bold text-gray-900 mb-1">
+                          <i class="fas fa-hashtag text-indigo-600 mr-2"></i>Tarea {{ escrow.id }}
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <span v-if="escrow.isPrivate" 
+                                class="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200"
+                          >
+                            <i class="fas fa-shield-alt mr-1"></i> Privada
+                          </span>
+                          <span 
+                            class="px-3 py-1 rounded-full text-xs font-medium"
+                            :class="{
+                              'bg-green-100 text-green-800 border border-green-200': escrow.isReleased,
+                              'bg-blue-100 text-blue-800 border border-blue-200': escrow.isCompleted && !escrow.isReleased,
+                              'bg-yellow-100 text-yellow-800 border border-yellow-200': !escrow.isCompleted
+                            }"
+                          >
+                            <i :class="{
+                              'fas fa-check-circle': escrow.isReleased,
+                              'fas fa-check': escrow.isCompleted && !escrow.isReleased,
+                              'fas fa-clock': !escrow.isCompleted
+                            }" class="mr-1"></i>
+                            {{ escrow.isReleased ? 'Pagada' : escrow.isCompleted ? 'Completada' : 'Pendiente' }}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="text-right text-sm text-gray-500">
+                        {{ formatDate(escrow.timestamp) }}
+                      </div>
+                    </div>
+
+                    <!-- Task details -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="text-xs text-gray-600 mb-1 font-medium">EJECUTOR</div>
+                        <div class="font-mono text-sm text-gray-900">
+                          {{ escrow.beneficiary.slice(0,8) }}...{{ escrow.beneficiary.slice(-6) }}
+                        </div>
+                      </div>
+                      <div class="bg-gray-50 rounded-lg p-4">
+                        <div class="text-xs text-gray-600 mb-1 font-medium">
+                          {{ escrow.isPrivate ? 'PAGO ENCRIPTADO' : 'PAGO' }}
+                        </div>
+                        <div class="font-semibold text-sm text-gray-900">
+                          {{ escrow.isPrivate 
+                            ? escrow.encryptedAmount.slice(0,12) + '...' 
+                            : escrow.publicAmount + ' ETH' 
+                          }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Task description -->
+                    <div class="bg-blue-50 rounded-lg p-4">
+                      <div class="text-xs text-blue-800 font-medium mb-2">DESCRIPCIÓN DE LA TAREA</div>
+                      <div class="text-sm text-blue-900 leading-relaxed">{{ escrow.taskDescription }}</div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+          </div>
 
-            <!-- Task description -->
-            <div class="bg-gray-50 rounded-lg p-3">
-              <div class="text-sm text-gray-600 mb-1">Descripción de la Tarea</div>
-              <div class="font-medium text-gray-800">{{ escrow.taskDescription }}</div>
+          <!-- Privacy registration card -->
+          <div v-if="account && !isRegisteredForPrivacy" class="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-2xl p-6 text-white">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="text-lg font-semibold mb-1">
+                  <i class="fas fa-shield-alt mr-2"></i>Funciones de Privacidad
+                </h3>
+                <p class="text-purple-100 text-sm">
+                  Regístrate para crear tareas privadas con zero-knowledge proofs
+                </p>
+              </div>
+              <button 
+                @click="registerForPrivacy"
+                class="px-6 py-3 bg-white text-indigo-600 rounded-xl font-medium hover:bg-gray-100 transition-all duration-300"
+              >
+                <i class="fas fa-user-plus mr-2"></i>Registrarse
+              </button>
             </div>
           </div>
         </div>

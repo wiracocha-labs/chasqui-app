@@ -3,6 +3,9 @@
 /* Estilos base y reset */
 @import './globals.css';
 
+/* Layout específico */
+@import './layout.css';
+
 /* Componentes */
 @import './components.css';
 

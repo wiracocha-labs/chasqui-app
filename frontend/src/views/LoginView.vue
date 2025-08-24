@@ -1,53 +1,136 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-    <div class="sm:mx-auto sm:w-full sm:max-w-md">
-      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-        Conecta tu Wallet
-      </h2>
-      <p class="mt-2 text-center text-sm text-gray-600">
-        Para acceder al chat, necesitas conectar tu wallet
-      </p>
-    </div>
+  <div style="min-height: 100vh; display: flex; background: #edf2f7;">
+    <!-- Left side - Info panel -->
+    <div class="left-panel" style="display: none; flex: 1; flex-direction: column; justify-content: center; padding: 2rem; background: linear-gradient(135deg, #4f46e5, #7c3aed, #2563eb); color: white;">
+      <div style="max-width: 400px; margin: 0 auto;">
+        <!-- Logo and branding -->
+        <div style="text-align: center; margin-bottom: 3rem;">
+          <div style="display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; background: rgba(255,255,255,0.2); border-radius: 50%; margin-bottom: 1.5rem;">
+            <span style="font-size: 2.5rem; font-weight: bold;">C</span>
+          </div>
+          <h1 style="font-size: 2.5rem; font-weight: bold; margin-bottom: 1rem;">Chasqui</h1>
+          <p style="font-size: 1.125rem; color: #e0e7ff;">Chat descentralizado y gestión de tareas</p>
+        </div>
 
-    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-      <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-        <div v-if="error" class="mb-4 bg-red-50 border-l-4 border-red-500 p-4">
-          <div class="flex">
-            <div class="flex-shrink-0">
-              <svg class="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
+        <!-- Features -->
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+          <div style="display: flex; align-items: flex-start; gap: 1rem;">
+            <div style="flex-shrink: 0; width: 24px; height: 24px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: 0.25rem;">
+              ✓
             </div>
-            <div class="ml-3">
-              <p class="text-sm text-red-700">{{ error }}</p>
+            <div>
+              <h3 style="font-weight: 600; font-size: 1.125rem;">Descentralizado</h3>
+              <p style="color: #e0e7ff;">Sin servidores centrales, tus datos son privados</p>
+            </div>
+          </div>
+          
+          <div style="display: flex; align-items: flex-start; gap: 1rem;">
+            <div style="flex-shrink: 0; width: 24px; height: 24px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: 0.25rem;">
+              ✓
+            </div>
+            <div>
+              <h3 style="font-weight: 600; font-size: 1.125rem;">Seguro</h3>
+              <p style="color: #e0e7ff;">Conecta con tu wallet, sin contraseñas</p>
+            </div>
+          </div>
+          
+          <div style="display: flex; align-items: flex-start; gap: 1rem;">
+            <div style="flex-shrink: 0; width: 24px; height: 24px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: 0.25rem;">
+              ✓
+            </div>
+            <div>
+              <h3 style="font-weight: 600; font-size: 1.125rem;">Tiempo Real</h3>
+              <p style="color: #e0e7ff;">Mensajes instantáneos con GunDB</p>
             </div>
           </div>
         </div>
+      </div>
+    </div>
 
-        <div class="space-y-4">
-          <button
-            @click="connectWallet('metamask')"
-            :disabled="isConnecting"
-            class="w-full flex items-center justify-center px-4 py-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-          >
-            {{ isConnecting ? 'Conectando...' : 'Conectar con MetaMask' }}
-          </button>
+    <!-- Right side - Login form -->
+    <div style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 1rem 1rem 3rem 1rem;">
+      <div style="max-width: 400px; width: 100%; display: flex; flex-direction: column; gap: 2rem;">
+        <!-- Mobile logo (visible on all screens now) -->
+        <div style="text-align: center;">
+          <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: #4f46e5; border-radius: 50%; margin-bottom: 1rem;">
+            <span style="font-size: 1.5rem; font-weight: bold; color: white;">C</span>
+          </div>
+          <h2 style="font-size: 1.875rem; font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">Chasqui</h2>
+          <p style="color: #6b7280;">Chat descentralizado</p>
+        </div>
 
-          <button
-            @click="connectWallet('walletconnect')"
-            :disabled="isConnecting"
-            class="w-full flex items-center justify-center px-4 py-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-          >
-            {{ isConnecting ? 'Conectando...' : 'Conectar con WalletConnect' }}
-          </button>
+        <!-- Login form -->
+        <div style="background: white; border-radius: 1rem; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); padding: 2rem; border: 1px solid #e5e7eb;">
+          <div style="text-align: center; margin-bottom: 2rem;">
+            <h2 style="font-size: 1.5rem; font-weight: bold; color: #1f2937; margin-bottom: 0.5rem;">Bienvenido</h2>
+            <p style="margin-top: 0.5rem; color: #6b7280; font-size: 0.875rem;">Conecta tu wallet para continuar</p>
+          </div>
 
-          <button
-            @click="connectWallet('coinbase')"
-            :disabled="isConnecting"
-            class="w-full flex items-center justify-center px-4 py-3 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50"
-          >
-            {{ isConnecting ? 'Conectando...' : 'Conectar con Coinbase Wallet' }}
-          </button>
+          <!-- Error alert -->
+          <div v-if="error" style="margin-bottom: 1.5rem; background: #fef2f2; border: 1px solid #fecaca; border-radius: 0.5rem; padding: 1rem;">
+            <div style="display: flex; align-items: flex-start;">
+              <div style="flex-shrink: 0;">
+                <span style="height: 20px; width: 20px; color: #ef4444;">⚠️</span>
+              </div>
+              <div style="margin-left: 0.75rem;">
+                <p style="font-size: 0.875rem; color: #991b1b;">{{ error }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Wallet connection buttons -->
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <button
+              @click="connectWallet('metamask')"
+              :disabled="isConnecting"
+              style="width: 100%; display: flex; align-items: center; justify-content: center; padding: 0.75rem 1rem; border: none; border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); background: linear-gradient(to right, #f97316, #ea580c); color: white; font-weight: 500; transition: all 0.2s; cursor: pointer;"
+              :style="{ opacity: isConnecting ? 0.5 : 1, cursor: isConnecting ? 'not-allowed' : 'pointer' }"
+            >
+              <span style="width: 20px; height: 20px; margin-right: 0.75rem;">🦊</span>
+              {{ isConnecting ? 'Conectando...' : 'Conectar con MetaMask' }}
+            </button>
+
+            <button
+              @click="connectWallet('walletconnect')"
+              :disabled="isConnecting"
+              style="width: 100%; display: flex; align-items: center; justify-content: center; padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); background: white; color: #374151; font-weight: 500; transition: colors 0.2s; cursor: pointer;"
+              :style="{ opacity: isConnecting ? 0.5 : 1, cursor: isConnecting ? 'not-allowed' : 'pointer' }"
+            >
+              <span style="width: 20px; height: 20px; margin-right: 0.75rem;">🔗</span>
+              {{ isConnecting ? 'Conectando...' : 'WalletConnect' }}
+            </button>
+
+            <button
+              @click="connectWallet('coinbase')"
+              :disabled="isConnecting"
+              style="width: 100%; display: flex; align-items: center; justify-content: center; padding: 0.75rem 1rem; border: 1px solid #d1d5db; border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); background: white; color: #374151; font-weight: 500; transition: colors 0.2s; cursor: pointer;"
+              :style="{ opacity: isConnecting ? 0.5 : 1, cursor: isConnecting ? 'not-allowed' : 'pointer' }"
+            >
+              <span style="width: 20px; height: 20px; margin-right: 0.75rem;">💰</span>
+              {{ isConnecting ? 'Conectando...' : 'Coinbase Wallet' }}
+            </button>
+          </div>
+
+          <!-- Loading state -->
+          <div v-if="isConnecting" style="display: flex; align-items: center; justify-content: center; margin-top: 1.5rem; padding: 1rem;">
+            <div style="border-radius: 50%; height: 24px; width: 24px; border: 2px solid #4f46e5; border-top-color: transparent; animation: spin 1s linear infinite;"></div>
+            <span style="margin-left: 0.75rem; color: #6b7280;">Conectando wallet...</span>
+          </div>
+
+          <!-- Info -->
+          <div style="margin-top: 2rem; text-align: center;">
+            <p style="font-size: 0.75rem; color: #9ca3af; line-height: 1.6;">
+              Al conectar tu wallet aceptas acceder a la red local Hardhat<br>
+              <span style="font-weight: 500;">Chain ID: 31337</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center;">
+          <p style="font-size: 0.875rem; color: #9ca3af;">
+            © 2024 Chasqui - Sistema descentralizado
+          </p>
         </div>
       </div>
     </div>
@@ -100,3 +183,27 @@ const connectWallet = async (walletType: WalletType) => {
   }
 }
 </script>
+
+<style scoped>
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Hover effects for buttons */
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* Large screen responsive */
+@media (min-width: 1024px) {
+  .left-panel {
+    display: flex !important;
+  }
+}
+</style>

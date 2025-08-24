@@ -32,6 +32,65 @@
   border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
+/* Chat specific styles - Siguiendo el diseño del HTML original */
+.bg-indigo-darkest {
+  background-color: #2D3748; /* Very dark blue-gray */
+}
+
+.bg-indigo-darker {
+  background-color: #4A5568; /* Dark blue-gray */
+}
+
+.bg-indigo-dark {
+  background-color: #5A67D8; /* Indigo */
+}
+
+.bg-indigo-lighter {
+  background-color: #E6FFFA; /* Light indigo */
+}
+
+.text-purple-lighter {
+  color: #E6FFFA; /* Very light purple */
+}
+
+.text-grey-darkest {
+  color: #1A202C; /* Very dark gray */
+}
+
+.text-grey-dark {
+  color: #4A5568; /* Dark gray */
+}
+
+.text-grey {
+  color: #A0AEC0; /* Medium gray */
+}
+
+.border-grey {
+  border-color: #E2E8F0; /* Light gray */
+}
+
+.bg-teal-dark {
+  background-color: #2D7D7D; /* Dark teal */
+}
+
+.bg-teal {
+  background-color: #38B2AC; /* Teal */
+}
+
+.bg-green {
+  background-color: #48BB78; /* Green */
+}
+
+/* Pin utilities for positioning (legacy Tailwind v0.x) */
+.pin-y {
+  top: 0;
+  bottom: 0;
+}
+
+.pin-l {
+  left: 0;
+}
+
 /* Efectos de hover personalizados */
 .hover-lift {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -58,4 +117,33 @@
 
 .slide-up {
   animation: slideInUp 0.6s ease-out;
+}
+
+/* Message container styles */
+.message-container {
+  height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.message {
+  transition: all 0.3s ease;
+}
+
+/* Custom scrollbar for messages */
+.message-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.message-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.message-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.message-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
