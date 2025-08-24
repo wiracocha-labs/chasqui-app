@@ -1,8 +1,22 @@
 {
-  "name": "orbit-db-ava-experiment",
+  "name": "chasqui-app",
+  "version": "1.0.0",
+  "description": "Plataforma de comunicación descentralizada con sistema de tareas privadas usando eERC20 en Avalanche",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
+  "keywords": [
+    "avalanche",
+    "eerc20",
+    "privacy",
+    "zero-knowledge",
+    "smart-contracts",
+    "vue",
+    "decentralized-chat",
+    "escrow",
+    "web3"
+  ],
+  "author": "Wiracocha Labs",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -11,9 +25,17 @@
     "hardhat:node": "hardhat node",
     "hardhat:compile": "hardhat compile",
     "hardhat:test": "hardhat test",
+    "hardhat:clean": "hardhat clean",
     "hardhat:deploy-local": "hardhat run web3/scripts/deploy-authorization.ts --network localhost",
-    "hardhat:deploy-and-update": "yarn hardhat:compile && yarn hardhat:deploy-local",
-    "hardhat:clean": "hardhat clean"
+    "hardhat:deploy-local-full": "hardhat run web3/scripts/deploy-local.ts --network localhost",
+    "hardhat:deploy-and-update": "yarn hardhat:compile && yarn hardhat:deploy-local-full",
+    "deploy:fuji": "hardhat run web3/scripts/deploy-local.ts --network fuji",
+    "deploy:mainnet": "hardhat run web3/scripts/deploy-local.ts --network avalanche",
+    "verify:fuji": "hardhat verify --network fuji",
+    "start:local": "npm run hardhat:node",
+    "dev:full": "npm run hardhat:deploy-and-update && npm run dev",
+    "test:contracts": "npm run hardhat:test",
+    "interact:local": "hardhat console --network localhost"
   },
   "dependencies": {
     "ethers": "^6.14.0",
