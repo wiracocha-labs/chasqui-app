@@ -1,6 +1,7 @@
 import { expect } from "chai";
-import { ethers } from "hardhat";
-import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
+import hre from "hardhat";
+const { ethers } = hre;
+import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
 
 type Contract = any; // Temporal hasta generar typechain
 
@@ -171,6 +172,8 @@ describe("AuthorizationWithEERC20Escrow", function () {
       await mockRegistrar.mockRegisterUser(user2.address, mockPublicKey);
       await mockEERC20.mockRegisterUser(user1.address);
       await mockEERC20.mockRegisterUser(user2.address);
+      // Registrar el contrato también para las transferencias
+      await mockEERC20.mockRegisterUser(await contract.getAddress());
     });
 
     it("Debe permitir registro para privacidad", async function () {
@@ -202,8 +205,12 @@ describe("AuthorizationWithEERC20Escrow", function () {
     });
 
     it("No debe permitir crear escrow privado sin registro", async function () {
-      // Crear un usuario no registrado (user2 en este caso)
+      // Crear un usuario no registrado
       const [, , user3] = await ethers.getSigners();
+      
+      // Asegurar que user3 NO está registrado
+      await mockEERC20.mockUnregisterUser(user3.address);
+      expect(await mockEERC20.isRegistered(user3.address)).to.be.false;
 
       const taskDescription = "Tarea privada";
       const encryptedAmount = "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef";
@@ -211,7 +218,7 @@ describe("AuthorizationWithEERC20Escrow", function () {
 
       await expect(
         contract.connect(user3).createPrivateEscrow(
-          user2.address,
+          user1.address, // Cambiar beneficiario a user1 que sí está registrado
           encryptedAmount,
           zkProof,
           taskDescription

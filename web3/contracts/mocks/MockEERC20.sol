@@ -66,6 +66,10 @@ contract MockEERC20 {
         registeredUsers[user] = true;
     }
     
+    function mockUnregisterUser(address user) external {
+        registeredUsers[user] = false;
+    }
+    
     function mockSetEncryptedBalance(address user, bytes32 balance) external {
         encryptedBalances[user] = balance;
     }
