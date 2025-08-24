@@ -1,0 +1,61 @@
+/* Componentes personalizados - efectos visuales únicos */
+
+/* Card Component con efectos especiales */
+.card-gradient {
+  background: rgba(46, 30, 26, 0.95); /* Usando color primario de Chasqui con transparencia */
+  border: 1px solid rgba(212, 175, 55, 0.3); /* Borde dorado sutil */
+  box-shadow: var(--shadow-card);
+  backdrop-filter: var(--backdrop-blur);
+  transition: transform 0.3s ease;
+}
+
+.card-gradient:hover {
+  transform: translateY(-5px);
+  border-color: rgba(212, 175, 55, 0.6);
+}
+
+/* Wallet Card con gradiente de marca */
+.wallet-card-gradient {
+  background: var(--gradient-primary);
+}
+
+/* Header con sombra de texto usando colores de marca */
+.header-title {
+  text-shadow: 2px 2px 4px rgba(46, 30, 26, 0.8);
+  color: var(--color-primary);
+}
+
+/* Network status con backdrop usando colores de marca */
+.network-status-glass {
+  background: rgba(212, 175, 55, 0.2);
+  backdrop-filter: var(--backdrop-blur);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+/* Efectos de hover personalizados */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.hover-slide {
+  transition: transform 0.3s ease;
+}
+
+.hover-slide:hover {
+  transform: translateX(10px);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+/* Animaciones personalizadas */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+.slide-up {
+  animation: slideInUp 0.6s ease-out;
+}

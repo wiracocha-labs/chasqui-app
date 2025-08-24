@@ -1,0 +1,66 @@
+/* Tailwind CSS v4 imports */
+@import "tailwindcss/preflight";
+@import "tailwindcss/utilities";
+
+/* Custom CSS variables para consistencia - Colores de marca Chasqui */
+:root {
+  /* Colores principales de Chasqui */
+  --color-primary: #D4AF37;        /* Dorado/Brand */
+  --color-primary-dark: #A9442B;   /* Rojo oscuro/Action */
+  --color-secondary: #F27D42;      /* Naranja/Accent */
+  --color-success: #51cf66;
+  --color-warning: #ffd43b;
+  --color-danger: #ff6b6b;
+  --color-info: #F27D42;          /* Usar accent para info */
+  
+  /* Backgrounds de Chasqui */
+  --color-bg-primary: #2E1E1A;     /* Marrón oscuro */
+  --color-bg-secondary: #5C5C5C;   /* Gris */
+  --color-text-primary: #F5F5F5;   /* Blanco casi */
+  --color-text-secondary: #D9D9D9; /* Gris claro */
+  
+  /* Gradientes con colores de marca */
+  --gradient-primary: linear-gradient(135deg, #D4AF37 0%, #A9442B 100%);
+  --gradient-secondary: linear-gradient(135deg, #F27D42 0%, #D4AF37 100%);
+  --gradient-success: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+  --gradient-warning: linear-gradient(135deg, #ffd43b 0%, #fab005 100%);
+  --gradient-danger: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+  --gradient-info: linear-gradient(135deg, #F27D42 0%, #D4AF37 100%);
+  --gradient-bg: linear-gradient(135deg, #2E1E1A 0%, #5C5C5C 100%);
+  
+  --shadow-card: 0 10px 30px rgba(46, 30, 26, 0.3);
+  --shadow-hover: 0 6px 20px rgba(169, 68, 43, 0.4);
+  --backdrop-blur: blur(10px);
+  --border-radius-card: 20px;
+  --border-radius-input: 10px;
+}
+
+/* Base styles personalizados con colores Chasqui */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--gradient-bg);
+  min-height: 100vh;
+  color: var(--color-text-primary);
+}
+
+/* Animaciones personalizadas */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

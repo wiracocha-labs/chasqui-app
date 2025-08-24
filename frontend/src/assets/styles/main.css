@@ -1,0 +1,19 @@
+/* Estilos principales de la aplicación */
+
+/* Estilos base y reset */
+@import './globals.css';
+
+/* Componentes */
+@import './components.css';
+
+/* Formularios */
+@import './forms.css';
+
+/* Botones */
+@import './buttons.css';
+
+/* UI Components */
+@import './ui.css';
+
+/* Escrow específicos */
+@import './escrow.css';

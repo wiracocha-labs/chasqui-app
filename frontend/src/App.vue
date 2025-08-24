@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100 text-gray-900">
+  <div id="app" class="app-container">
     <RouterView />
   </div>
 </template>
@@ -9,4 +9,7 @@ import { RouterView } from 'vue-router'
 </script>
 
 <style scoped>
+.app-container {
+  min-height: 100vh;
+}
 </style>

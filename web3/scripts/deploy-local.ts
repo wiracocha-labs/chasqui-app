@@ -1,4 +1,5 @@
-import { ethers } from "hardhat";
+import hre from "hardhat";
+const { ethers } = hre;
 import { writeFileSync, existsSync, mkdirSync } from "fs";
 
 // Temporal hasta generar typechain
