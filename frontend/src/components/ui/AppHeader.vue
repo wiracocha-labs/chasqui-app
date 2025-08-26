@@ -18,6 +18,4 @@ interface Props {
 defineProps<Props>()
 </script>
 
-<style scoped>
-/* Estilos específicos adicionales si necesarios */
-</style>
+

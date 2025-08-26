@@ -1,60 +1,125 @@
-/* Botones */
-.btn {
-  padding: 12px 24px;
-  border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-weight: 600;
-  margin-right: 10px;
-  margin-bottom: 10px;
-}
+/* Botones minimalistas - Solo colores planos */
 
+/* Botón principal */
 .btn-primary {
-  background: var(--gradient-primary);
-  color: var(--color-text-primary);
+  background-color: var(--color-brand);
+  color: var(--color-bg-primary);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.btn-success {
-  background: var(--gradient-success);
-  color: white;
+.btn-primary:hover {
+  background-color: var(--color-accent);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
-.btn-warning {
-  background: var(--gradient-warning);
-  color: #333;
+.btn-primary:active {
+  transform: translateY(0);
 }
 
-.btn-danger {
-  background: var(--gradient-danger);
-  color: white;
-}
-
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-}
-
-.btn:disabled {
-  opacity: 0.6;
+.btn-primary:disabled {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
   cursor: not-allowed;
   transform: none;
 }
 
-.connect-btn {
-  background: var(--gradient-secondary);
+/* Botón secundario */
+.btn-secondary {
+  background-color: transparent;
   color: var(--color-text-primary);
-  border: none;
-  padding: 12px 30px;
-  border-radius: 25px;
-  font-size: 1rem;
+  border: var(--border-light);
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-card);
+  transition: var(--transition-normal);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.connect-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
+.btn-secondary:hover {
+  border-color: var(--color-brand);
+  background-color: var(--color-brand-10);
+  color: var(--color-brand);
+}
+
+/* Botón de acción (peligroso) */
+.btn-action {
+  background-color: var(--color-action);
+  color: var(--color-text-primary);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.btn-action:hover {
+  background-color: var(--color-accent);
+}
+
+/* Botón pequeño */
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  border-radius: 4px;
+}
+
+/* Botón grande */
+.btn-lg {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  border-radius: 8px;
+}
+
+/* Botón texto */
+.btn-text {
+  background: none;
+  border: none;
+  color: var(--color-brand);
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  font-weight: 500;
+}
+
+.btn-text:hover {
+  color: var(--color-accent);
+  background-color: var(--color-brand-10);
+  border-radius: 4px;
+}
+
+/* Botón icono */
+.btn-icon {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  padding: 0.5rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon:hover {
+  background-color: var(--color-brand-10);
+  color: var(--color-brand);
 }

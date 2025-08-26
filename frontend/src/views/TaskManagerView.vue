@@ -12,11 +12,11 @@
         </div>
         <div class="flex items-center space-x-4">
           <!-- Network indicator -->
-          <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+          <div class="bg-chat-accent-light text-chat-accent px-3 py-1 rounded-full text-sm font-medium">
             {{ networkName }}
           </div>
           <!-- Balance display -->
-          <div class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
+          <div class="bg-chat-brand-light text-chat-brand px-3 py-1 rounded-full text-sm font-medium">
             {{ avaxBalance }} ETH
           </div>
         </div>
@@ -28,7 +28,7 @@
       <div class="max-w-6xl mx-auto p-6">
         <!-- Wallet connection card -->
         <div v-if="!account" class="bg-white rounded-2xl shadow-lg p-8 text-center">
-          <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div class="w-16 h-16 bg-chat-brand rounded-full flex items-center justify-center mx-auto mb-4">
             <i class="fas fa-wallet text-white text-2xl"></i>
           </div>
           <h3 class="text-xl font-semibold text-gray-900 mb-2">Conecta tu Wallet</h3>
@@ -36,7 +36,7 @@
           <button 
             @click="connectWallet"
             :disabled="connecting"
-            class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white px-8 py-3 rounded-xl font-medium hover:from-indigo-700 hover:to-purple-700 transition-all duration-300 disabled:opacity-50"
+            class="bg-chat-brand text-white px-8 py-3 rounded-xl font-medium hover:bg-chat-accent transition-all duration-300 disabled:opacity-50"
           >
             <i class="fas fa-plug mr-2"></i>
             {{ connecting ? 'Conectando...' : 'Conectar Wallet' }}
@@ -49,9 +49,9 @@
           <div v-if="alert.message" 
                class="p-4 rounded-xl font-medium slide-up flex items-center"
                :class="{
-                 'bg-green-100 text-green-800 border border-green-200': alert.type === 'success',
-                 'bg-red-100 text-red-800 border border-red-200': alert.type === 'error',
-                 'bg-yellow-100 text-yellow-800 border border-yellow-200': alert.type === 'warning'
+                 'bg-chat-accent-light text-chat-accent border border-chat-accent': alert.type === 'success',
+                 'bg-chat-action-light text-chat-action border border-chat-action': alert.type === 'error',
+                 'bg-chat-brand-light text-chat-brand border border-chat-brand': alert.type === 'warning'
                }"
           >
             <i :class="alertIcon" class="mr-3 text-lg"></i> 
@@ -66,7 +66,7 @@
                 :key="tab.id"
                 class="flex-1 px-6 py-4 text-center font-medium transition-all duration-300 first:rounded-tl-2xl last:rounded-tr-2xl"
                 :class="activeTab === tab.id 
-                  ? 'bg-white text-indigo-600 shadow-sm border-b-2 border-indigo-600' 
+                  ? 'bg-white text-chat-brand shadow-sm border-b-2 border-chat-brand' 
                   : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'"
                 @click="activeTab = tab.id"
               >
@@ -80,7 +80,7 @@
               <div v-if="activeTab === 'create'" class="space-y-6">
                 <div class="text-center mb-6">
                   <h2 class="text-2xl font-bold text-gray-900 mb-2">
-                    <i class="fas fa-plus text-indigo-600 mr-3"></i>Crear Nueva Tarea
+                    <i class="fas fa-plus text-chat-brand mr-3"></i>Crear Nueva Tarea
                   </h2>
                   <p class="text-gray-600">Define una tarea y establece los términos del contrato</p>
                 </div>
@@ -91,7 +91,7 @@
                     <span class="font-medium text-gray-700">Tarea Pública</span>
                     <div 
                       class="relative w-14 h-7 rounded-full cursor-pointer transition-colors duration-300"
-                      :class="createForm.isPrivate ? 'bg-indigo-600' : 'bg-gray-300'"
+                      :class="createForm.isPrivate ? 'bg-chat-brand' : 'bg-gray-300'"
                       @click="togglePrivacy"
                     >
                       <div 
@@ -100,7 +100,7 @@
                       ></div>
                     </div>
                     <span class="font-medium text-gray-700">Tarea Privada</span>
-                    <i v-if="createForm.isPrivate" class="fas fa-shield-alt text-indigo-600 text-lg"></i>
+                    <i v-if="createForm.isPrivate" class="fas fa-shield-alt text-chat-brand text-lg"></i>
                   </div>
                   <div class="mt-3 text-sm text-gray-500">
                     {{ createForm.isPrivate ? 'Los detalles serán encriptados' : 'Los detalles serán públicos' }}
@@ -115,7 +115,7 @@
                     </label>
                     <input 
                       type="text" 
-                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors duration-300 font-mono text-sm"
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-chat-brand focus:outline-none transition-colors duration-300 font-mono text-sm"
                       v-model="createForm.beneficiary" 
                       placeholder="0x... (dirección de quien realizará la tarea)"
                     />
@@ -128,7 +128,7 @@
                     <input 
                       type="number" 
                       step="0.001" 
-                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors duration-300"
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-chat-brand focus:outline-none transition-colors duration-300"
                       v-model="createForm.amount" 
                       placeholder="0.000"
                     />
@@ -140,7 +140,7 @@
                     </label>
                     <input 
                       type="text" 
-                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors duration-300 font-mono text-sm"
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-chat-brand focus:outline-none transition-colors duration-300 font-mono text-sm"
                       v-model="createForm.encryptedAmount" 
                       placeholder="0x..."
                     />
@@ -151,7 +151,7 @@
                       <i class="fas fa-clipboard-list mr-2"></i>Descripción de la Tarea
                     </label>
                     <textarea 
-                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors duration-300 min-h-[120px] resize-y"
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-chat-brand focus:outline-none transition-colors duration-300 min-h-[120px] resize-y"
                       v-model="createForm.taskDescription" 
                       placeholder="Describe detalladamente la tarea que debe completarse..."
                     ></textarea>
@@ -162,14 +162,14 @@
                       <i class="fas fa-key mr-2"></i>Prueba Zero-Knowledge (Hex)
                     </label>
                     <textarea 
-                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors duration-300 min-h-[100px] resize-y font-mono text-sm"
+                      class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-chat-brand focus:outline-none transition-colors duration-300 min-h-[100px] resize-y font-mono text-sm"
                       v-model="createForm.zkProof" 
                       placeholder="0x..."
                     ></textarea>
                   </div>
 
                   <button 
-                    class="w-full px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+                    class="w-full px-6 py-4 bg-chat-brand text-white rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
                     :class="creating ? 'opacity-60 cursor-not-allowed' : ''"
                     :disabled="creating"
                     @click="createEscrow"
@@ -184,7 +184,7 @@
               <div v-if="activeTab === 'manage'" class="space-y-6">
                 <div class="text-center mb-6">
                   <h2 class="text-2xl font-bold text-gray-900 mb-2">
-                    <i class="fas fa-tasks text-indigo-600 mr-3"></i>Gestionar Tareas
+                    <i class="fas fa-tasks text-chat-brand mr-3"></i>Gestionar Tareas
                   </h2>
                   <p class="text-gray-600">Actualiza el estado de las tareas existentes</p>
                 </div>
@@ -195,7 +195,7 @@
                   </label>
                   <input 
                     type="number" 
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors duration-300"
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-chat-brand focus:outline-none transition-colors duration-300"
                     v-model="manageForm.escrowId" 
                     placeholder="Ingresa el ID de la tarea"
                   />
@@ -204,21 +204,21 @@
                 <!-- Action buttons -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <button 
-                    class="px-6 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold transition-all duration-300 hover:from-green-600 hover:to-green-700 transform hover:scale-105"
+                    class="px-6 py-4 bg-chat-accent text-white rounded-xl font-semibold transition-all duration-300 hover:bg-chat-brand transform hover:scale-105"
                     :disabled="managing || !manageForm.escrowId"
                     @click="markCompleted"
                   >
                     <i class="fas fa-check mr-2"></i> Marcar Completada
                   </button>
                   <button 
-                    class="px-6 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl font-semibold transition-all duration-300 hover:from-indigo-600 hover:to-purple-700 transform hover:scale-105"
+                    class="px-6 py-4 bg-chat-brand text-white rounded-xl font-semibold transition-all duration-300 hover:bg-chat-accent transform hover:scale-105"
                     :disabled="managing || !manageForm.escrowId"
                     @click="releaseFunds"
                   >
                     <i class="fas fa-coins mr-2"></i> Liberar Pago
                   </button>
                   <button 
-                    class="px-6 py-4 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl font-semibold transition-all duration-300 hover:from-red-600 hover:to-red-700 transform hover:scale-105"
+                    class="px-6 py-4 bg-chat-action text-white rounded-xl font-semibold transition-all duration-300 hover:bg-chat-accent transform hover:scale-105"
                     :disabled="managing || !manageForm.escrowId"
                     @click="cancelEscrow"
                   >
@@ -231,7 +231,7 @@
                     <i class="fas fa-shield-alt mr-2"></i>Prueba ZK (opcional para tareas privadas)
                   </label>
                   <textarea 
-                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors duration-300 min-h-[100px] resize-y font-mono text-sm"
+                    class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-chat-brand focus:outline-none transition-colors duration-300 min-h-[100px] resize-y font-mono text-sm"
                     v-model="manageForm.zkProof" 
                     placeholder="0x... (requerido para tareas privadas)"
                   ></textarea>
@@ -243,12 +243,12 @@
                 <div class="flex items-center justify-between">
                   <div>
                     <h2 class="text-2xl font-bold text-gray-900">
-                      <i class="fas fa-list text-indigo-600 mr-3"></i>Mis Tareas
+                      <i class="fas fa-list text-chat-brand mr-3"></i>Mis Tareas
                     </h2>
                     <p class="text-gray-600 mt-1">Todas las tareas que has creado</p>
                   </div>
                   <button 
-                    class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-medium transition-all duration-300 hover:from-indigo-700 hover:to-purple-700 transform hover:scale-105"
+                    class="px-6 py-3 bg-chat-brand text-white rounded-xl font-medium transition-all duration-300 hover:bg-chat-accent transform hover:scale-105"
                     :disabled="loading" 
                     @click="loadUserEscrows"
                   >
@@ -260,7 +260,7 @@
                 <!-- Loading state -->
                 <div v-if="loading" class="flex items-center justify-center py-16">
                   <div class="text-center">
-                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-chat-brand mx-auto mb-4"></div>
                     <p class="text-gray-600 font-medium">Cargando tareas...</p>
                   </div>
                 </div>
@@ -274,7 +274,7 @@
                   <p class="text-gray-500 mb-6">¡Crea tu primera tarea usando la pestaña "Crear Tarea"!</p>
                   <button 
                     @click="activeTab = 'create'"
-                    class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-medium hover:from-indigo-700 hover:to-purple-700 transition-all duration-300"
+                    class="px-6 py-3 bg-chat-brand text-white rounded-xl font-medium hover:bg-chat-accent transition-all duration-300"
                   >
                     <i class="fas fa-plus mr-2"></i> Crear Primera Tarea
                   </button>
@@ -291,20 +291,20 @@
                     <div class="flex justify-between items-start mb-4">
                       <div>
                         <div class="text-xl font-bold text-gray-900 mb-1">
-                          <i class="fas fa-hashtag text-indigo-600 mr-2"></i>Tarea {{ escrow.id }}
+                          <i class="fas fa-hashtag text-chat-brand mr-2"></i>Tarea {{ escrow.id }}
                         </div>
                         <div class="flex items-center gap-2">
                           <span v-if="escrow.isPrivate" 
-                                class="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200"
+                                class="px-2 py-1 rounded-full text-xs font-medium bg-chat-brand-light text-chat-brand border border-chat-brand"
                           >
                             <i class="fas fa-shield-alt mr-1"></i> Privada
                           </span>
                           <span 
                             class="px-3 py-1 rounded-full text-xs font-medium"
                             :class="{
-                              'bg-green-100 text-green-800 border border-green-200': escrow.isReleased,
-                              'bg-blue-100 text-blue-800 border border-blue-200': escrow.isCompleted && !escrow.isReleased,
-                              'bg-yellow-100 text-yellow-800 border border-yellow-200': !escrow.isCompleted
+                              'bg-chat-accent-light text-chat-accent border border-chat-accent': escrow.isReleased,
+                              'bg-chat-brand-light text-chat-brand border border-chat-brand': escrow.isCompleted && !escrow.isReleased,
+                              'bg-chat-action-light text-chat-action border border-chat-action': !escrow.isCompleted
                             }"
                           >
                             <i :class="{
@@ -354,19 +354,19 @@
           </div>
 
           <!-- Privacy registration card -->
-          <div v-if="account && !isRegisteredForPrivacy" class="bg-gradient-to-r from-purple-500 to-indigo-600 rounded-2xl p-6 text-white">
+          <div v-if="account && !isRegisteredForPrivacy" class="bg-chat-brand rounded-2xl p-6 text-white">
             <div class="flex items-center justify-between">
               <div>
                 <h3 class="text-lg font-semibold mb-1">
                   <i class="fas fa-shield-alt mr-2"></i>Funciones de Privacidad
                 </h3>
-                <p class="text-purple-100 text-sm">
+                <p class="text-chat-secondary text-sm">
                   Regístrate para crear tareas privadas con zero-knowledge proofs
                 </p>
               </div>
               <button 
                 @click="registerForPrivacy"
-                class="px-6 py-3 bg-white text-indigo-600 rounded-xl font-medium hover:bg-gray-100 transition-all duration-300"
+                class="px-6 py-3 bg-white text-chat-brand rounded-xl font-medium hover:bg-gray-100 transition-all duration-300"
               >
                 <i class="fas fa-user-plus mr-2"></i>Registrarse
               </button>
@@ -732,6 +732,4 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped>
-/* Estilos específicos del componente si necesarios */
-</style>
+

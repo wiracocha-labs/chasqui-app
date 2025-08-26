@@ -1,149 +1,136 @@
-/* Componentes personalizados - efectos visuales únicos */
+/* Componentes minimalistas - Solo colores planos */
 
-/* Card Component con efectos especiales */
-.card-gradient {
-  background: rgba(46, 30, 26, 0.95); /* Usando color primario de Chasqui con transparencia */
-  border: 1px solid rgba(212, 175, 55, 0.3); /* Borde dorado sutil */
-  box-shadow: var(--shadow-card);
-  backdrop-filter: var(--backdrop-blur);
-  transition: transform 0.3s ease;
+/* Card minimalista - SIN GRADIENTES */
+.card-flat {
+  background: var(--color-bg-primary);
+  border: var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-normal);
+  border-radius: 8px;
+  padding: 1.5rem;
 }
 
-.card-gradient:hover {
-  transform: translateY(-5px);
-  border-color: rgba(212, 175, 55, 0.6);
+.card-flat:hover {
+  border-color: var(--color-brand);
+  box-shadow: var(--shadow-md);
 }
 
-/* Wallet Card con gradiente de marca */
-.wallet-card-gradient {
-  background: var(--gradient-primary);
-}
+/* ELIMINAR: .card-gradient - usar .card-flat */
+/* ELIMINAR: .wallet-card-gradient - usar .card-flat */
 
-/* Header con sombra de texto usando colores de marca */
+/* Header minimalista */
 .header-title {
-  text-shadow: 2px 2px 4px rgba(46, 30, 26, 0.8);
-  color: var(--color-primary);
+  color: var(--color-brand);
+  font-weight: 600;
+  /* ELIMINAR: text-shadow (no minimalista) */
 }
 
-/* Network status con backdrop usando colores de marca */
-.network-status-glass {
-  background: rgba(212, 175, 55, 0.2);
-  backdrop-filter: var(--backdrop-blur);
-  border: 1px solid rgba(212, 175, 55, 0.3);
+/* Network status minimalista - SIN backdrop-filter */
+.network-status {
+  background: var(--color-brand-10);
+  border: var(--border-light);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
 }
 
-/* Chat specific styles - Siguiendo el diseño del HTML original */
-.bg-indigo-darkest {
-  background-color: #2D3748; /* Very dark blue-gray */
-}
+/* Chat styles - MANTENIDOS (ya son minimalistas) */
+.bg-chat-primary { background-color: var(--color-bg-primary); }
+.bg-chat-secondary { background-color: var(--color-bg-secondary); }
+.bg-chat-accent { background-color: var(--color-accent); }
+.bg-chat-action { background-color: var(--color-action); }
+.bg-chat-brand { background-color: var(--color-brand); }
 
-.bg-indigo-darker {
-  background-color: #4A5568; /* Dark blue-gray */
-}
+/* Versiones con transparencia */
+.bg-chat-brand-light { background-color: var(--color-brand-10); }
+.bg-chat-accent-light { background-color: var(--color-accent-10); }
+.bg-chat-action-light { background-color: var(--color-action-10); }
 
-.bg-indigo-dark {
-  background-color: #5A67D8; /* Indigo */
-}
+/* Text colors - MANTENIDOS */
+.text-chat-primary { color: var(--color-text-primary); }
+.text-chat-secondary { color: var(--color-text-secondary); }
+.text-chat-brand { color: var(--color-brand); }
+.text-chat-accent { color: var(--color-accent); }
+.text-chat-action { color: var(--color-action); }
 
-.bg-indigo-lighter {
-  background-color: #E6FFFA; /* Light indigo */
-}
+/* Border colors - MANTENIDOS */
+.border-chat-brand { border-color: var(--color-brand); }
+.border-chat-accent { border-color: var(--color-accent); }
 
-.text-purple-lighter {
-  color: #E6FFFA; /* Very light purple */
-}
-
-.text-grey-darkest {
-  color: #1A202C; /* Very dark gray */
-}
-
-.text-grey-dark {
-  color: #4A5568; /* Dark gray */
-}
-
-.text-grey {
-  color: #A0AEC0; /* Medium gray */
-}
-
-.border-grey {
-  border-color: #E2E8F0; /* Light gray */
-}
-
-.bg-teal-dark {
-  background-color: #2D7D7D; /* Dark teal */
-}
-
-.bg-teal {
-  background-color: #38B2AC; /* Teal */
-}
-
-.bg-green {
-  background-color: #48BB78; /* Green */
-}
-
-/* Pin utilities for positioning (legacy Tailwind v0.x) */
-.pin-y {
-  top: 0;
-  bottom: 0;
-}
-
-.pin-l {
-  left: 0;
-}
-
-/* Efectos de hover personalizados */
+/* Efectos hover minimalistas */
 .hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: var(--transition-normal);
 }
 
 .hover-lift:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px); /* REDUCIDO: era -2px */
+  box-shadow: var(--shadow-md);
 }
 
-.hover-slide {
-  transition: transform 0.3s ease;
+/* ELIMINAR: .hover-slide (no minimalista) */
+
+.hover-brand {
+  transition: var(--transition-normal);
 }
 
-.hover-slide:hover {
-  transform: translateX(10px);
-  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+.hover-brand:hover {
+  background-color: var(--color-brand-10);
+  color: var(--color-brand);
 }
 
-/* Animaciones personalizadas */
-.fade-in {
-  animation: fadeIn 0.5s ease-in;
-}
-
-.slide-up {
-  animation: slideInUp 0.6s ease-out;
-}
-
-/* Message container styles */
+/* Message styles minimalistas */
 .message-container {
   height: calc(100vh - 200px);
   overflow-y: auto;
+  background: var(--color-bg-primary);
 }
 
-.message {
-  transition: all 0.3s ease;
-}
-
-/* Custom scrollbar for messages */
-.message-container::-webkit-scrollbar {
-  width: 8px;
-}
-
-.message-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
+.message-sent {
+  background: var(--color-brand-10);
+  color: var(--color-text-primary);
+  border-left: 3px solid var(--color-brand);
+  padding: 0.75rem;
+  margin: 0.5rem 0;
   border-radius: 4px;
 }
 
-.message-container::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+.message-received {
+  background: var(--color-accent-10);
+  color: var(--color-text-primary);
+  border-left: 3px solid var(--color-accent);
+  padding: 0.75rem;
+  margin: 0.5rem 0;
   border-radius: 4px;
 }
 
-.message-container::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+/* Scrollbar - MANTENIDO (ya minimalista) */
+.message-container::-webkit-scrollbar { width: 6px; }
+.message-container::-webkit-scrollbar-track { background: var(--color-bg-secondary); }
+.message-container::-webkit-scrollbar-thumb { background: var(--color-brand); border-radius: 3px; }
+
+/* Estados de conexión minimalistas */
+.status-online {
+  background: var(--color-accent-10);
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.status-offline {
+  background: var(--color-action-10);
+  color: var(--color-action);
+  border: 1px solid var(--color-action);
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.status-connecting {
+  background: var(--color-brand-10);
+  color: var(--color-brand);
+  border: 1px solid var(--color-brand);
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
 }

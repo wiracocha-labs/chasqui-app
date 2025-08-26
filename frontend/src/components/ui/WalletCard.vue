@@ -1,6 +1,6 @@
 <template>
   <!-- Wallet Connection Card -->
-  <div v-if="!account" class="rounded-3xl p-6 mb-6 text-white wallet-card-gradient slide-up">
+  <div v-if="!account" class="rounded-3xl p-6 mb-6 text-white bg-chat-primary border border-chat-brand slide-up">
     <div class="text-2xl font-bold mb-5 flex items-center gap-3">
       <i class="fas fa-wallet"></i> Conectar Wallet
     </div>
@@ -8,11 +8,10 @@
       Conecta tu wallet para comenzar a usar el sistema de tareas privadas.
     </p>
     <button 
-      class="px-6 py-3 rounded-full font-medium transition-all duration-300 hover-lift"
+      class="px-6 py-3 rounded-full font-medium transition-all duration-300 hover-lift bg-chat-brand text-chat-primary"
       :class="connecting ? 'opacity-60 cursor-not-allowed' : 'hover:scale-105'"
       :disabled="connecting"
       @click="handleConnect"
-      style="background: var(--gradient-info);"
     >
       <i class="fas fa-plug mr-2"></i>
       {{ connecting ? 'Conectando...' : 'Conectar MetaMask' }}
@@ -20,7 +19,7 @@
   </div>
 
   <!-- Connected Wallet Info -->
-  <div v-else class="rounded-3xl p-6 mb-6 text-white wallet-card-gradient slide-up">
+  <div v-else class="rounded-3xl p-6 mb-6 text-white bg-chat-primary border border-chat-brand slide-up">
     <div class="text-2xl font-bold mb-5 flex items-center gap-3">
       <i class="fas fa-user"></i> Wallet Conectada
     </div>
@@ -42,7 +41,7 @@
         <div class="font-semibold">
           <span 
             class="inline-block px-3 py-1 rounded-full text-xs font-medium"
-            :class="isRegisteredForPrivacy ? 'bg-green-500 text-white' : 'bg-yellow-500 text-gray-900'"
+            :class="isRegisteredForPrivacy ? 'bg-chat-accent text-white' : 'bg-chat-brand text-gray-900'"
           >
             {{ isRegisteredForPrivacy ? 'Registrado' : 'No registrado' }}
           </span>
@@ -52,8 +51,7 @@
     
     <button 
       v-if="!isRegisteredForPrivacy" 
-      class="px-6 py-3 rounded-lg font-medium transition-all duration-300 hover-lift"
-      style="background: var(--gradient-warning); color: #374151;"
+      class="px-6 py-3 rounded-lg font-medium transition-all duration-300 hover-lift bg-chat-accent text-chat-primary"
       @click="handleRegisterPrivacy"
     >
       <i class="fas fa-shield-alt mr-2"></i> Registrar para Privacidad
@@ -86,6 +84,4 @@ const handleRegisterPrivacy = () => {
 }
 </script>
 
-<style scoped>
-/* Estilos específicos adicionales si necesarios */
-</style>
+

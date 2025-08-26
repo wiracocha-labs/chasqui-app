@@ -1,91 +1,263 @@
-/* Escrow components */
-.escrow-list {
-  display: grid;
-  gap: 20px;
-}
+/* Componentes específicos de escrow minimalistas */
 
-.escrow-item {
-  background: rgba(46, 30, 26, 0.9);
-  border-radius: 15px;
-  padding: 20px;
-  border-left: 5px solid var(--color-primary);
-  transition: all 0.3s ease;
-  border: 1px solid rgba(212, 175, 55, 0.2);
-}
-
-.escrow-item:hover {
-  transform: translateX(10px);
-  box-shadow: var(--shadow-hover);
-  border-left-color: var(--color-secondary);
-}
-
-.escrow-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-.escrow-id {
-  font-weight: bold;
-  color: var(--color-primary);
-  font-size: 1.1rem;
-}
-
-.status-badge {
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.status-pending {
-  background: var(--color-warning);
-  color: #333;
-}
-
-.status-completed {
-  background: var(--color-success);
-  color: white;
-}
-
-.status-released {
-  background: var(--color-primary-dark);
-  color: var(--color-text-primary);
-}
-
-.status-private {
-  background: var(--gradient-secondary);
-  color: var(--color-text-primary);
-}
-
-.escrow-details {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 15px;
-  margin-bottom: 15px;
-}
-
-.detail-item {
-  background: rgba(212, 175, 55, 0.1);
-  padding: 10px 15px;
+/* Escrow card */
+.escrow-card {
+  background-color: var(--color-bg-primary);
+  border: var(--border-light);
   border-radius: 8px;
-  border: 1px solid rgba(212, 175, 55, 0.2);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-normal);
 }
 
-.detail-label {
-  font-size: 0.85rem;
-  color: var(--color-text-secondary);
-  margin-bottom: 5px;
+.escrow-card:hover {
+  border-color: var(--color-brand);
+  box-shadow: var(--shadow-md);
 }
 
-.detail-value {
+.escrow-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: var(--border-light);
+}
+
+.escrow-card-title {
+  font-size: 1.125rem;
   font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.escrow-card-id {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  font-family: 'Courier New', monospace;
+  background-color: var(--color-bg-secondary);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+/* Escrow status */
+.escrow-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.escrow-status-pending {
+  background-color: var(--color-brand-10);
+  color: var(--color-brand);
+  border: 1px solid var(--color-brand);
+}
+
+.escrow-status-active {
+  background-color: var(--color-accent-10);
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+}
+
+.escrow-status-completed {
+  background-color: rgba(242, 125, 66, 0.15);
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+}
+
+.escrow-status-cancelled {
+  background-color: var(--color-action-10);
+  color: var(--color-action);
+  border: 1px solid var(--color-action);
+}
+
+.escrow-status-disputed {
+  background-color: rgba(169, 68, 43, 0.15);
+  color: var(--color-action);
+  border: 1px solid var(--color-action);
+}
+
+/* Escrow amount */
+.escrow-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-brand);
+  margin: 1rem 0;
+}
+
+.escrow-amount-label {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+/* Escrow participants */
+.escrow-participants {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.escrow-participant {
+  text-align: center;
+  padding: 1rem;
+  background-color: var(--color-bg-secondary);
+  border-radius: 6px;
+}
+
+.escrow-participant-role {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.escrow-participant-address {
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
   color: var(--color-text-primary);
   word-break: break-all;
 }
 
+/* Escrow timeline */
+.escrow-timeline {
+  margin: 1.5rem 0;
+}
+
+.escrow-timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  position: relative;
+}
+
+.escrow-timeline-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 1rem;
+  top: 2rem;
+  bottom: -1rem;
+  width: 2px;
+  background-color: var(--color-bg-secondary);
+}
+
+.escrow-timeline-icon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background-color: var(--color-brand);
+  color: var(--color-bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.escrow-timeline-content {
+  flex: 1;
+}
+
+.escrow-timeline-title {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.escrow-timeline-date {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.escrow-timeline-description {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* Escrow actions */
+.escrow-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: var(--border-light);
+}
+
+/* Escrow details */
+.escrow-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.escrow-detail-item {
+  padding: 1rem;
+  background-color: var(--color-bg-secondary);
+  border-radius: 6px;
+}
+
+.escrow-detail-label {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.escrow-detail-value {
+  font-size: 0.875rem;
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+/* Escrow form specific */
+.escrow-form {
+  background-color: var(--color-bg-primary);
+  border: var(--border-light);
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.escrow-form-section {
+  margin-bottom: 2rem;
+}
+
+.escrow-form-section:last-child {
+  margin-bottom: 0;
+}
+
+.escrow-form-section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: var(--border-light);
+}
+
+/* Responsive */
 @media (max-width: 768px) {
+  .escrow-participants {
+    grid-template-columns: 1fr;
+  }
+  
+  .escrow-actions {
+    flex-direction: column;
+  }
+  
   .escrow-details {
     grid-template-columns: 1fr;
   }

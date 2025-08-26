@@ -1,76 +1,206 @@
-/* Formularios */
-.form-group {
-  margin-bottom: 20px;
-}
+/* Formularios minimalistas - Solo colores planos */
 
-.form-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 600;
-  color: var(--color-text-primary);
-}
-
+/* Input base */
 .form-input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid rgba(212, 175, 55, 0.3);
-  border-radius: var(--border-radius-input);
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
-  background: rgba(46, 30, 26, 0.8);
+  background-color: var(--color-bg-primary);
+  border: var(--border-light);
   color: var(--color-text-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  width: 100%;
+  transition: var(--transition-normal);
+  outline: none;
 }
 
 .form-input::placeholder {
   color: var(--color-text-secondary);
+  opacity: 0.7;
 }
 
 .form-input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
-  background: rgba(46, 30, 26, 0.95);
+  border-color: var(--color-brand);
+  background-color: var(--color-brand-10);
 }
 
+.form-input:hover {
+  border-color: var(--color-brand);
+}
+
+.form-input:disabled {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Input con error */
+.form-input.error {
+  border-color: var(--color-action);
+  background-color: var(--color-action-10);
+}
+
+.form-input.error:focus {
+  border-color: var(--color-action);
+  box-shadow: 0 0 0 2px var(--color-action-10);
+}
+
+/* Textarea */
 .form-textarea {
-  resize: vertical;
+  background-color: var(--color-bg-primary);
+  border: var(--border-light);
+  color: var(--color-text-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  width: 100%;
   min-height: 100px;
+  resize: vertical;
+  transition: var(--transition-normal);
+  outline: none;
+  font-family: inherit;
 }
 
-/* Toggle Switch */
-.privacy-toggle {
+.form-textarea:focus {
+  border-color: var(--color-brand);
+  background-color: var(--color-brand-10);
+}
+
+/* Select */
+.form-select {
+  background-color: var(--color-bg-primary);
+  border: var(--border-light);
+  color: var(--color-text-primary);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  width: 100%;
+  cursor: pointer;
+  transition: var(--transition-normal);
+  outline: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D4AF37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+  padding-right: 2.5rem;
+}
+
+.form-select:focus {
+  border-color: var(--color-brand);
+  background-color: var(--color-brand-10);
+}
+
+/* Checkbox y Radio */
+.form-checkbox, .form-radio {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: var(--border-medium);
+  border-radius: 3px;
+  background-color: var(--color-bg-primary);
+  cursor: pointer;
+  transition: var(--transition-normal);
+  position: relative;
+  margin-right: 0.5rem;
+}
+
+.form-radio {
+  border-radius: 50%;
+}
+
+.form-checkbox:checked, .form-radio:checked {
+  background-color: var(--color-brand);
+  border-color: var(--color-brand);
+}
+
+.form-checkbox:checked::after {
+  content: '✓';
+  color: var(--color-bg-primary);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.875rem;
+  font-weight: bold;
+}
+
+.form-radio:checked::after {
+  content: '';
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: var(--color-bg-primary);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Labels */
+.form-label {
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.form-label.required::after {
+  content: ' *';
+  color: var(--color-action);
+}
+
+/* Error message */
+.form-error {
+  color: var(--color-action);
+  font-size: 0.8125rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Success message */
+.form-success {
+  color: var(--color-accent);
+  font-size: 0.8125rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Form group */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+/* Input group */
+.input-group {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
+  border: var(--border-light);
+  border-radius: 6px;
+  background-color: var(--color-bg-primary);
+  transition: var(--transition-normal);
 }
 
-.toggle-switch {
-  position: relative;
-  width: 60px;
-  height: 30px;
-  background: var(--color-bg-secondary);
-  border-radius: 15px;
-  cursor: pointer;
-  transition: background 0.3s ease;
+.input-group:focus-within {
+  border-color: var(--color-brand);
+  background-color: var(--color-brand-10);
 }
 
-.toggle-switch.active {
-  background: var(--color-primary);
+.input-group .form-input {
+  border: none;
+  background: transparent;
+  flex: 1;
 }
 
-.toggle-switch::before {
-  content: '';
-  position: absolute;
-  width: 26px;
-  height: 26px;
-  background: white;
-  border-radius: 50%;
-  top: 2px;
-  left: 2px;
-  transition: transform 0.3s ease;
+.input-group .input-addon {
+  padding: 0.75rem;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-secondary);
+  border-radius: 6px 0 0 6px;
+  font-size: 0.875rem;
 }
 
-.toggle-switch.active::before {
-  transform: translateX(30px);
+.input-group .input-addon:last-child {
+  border-radius: 0 6px 6px 0;
 }

@@ -29,6 +29,7 @@
     "hardhat:deploy-local": "hardhat run web3/scripts/deploy-authorization.ts --network localhost",
     "hardhat:deploy-local-full": "hardhat run web3/scripts/deploy-local.ts --network localhost",
     "hardhat:deploy-and-update": "yarn hardhat:compile && yarn hardhat:deploy-local-full",
+    "update-contract": "node update-contract-addresses.js",
     "deploy:fuji": "hardhat run web3/scripts/deploy-local.ts --network fuji",
     "deploy:mainnet": "hardhat run web3/scripts/deploy-local.ts --network avalanche",
     "verify:fuji": "hardhat verify --network fuji",

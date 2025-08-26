@@ -1,16 +1,16 @@
 <template>
   <!-- Layout estilo Slack/Discord basado en el HTML de referencia -->
-  <div class="font-sans antialiased h-screen flex" style="background: #edf2f7;">
+  <div class="font-sans antialiased h-screen flex bg-chat-primary">
     <!-- Primary sidebar - App selector (más estrecho) -->
-    <div class="bg-indigo-darkest text-purple-lighter flex-none w-20 p-4 hidden md:block">
+    <div class="bg-chat-darkest text-purple-lighter flex-none w-20 p-4 hidden md:block">
       <div class="cursor-pointer mb-4">
         <div class="bg-white h-12 w-12 flex items-center justify-center text-black text-2xl font-semibold rounded-lg mb-1 overflow-hidden">
-          <span class="text-indigo-600 font-bold">C</span>
+          <span class="text-chat-600 font-bold">C</span>
         </div>
         <div class="text-center text-white opacity-50 text-xs">⌘1</div>
       </div>
       <div class="cursor-pointer mb-4">
-        <div class="bg-indigo-lighter opacity-25 h-12 w-12 flex items-center justify-center text-black text-2xl font-semibold rounded-lg mb-1 overflow-hidden">
+        <div class="bg-chat-lighter opacity-25 h-12 w-12 flex items-center justify-center text-black text-2xl font-semibold rounded-lg mb-1 overflow-hidden">
           T
         </div>
         <div class="text-center text-white opacity-50 text-xs">⌘2</div>
@@ -25,7 +25,7 @@
     </div>
 
     <!-- Secondary sidebar - Channels and users -->
-    <div class="bg-indigo-darker text-purple-lighter flex-none w-64 pb-6 hidden md:block">
+    <div class="bg-chat-darker text-purple-lighter flex-none w-64 pb-6 hidden md:block">
       <!-- Workspace header -->
       <div class="text-white mb-2 mt-3 px-4 flex justify-between">
         <div class="flex-auto">
@@ -67,7 +67,7 @@
           </div>
         </div>
         
-        <div class="flex items-center mb-3 px-4 cursor-pointer hover:bg-indigo-dark transition-colors py-1 rounded">
+        <div class="flex items-center mb-3 px-4 cursor-pointer hover:bg-chat-dark transition-colors py-1 rounded">
           <span :class="`rounded-full block w-2 h-2 mr-2 ${isConnected ? 'bg-green' : 'bg-red-400'}`"></span>
           <span class="text-white opacity-75">{{ formatAddress(authStore.address) }} <span class="text-grey text-sm">(tú)</span></span>
         </div>
@@ -75,7 +75,7 @@
         <div 
           v-for="user in onlineUsers" 
           :key="user.id"
-          class="flex items-center mb-3 px-4 cursor-pointer hover:bg-indigo-dark transition-colors py-1 rounded"
+          class="flex items-center mb-3 px-4 cursor-pointer hover:bg-chat-dark transition-colors py-1 rounded"
         >
           <span class="bg-green rounded-full block w-2 h-2 mr-2"></span>
           <span class="text-white opacity-75">{{ user.name }}</span>
@@ -131,7 +131,7 @@
         <!-- Loading state -->
         <div v-if="isLoading" class="flex items-center justify-center h-full">
           <div class="text-center">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-chat-600 mx-auto mb-4"></div>
             <p class="text-gray-600 text-sm">Cargando mensajes...</p>
           </div>
         </div>
@@ -168,7 +168,7 @@
             <div class="flex items-start">
               <!-- Avatar -->
               <div class="flex-shrink-0 mr-3">
-                <div class="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                <div class="h-8 w-8 rounded-full bg-chat-brand flex items-center justify-center">
                   <span class="text-white text-xs font-medium">
                     {{ getInitials(msg.sender) }}
                   </span>
@@ -214,7 +214,7 @@
           </button>
         </form>
         <div class="text-xs text-gray-500 mt-1">
-          <span :class="isConnected ? 'text-green-600' : 'text-red-600'">
+          <span :class="isConnected ? 'text-chat-accent' : 'text-chat-action'">
             {{ isConnected ? 'Conectado' : 'Desconectado' }}
           </span>
           <span class="ml-4 text-gray-400">Presiona Enter para enviar</span>
@@ -481,60 +481,3 @@ onUnmounted(() => {
   }
 })
 </script>
-
-<style scoped>
-/* Animaciones específicas para mensajes */
-.message {
-  animation: slideInUp 0.3s ease-out;
-}
-
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Hover effects para canales y usuarios */
-.hover\:bg-indigo-dark:hover {
-  background-color: #5A67D8;
-}
-
-.hover\:bg-teal:hover {
-  background-color: #38B2AC;
-}
-
-.hover\:bg-teal-dark:hover {
-  background-color: #2D7D7D;
-}
-
-/* Scrollbar personalizado */
-.overflow-y-scroll::-webkit-scrollbar {
-  width: 8px;
-}
-
-.overflow-y-scroll::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
-}
-
-.overflow-y-scroll::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
-}
-
-.overflow-y-scroll::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .message-container {
-    height: calc(100vh - 160px);
-  }
-}
-</style>
