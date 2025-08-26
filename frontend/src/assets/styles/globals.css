@@ -1,10 +1,10 @@
 /* Variables CSS minimalistas - Solo colores planos Chasqui */
 :root {
-  /* Colores principales de marca (sync con Tailwind) */
+  /* Colores principales de marca (sync con Tailwind) - SOLO 2 GRISES */
   --color-bg-primary: #2E1E1A;
-  --color-bg-secondary: #5C5C5C;
-  --color-text-primary: #F5F5F5;
-  --color-text-secondary: #D9D9D9;
+  --color-bg-secondary: #D9D9D9;
+  --color-text-primary: #D9D9D9;
+  --color-text-secondary: #2E1E1A;
   --color-brand: #D4AF37;
   --color-action: #A9442B;
   --color-accent: #F27D42;
@@ -57,7 +57,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-bg-secondary);
+  background: var(--color-bg-primary);
 }
 
 ::-webkit-scrollbar-thumb {

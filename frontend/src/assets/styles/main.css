@@ -20,3 +20,6 @@
 
 /* Escrow específicos */
 @import './escrow.css';
+
+/* Chat específicos */
+@import './chat.css';

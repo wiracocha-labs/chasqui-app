@@ -1,29 +1,7 @@
 @import "tailwindcss";
 
-/* Variables CSS del proyecto Chasqui */
-:root {
-  --color-bg-primary: #2E1E1A;
-  --color-bg-secondary: #5C5C5C;
-  --color-text-primary: #F5F5F5;
-  --color-text-secondary: #D9D9D9;
-  --color-brand: #D4AF37;
-  --color-action: #A9442B;
-  --color-accent: #F27D42;
-  
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light;
-  color: var(--color-text-primary);
-  background-color: var(--color-bg-primary);
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
+/* Importar variables centralizadas */
+@import "./assets/styles/main.css";
 
 body {
   margin: 0;

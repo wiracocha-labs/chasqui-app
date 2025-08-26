@@ -1,0 +1,51 @@
+/* Chat específico - Estilos adicionales para el diseño Slack-like */
+.message-container {
+    height: calc(100vh - 200px);
+    overflow-y: auto;
+}
+
+.message {
+    transition: all 0.3s ease;
+}
+
+/* Scrollbar para el chat */
+.message-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.message-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.message-container::-webkit-scrollbar-thumb {
+    background: var(--color-brand);
+    border-radius: 3px;
+}
+
+.message-container::-webkit-scrollbar-thumb:hover {
+    background: var(--color-accent);
+}
+
+/* Efectos hover en sidebar */
+.cursor-pointer:hover {
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+/* Focus states para inputs */
+input[type="search"]:focus,
+input[type="text"]:focus {
+    outline: none;
+    border-color: var(--color-brand);
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2);
+}
+
+/* Button hover effects */
+button:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+button:disabled {
+    cursor: not-allowed;
+}

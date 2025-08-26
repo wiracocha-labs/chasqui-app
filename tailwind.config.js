@@ -9,49 +9,77 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Colores personalizados del proyecto Chasqui
-        bg: {
-          primary: '#2E1E1A',   // --color-bg-primary
-          secondary: '#5C5C5C', // --color-bg-secondary
+        // Heredamos de CSS variables - Sin duplicación
+        'dark': {
+          DEFAULT: 'var(--color-bg-primary)', 
+          light: 'var(--color-text-primary)',   
         },
-        text: {
-          primary: '#F5F5F5',   // --color-text-primary
-          secondary: '#D9D9D9', // --color-text-secondary
+        'light': {
+          DEFAULT: 'var(--color-bg-secondary)', 
+          dark: 'var(--color-text-secondary)',   
         },
-        brand: '#D4AF37',       // --color-brand (oro)
-        action: '#A9442B',      // --color-action (rojo oscuro)
-        accent: '#F27D42',      // --color-accent (naranja)
+        brand: {
+          DEFAULT: 'var(--color-brand)',
+          10: 'var(--color-brand-10)',
+          20: 'var(--color-brand-20)',
+        },
+        action: {
+          DEFAULT: 'var(--color-action)',
+          10: 'var(--color-action-10)',
+          20: 'var(--color-action-20)',
+        },
+        accent: {
+          DEFAULT: 'var(--color-accent)',
+          10: 'var(--color-accent-10)',
+          20: 'var(--color-accent-20)',
+        },
         
-        // Mantener algunos colores por defecto útiles
-        primary: {
-          50: '#fefce8',
-          100: '#fef3c7',
-          200: '#fde68a',
-          300: '#fcd34d',
-          400: '#fbbf24',
-          500: '#D4AF37', // brand color
-          600: '#d97706',
-          700: '#b45309',
-          800: '#92400e',
-          900: '#78350f',
-          950: '#451a03',
+        // Solo colores adicionales que no están en CSS variables
+        green: '#48bb78',
+        
+        // Clases específicas del diseño Slack para compatibilidad con el HTML original
+        indigo: {
+          'darkest': '#1e1e3f',
+          'darker': '#2a2a5a', 
+          'lighter': '#6b7cb8',
+        },
+        purple: {
+          'lighter': '#e2d6ff',
+        },
+        teal: {
+          'dark': '#285e61',
+        },
+        grey: {
+          DEFAULT: '#9ca3af',
+          'darkest': '#1f2937',
+          'dark': '#374151',
         },
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'sans-serif'],
       },
-      backgroundColor: {
-        'chasqui-primary': '#2E1E1A',
-        'chasqui-secondary': '#5C5C5C',
-      },
-      textColor: {
-        'chasqui-primary': '#F5F5F5',
-        'chasqui-secondary': '#D9D9D9',
-        'chasqui-brand': '#D4AF37',
-        'chasqui-action': '#A9442B',
-        'chasqui-accent': '#F27D42',
+      // Utilities específicas del HTML original
+      spacing: {
+        'pin-y': '0',
+        'pin-l': '0',
       },
     },
+    // Agregar utilities personalizadas para compatibilidad
+    extend: {},
   },
-  plugins: [],
+  // Plugin para agregar las clases específicas del HTML original
+  plugins: [
+    function({ addUtilities }) {
+      const newUtilities = {
+        '.pin-y': {
+          top: '0',
+          bottom: '0',
+        },
+        '.pin-l': {
+          left: '0',
+        },
+      }
+      addUtilities(newUtilities)
+    }
+  ],
 }

@@ -15,17 +15,13 @@
   box-shadow: var(--shadow-md);
 }
 
-/* ELIMINAR: .card-gradient - usar .card-flat */
-/* ELIMINAR: .wallet-card-gradient - usar .card-flat */
-
 /* Header minimalista */
 .header-title {
   color: var(--color-brand);
   font-weight: 600;
-  /* ELIMINAR: text-shadow (no minimalista) */
 }
 
-/* Network status minimalista - SIN backdrop-filter */
+/* Network status minimalista */
 .network-status {
   background: var(--color-brand-10);
   border: var(--border-light);
@@ -33,40 +29,15 @@
   border-radius: 4px;
 }
 
-/* Chat styles - MANTENIDOS (ya son minimalistas) */
-.bg-chat-primary { background-color: var(--color-bg-primary); }
-.bg-chat-secondary { background-color: var(--color-bg-secondary); }
-.bg-chat-accent { background-color: var(--color-accent); }
-.bg-chat-action { background-color: var(--color-action); }
-.bg-chat-brand { background-color: var(--color-brand); }
-
-/* Versiones con transparencia */
-.bg-chat-brand-light { background-color: var(--color-brand-10); }
-.bg-chat-accent-light { background-color: var(--color-accent-10); }
-.bg-chat-action-light { background-color: var(--color-action-10); }
-
-/* Text colors - MANTENIDOS */
-.text-chat-primary { color: var(--color-text-primary); }
-.text-chat-secondary { color: var(--color-text-secondary); }
-.text-chat-brand { color: var(--color-brand); }
-.text-chat-accent { color: var(--color-accent); }
-.text-chat-action { color: var(--color-action); }
-
-/* Border colors - MANTENIDOS */
-.border-chat-brand { border-color: var(--color-brand); }
-.border-chat-accent { border-color: var(--color-accent); }
-
 /* Efectos hover minimalistas */
 .hover-lift {
   transition: var(--transition-normal);
 }
 
 .hover-lift:hover {
-  transform: translateY(-1px); /* REDUCIDO: era -2px */
+  transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
-
-/* ELIMINAR: .hover-slide (no minimalista) */
 
 .hover-brand {
   transition: var(--transition-normal);
@@ -77,37 +48,22 @@
   color: var(--color-brand);
 }
 
-/* Message styles minimalistas */
+/* Message styles - Solo los necesarios */
 .message-container {
   height: calc(100vh - 200px);
   overflow-y: auto;
-  background: var(--color-bg-primary);
 }
 
-.message-sent {
-  background: var(--color-brand-10);
-  color: var(--color-text-primary);
-  border-left: 3px solid var(--color-brand);
-  padding: 0.75rem;
-  margin: 0.5rem 0;
-  border-radius: 4px;
+.message {
+  transition: all 0.3s ease;
 }
 
-.message-received {
-  background: var(--color-accent-10);
-  color: var(--color-text-primary);
-  border-left: 3px solid var(--color-accent);
-  padding: 0.75rem;
-  margin: 0.5rem 0;
-  border-radius: 4px;
-}
-
-/* Scrollbar - MANTENIDO (ya minimalista) */
+/* Scrollbar minimalista */
 .message-container::-webkit-scrollbar { width: 6px; }
 .message-container::-webkit-scrollbar-track { background: var(--color-bg-secondary); }
 .message-container::-webkit-scrollbar-thumb { background: var(--color-brand); border-radius: 3px; }
 
-/* Estados de conexión minimalistas */
+/* Estados de conexión */
 .status-online {
   background: var(--color-accent-10);
   color: var(--color-accent);
