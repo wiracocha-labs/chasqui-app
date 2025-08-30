@@ -186,7 +186,7 @@
             <input 
               v-model="inputMessage"
               type="text" 
-              class="flex-1 px-4 py-2 focus:outline-none bg-bg-secondary text-color-textSecondary" 
+              class="flex-1 px-4 py-2 focus:outline-none bg-bg-secondary text-black" 
               placeholder="Escribe un mensaje..." 
               autocomplete="off"
               :disabled="!isConnected"
@@ -258,10 +258,6 @@ const formatTime = (timestamp: number) => {
   })
 }
 
-const getInitials = (name: string) => {
-  return name.slice(0, 2).toUpperCase()
-}
-
 const scrollToBottom = async () => {
   await nextTick()
   if (messagesContainer.value) {
@@ -271,32 +267,25 @@ const scrollToBottom = async () => {
 
 // Initialize GunDB
 const initializeGun = () => {
-  try {
-    // Load GunDB from CDN
-    if (typeof window !== 'undefined' && (window as any).Gun) {
-      gun = (window as any).Gun({
-        peers: ['https://gun-manhattan.herokuapp.com/gun'],
-        localStorage: false,
-        radisk: true,
-        uuid: () => {
-          return Date.now().toString(36) + Math.random().toString(36).substr(2)
-        }
-      })
+  if (typeof window !== 'undefined' && (window as any).Gun) {
+    gun = (window as any).Gun({
+      localStorage: false,
+      radisk: true,
+      uuid: () => {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2)
+      }
+    })
 
-      messagesRef = gun.get('chasqui-chat-messages')
-      isConnected.value = true
-      
-      // Setup username
-      username = formatAddress(authStore.address) || 'user-' + Math.random().toString(36).substr(2, 8)
-      
-      console.log('GunDB initialized successfully')
-      return true
-    } else {
-      throw new Error('GunDB not loaded')
-    }
-  } catch (err) {
-    console.error('Error initializing GunDB:', err)
-    error.value = 'Error al conectar con la red descentralizada'
+    messagesRef = gun.get('chasqui-chat-messages')
+    isConnected.value = true
+    
+    // Setup username
+    username = formatAddress(authStore.address) || 'user-' + Math.random().toString(36).substr(2, 8)
+    
+    console.log('GunDB initialized successfully')
+    return true
+  } else {
+    error.value = 'GunDB no está disponible en window. Verifica la carga del script en index.html.'
     isConnected.value = false
     return false
   }
@@ -375,9 +364,17 @@ const sendMessage = async () => {
       }
     })
 
+    // Mostrar el mensaje inmediatamente en la lista
+    messages.value.push({
+      text: messageData.text,
+      sender: messageData.sender,
+      timestamp: messageData.timestamp
+    })
+    messages.value.sort((a, b) => a.timestamp - b.timestamp)
+
     // Clear input
     inputMessage.value = ''
-    
+
     // Scroll to bottom
     setTimeout(scrollToBottom, 100)
 
@@ -400,45 +397,9 @@ const cleanupOldMessages = () => {
   })
 }
 
-// Load GunDB script dynamically
-const loadGunScript = () => {
-  return new Promise((resolve, reject) => {
-    if ((window as any).Gun) {
-      resolve(true)
-      return
-    }
-
-    const scripts = [
-      'https://unpkg.com/gun/gun.js',
-      'https://unpkg.com/gun/sea.js',
-      'https://unpkg.com/gun/lib/radix.js',
-      'https://unpkg.com/gun/lib/radisk.js',
-      'https://unpkg.com/gun/lib/store.js',
-      'https://unpkg.com/gun/lib/rindexed.js'
-    ]
-
-    let loadedCount = 0
-
-    scripts.forEach(src => {
-      const script = document.createElement('script')
-      script.src = src
-      script.onload = () => {
-        loadedCount++
-        if (loadedCount === scripts.length) {
-          // Small delay to ensure all scripts are properly initialized
-          setTimeout(() => resolve(true), 500)
-        }
-      }
-      script.onerror = () => reject(new Error(`Failed to load ${src}`))
-      document.head.appendChild(script)
-    })
-  })
-}
-
 // Lifecycle
 onMounted(async () => {
   try {
-    await loadGunScript()
     await loadMessages()
     
     // Setup periodic cleanup
