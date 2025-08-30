@@ -98,3 +98,24 @@ button:hover:not(:disabled) {
 button:disabled {
     cursor: not-allowed;
 }
+
+/* Header del chat con color de marca */
+.chat-header {
+    background: var(--color-brand);
+    color: var(--color-textPrimary);
+    padding: 1rem 2rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+.chat-message {
+    background: var(--color-bg-secondary);
+    color: var(--color-text-secondary);
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    box-shadow: var(--shadow-sm);
+}
+.chat-message.me {
+    background: var(--color-brand-10);
+    color: var(--color-brand);
+}

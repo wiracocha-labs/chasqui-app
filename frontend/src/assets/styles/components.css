@@ -1,21 +1,22 @@
 /* Componentes minimalistas - Solo colores planos */
 
 /* Card minimalista - SIN GRADIENTES */
-.card-flat {
-  background: var(--color-bg-primary);
-  border: var(--border-light);
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition-normal);
-  border-radius: 8px;
-  padding: 1.5rem;
-}
-
-.card-flat:hover {
-  border-color: var(--color-brand);
+/* Tarjeta principal */
+.card {
+  background: var(--color-bg-secondary);
+  border-radius: 1.5rem;
   box-shadow: var(--shadow-md);
+  padding: 2rem;
+  border: var(--border-light);
 }
-
-/* Header minimalista */
+.card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--color-brand);
+}
+.card-desc {
+  color: var(--color-text-secondary);
+}
 .header-title {
   color: var(--color-brand);
   font-weight: 600;

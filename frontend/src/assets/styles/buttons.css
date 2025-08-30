@@ -1,125 +1,45 @@
-/* Botones minimalistas - Solo colores planos */
-
 /* Botón principal */
-.btn-primary {
-  background-color: var(--color-brand);
-  color: var(--color-bg-primary);
+.btn {
+  background: var(--color-brand);
+  color: var(--color-text-primary);
+  border-radius: 0.75rem;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: var(--transition-normal);
+  box-shadow: var(--shadow-md);
+  transition: background var(--transition-normal);
+  font-family: var(--font-display);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
 }
-
-.btn-primary:hover {
-  background-color: var(--color-accent);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+.btn:hover {
+  background: var(--color-accent);
+  color: var(--color-text-primary);
 }
-
-.btn-primary:active {
-  transform: translateY(0);
-}
-
-.btn-primary:disabled {
-  background-color: var(--color-bg-secondary);
+.btn:disabled {
+  background: var(--color-bg-secondary);
   color: var(--color-text-secondary);
   cursor: not-allowed;
   transform: none;
 }
 
 /* Botón secundario */
-.btn-secondary {
-  background-color: transparent;
-  color: var(--color-text-primary);
+.btn-outline {
+  background: var(--color-bg-secondary);
+  color: var(--color-primary);
   border: var(--border-light);
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: var(--transition-normal);
+  box-shadow: var(--shadow-sm);
+  font-weight: 600;
+  font-family: var(--font-display);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
 }
-
-.btn-secondary:hover {
-  border-color: var(--color-brand);
-  background-color: var(--color-brand-10);
-  color: var(--color-brand);
-}
-
-/* Botón de acción (peligroso) */
-.btn-action {
-  background-color: var(--color-action);
-  color: var(--color-text-primary);
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: var(--transition-normal);
-}
-
-.btn-action:hover {
-  background-color: var(--color-accent);
-}
-
-/* Botón pequeño */
-.btn-sm {
-  padding: 0.5rem 1rem;
-  font-size: 0.8125rem;
-  border-radius: 4px;
-}
-
-/* Botón grande */
-.btn-lg {
-  padding: 1rem 2rem;
-  font-size: 1rem;
-  border-radius: 8px;
-}
-
-/* Botón texto */
-.btn-text {
-  background: none;
-  border: none;
-  color: var(--color-brand);
-  padding: 0.5rem;
-  cursor: pointer;
-  transition: var(--transition-fast);
-  font-weight: 500;
-}
-
-.btn-text:hover {
-  color: var(--color-accent);
-  background-color: var(--color-brand-10);
-  border-radius: 4px;
-}
-
-/* Botón icono */
-.btn-icon {
-  background: none;
-  border: none;
-  color: var(--color-text-secondary);
-  padding: 0.5rem;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: var(--transition-fast);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-icon:hover {
-  background-color: var(--color-brand-10);
+.btn-outline:hover {
+  background: var(--color-brand-10);
   color: var(--color-brand);
 }

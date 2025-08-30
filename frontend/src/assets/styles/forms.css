@@ -46,26 +46,28 @@
 }
 
 /* Textarea */
-.form-textarea {
-  background-color: var(--color-bg-primary);
+/* Etiqueta de formulario */
+.form-label {
+  color: var(--color-primary);
+  font-weight: 500;
+}
+/* Input de formulario */
+.form-input {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  border-radius: 0.5rem;
   border: var(--border-light);
-  color: var(--color-text-primary);
   padding: 0.75rem 1rem;
-  border-radius: 6px;
-  font-size: 0.875rem;
-  width: 100%;
-  min-height: 100px;
-  resize: vertical;
-  transition: var(--transition-normal);
-  outline: none;
-  font-family: inherit;
+  font-size: 1rem;
+  transition: border var(--transition-normal);
 }
-
-.form-textarea:focus {
+.form-input:focus {
   border-color: var(--color-brand);
-  background-color: var(--color-brand-10);
 }
-
+.form-error {
+  color: var(--color-action);
+  font-size: 0.95rem;
+}
 /* Select */
 .form-select {
   background-color: var(--color-bg-primary);
