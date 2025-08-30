@@ -1,0 +1,35 @@
+@theme {
+  /* Branding: colores principales */
+  --color-primary: #2E1E1A;
+  --color-secondary: #D9D9D9;
+  --color-textPrimary: #D9D9D9;
+  --color-textSecondary: #2E1E1A;
+  --color-brand: #D4AF37;
+  --color-action: #A9442B;
+  --color-accent: #F27D42;
+  --color-bg-primary: #2E1E1A;
+  --color-bg-secondary: #D9D9D9;
+  --color-text-primary: #D9D9D9;
+  --color-text-secondary: #2E1E1A;
+  /* Transparencias */
+  --color-brand-10: rgba(212, 175, 55, 0.1);
+  --color-brand-20: rgba(212, 175, 55, 0.2);
+  --color-accent-10: rgba(242, 125, 66, 0.1);
+  --color-accent-20: rgba(242, 125, 66, 0.2);
+  --color-action-10: rgba(169, 68, 43, 0.1);
+  --color-action-20: rgba(169, 68, 43, 0.2);
+  /* Sombras */
+  --shadow-sm: 0 1px 2px rgba(46, 30, 26, 0.1);
+  --shadow-md: 0 2px 4px rgba(46, 30, 26, 0.15);
+  --shadow-lg: 0 4px 8px rgba(46, 30, 26, 0.2);
+  /* Bordes */
+  --border-light: 1px solid rgba(212, 175, 55, 0.2);
+  --border-medium: 1px solid rgba(212, 175, 55, 0.4);
+  --border-accent: 1px solid var(--color-accent);
+  /* Transiciones */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.2s ease;
+  /* Fuentes */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Oswald", sans-serif;
+}

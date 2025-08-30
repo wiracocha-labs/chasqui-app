@@ -39,6 +39,7 @@
     "interact:local": "hardhat console --network localhost"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.12",
     "ethers": "^6.14.0",
     "pinia": "^2.1.7",
     "vue": "^3.4.0",

@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* Importar variables centralizadas */
-@import "./assets/styles/main.css";
+@import "./main.css";
 
 body {
   margin: 0;
@@ -9,10 +9,6 @@ body {
   color: var(--color-text-primary);
   min-width: 320px;
   min-height: 100vh;
-}
-
-h1, h2, h3 {
-  color: var(--color-brand);
 }
 
 a {
