@@ -50,10 +50,10 @@
           <p class="brand-desc-sm">Privado. Claro. Hecho para tu equipo.</p>
         </div>
         <!-- Login form -->
-        <div class="rounded-2xl shadow-lg p-8 border border-accent bg-[var(--color-action)]">
+  <div class="rounded-2xl shadow-lg p-8 border border-accent bg-[var(--color-bg-secondary)]">
           <div class="text-center mb-8">
-            <h2>Bienvenido</h2>
-            <p>Conecta tu wallet para continuar</p>
+            <h2 class="text-textSecondary">Bienvenido</h2>
+            <p class="text-textSecondary">Conecta tu wallet para continuar</p>
           </div>
           <!-- Error alert -->
           <div v-if="error" class="error-alert mb-6">
@@ -67,7 +67,7 @@
             <button
               @click="connectWallet('metamask')"
               :disabled="isConnecting"
-              class="btn"
+              class="btn-secundary"
               :class="{ 'btn-disabled': isConnecting }"
             >
               <span class="btn-icon">🦊</span>
@@ -76,7 +76,7 @@
             <button
               @click="connectWallet('walletconnect')"
               :disabled="isConnecting"
-              class="btn"
+              class="btn-secundary"
               :class="{ 'btn-disabled': isConnecting }"
             >
               <span class="btn-icon">🔗</span>
@@ -85,7 +85,7 @@
             <button
               @click="connectWallet('coinbase')"
               :disabled="isConnecting"
-              class="btn"
+              class="btn-secundary"
               :class="{ 'btn-disabled': isConnecting }"
             >
               <span class="btn-icon">💰</span>

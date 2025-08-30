@@ -27,19 +27,25 @@
 }
 
 /* Botón secundario */
-.btn-outline {
-  background: var(--color-bg-secondary);
-  color: var(--color-primary);
-  border: var(--border-light);
-  box-shadow: var(--shadow-sm);
+.btn-secundary {
+  background: var(--color-action); /* beige claro */
+  color: var(--color-brand); /* marrón */
+  border: 2px solid var(--color-primary); /* borde marrón más visible */
+  border-radius: 0.75rem; /* igual que .btn */
   font-weight: 600;
+  font-size: 1rem; /* igual que .btn */
+  padding: 0.75rem 1rem; /* igual que .btn */
+  box-shadow: var(--shadow-sm);
   font-family: var(--font-display);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  width: 100%; /* igual que .btn si aplica */
+  transition: background var(--transition-normal), color var(--transition-normal), border var(--transition-normal);
 }
-.btn-outline:hover {
-  background: var(--color-brand-10);
-  color: var(--color-brand);
+.btn-secundary:hover {
+  background: var(--color-action-80); /* marrón sólido */
+  color: var(--color-brand); /* dorado */
+  border: 2px solid var(--color-brand); /* borde dorado */
 }
