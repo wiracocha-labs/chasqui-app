@@ -43,8 +43,8 @@
       <div class="max-w-md w-full flex flex-col gap-8">
         <!-- Mobile logo -->
         <div class="text-center">
-          <div class="logo-circle-sm mb-4">
-            <span class="logo-text-sm">C</span>
+          <div class="mb-4 flex justify-center">
+            <img src="/src/assets/images/logo.webp" alt="Logo Chasqui" class="h-16 w-16" />
           </div>
           <h2 class="brand-title-sm mb-2">Chasqui</h2>
           <p class="brand-desc-sm">Privado. Claro. Hecho para tu equipo.</p>
