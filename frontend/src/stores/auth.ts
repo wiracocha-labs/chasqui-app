@@ -261,6 +261,7 @@ export const useAuthStore = defineStore('auth', () => {
     checkAuthorization,
     getBalance,
   }
-}, {
+}, 
+{
   persist: true
 })

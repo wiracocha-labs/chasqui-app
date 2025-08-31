@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center text-white mb-10 fade-in">
+  <div class="text-center text-white my-10 fade-in">
     <h1 class="text-4xl md:text-5xl mb-3 font-bold header-title">
       <i class="fas fa-tasks mr-3"></i>Gestor de Tareas Privadas
     </h1>
