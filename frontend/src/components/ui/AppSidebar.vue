@@ -28,7 +28,7 @@ const handleNavigation = (view: string) => {
     window.location.href = '/chat'; // Ajusta la ruta si usas Vue Router
   }
   if (view === 'tasks') {
-    window.location.href = '/task-manager'; // Ajusta la ruta si usas Vue Router
+    window.location.href = '/tasks'; // Ajusta la ruta si usas Vue Router
   }
 }
 </script>

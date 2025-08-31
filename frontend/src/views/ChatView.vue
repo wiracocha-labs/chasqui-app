@@ -7,14 +7,14 @@
     
     <!-- Middle Sidebar - Channels and DMs -->
   <!-- Middle Sidebar -->
-  <div class="middle-sidebar w-[260px] min-w-[260px] flex flex-col border-r border-brand-20 bg-brand px-3 py-4 shadow-md">
+  <div class="middle-sidebar w-[260px] min-w-[260px] flex flex-col border-r border-brand-20 bg-terciary px-3 py-4 shadow-md">
     <div class="flex flex-col gap-4">
       <!-- Chat header -->
   <div class="mb-4 flex justify-between">
         <div class="flex-auto">
           <h1 class="font-semibold text-lg leading-tight mb-1 truncate">Chasqui Chat</h1>
           <div class="flex items-center mb-4">
-            <span class="rounded-full block mr-2 flex-shrink-0 bg-red-300" style="width: 8px; height: 8px;"></span>
+            <span class="rounded-full block mr-2 flex-shrink-0 bg-brand" style="width: 8px; height: 8px;"></span>
             <span class="opacity-80 text-sm text-gray-200">{{ formatAddress(authStore.address) || 'Usuario' }}</span>
           </div>
         </div>
@@ -25,7 +25,7 @@
         </div>
       </div>
       <!-- Channels -->
-  <div class="mb-6 bg-brand-10 text-white">
+  <div class="mb-6 bg-brand-10 text-white rounded-xl">
   <div class="flex justify-between items-center px-3 pb-2 text-white">
           <div class="font-semibold text-[14px] text-white">Channels</div>
           <div class="flex-shrink-0 sidebar-svg-wrapper flex items-center justify-center">
@@ -37,7 +37,7 @@
   <div class="px-3 py-1.5 rounded-lg cursor-pointer text-[14px] bg-accent text-white shadow-sm font-bold"># general</div>
       </div>
       <!-- Direct Messages -->
-  <div class="mb-6 bg-brand-10 text-white">
+  <div class="mb-6 bg-brand-10 text-white rounded-xl">
   <div class="flex justify-between items-center px-3 pb-2 text-white">
           <div class="font-semibold text-[14px] text-white">Direct Messages</div>
           <div class="flex-shrink-0 sidebar-svg-wrapper flex items-center justify-center">
@@ -60,8 +60,8 @@
         </div>
       </div>
       <!-- Apps -->
-      <div class="text-white">
-        <div class="flex justify-between items-center px-3 pb-2 text-white bg-brand-10">
+      <div class="text-white rounded-xl">
+        <div class="flex justify-between items-center px-3 pb-2 text-white bg-brand-10 rounded-xl">
           <div class="font-semibold text-[14px] text-white">Apps</div>
           <div class="flex-shrink-0 sidebar-svg-wrapper flex items-center justify-center text-white">
             <svg class="w-4 h-4 opacity-50 fill-primary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -87,11 +87,11 @@
             </span>
           </div>
         </div>
-        <div class="ml-auto relative">
+        <div class="flex ml-auto relative">
           <input 
             type="search" 
             placeholder="Buscar..." 
-            class="appearance-none border rounded-lg px-8 py-2 outline-none w-[200px] bg-bg-secondary text-color-textSecondary border-brand-20" 
+            class="appearance-none border rounded-lg px-8 py-2 outline-none w-[200px] bg-secondary text-color-textSecondary border-brand-20" 
           >
           <div class="sidebar-svg-wrapper flex items-center justify-center">
             <svg class="w-4 h-4 fill-secondary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -163,7 +163,7 @@
             <input 
               v-model="inputMessage"
               type="text" 
-              class="flex-1 px-4 py-2 focus:outline-none bg-bg-secondary text-black" 
+              class="flex-1 px-4 py-2 focus:outline-none bg-secondary text-black" 
               placeholder="Escribe un mensaje..." 
               autocomplete="off"
               :disabled="!isConnected"

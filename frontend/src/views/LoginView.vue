@@ -50,7 +50,7 @@
           <p class="brand-desc-sm">Privado. Claro. Hecho para tu equipo.</p>
         </div>
         <!-- Login form -->
-  <div class="rounded-2xl shadow-lg p-8 border border-accent bg-[var(--color-bg-secondary)]">
+  <div class="rounded-2xl shadow-lg p-8 border border-accent bg-secondary">
           <div class="text-center mb-8">
             <h2 class="text-textSecondary">Bienvenido</h2>
             <p class="text-textSecondary">Conecta tu wallet para continuar</p>

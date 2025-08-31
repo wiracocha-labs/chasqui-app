@@ -252,8 +252,8 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   return {
-    address: readonly(address),
-    provider: readonly(provider),
+    address,
+    provider,
     isAuthenticated,
     initializeProvider,
     connectWallet,
@@ -261,4 +261,6 @@ export const useAuthStore = defineStore('auth', () => {
     checkAuthorization,
     getBalance,
   }
+}, {
+  persist: true
 })

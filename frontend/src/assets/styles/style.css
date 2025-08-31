@@ -5,7 +5,7 @@
 
 body {
   margin: 0;
-  background-color: var(--color-bg-primary);
+  background-color: var(--color-primary);
   color: var(--color-text-primary);
   min-width: 320px;
   min-height: 100vh;

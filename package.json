@@ -42,6 +42,7 @@
     "@tailwindcss/vite": "^4.1.12",
     "ethers": "^6.14.0",
     "pinia": "^2.1.7",
+    "pinia-plugin-persistedstate": "^4.5.0",
     "vue": "^3.4.0",
     "vue-router": "^4.2.5"
   },
