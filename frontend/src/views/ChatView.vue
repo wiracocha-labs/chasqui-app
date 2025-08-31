@@ -86,9 +86,6 @@
               {{ isConnected ? 'Conectado' : 'Desconectado' }}
             </span>
           </div>
-          <div class="text-sm opacity-75 text-color-textSecondary">
-            Chat descentralizado con tecnología blockchain
-          </div>
         </div>
         <div class="ml-auto relative">
           <input 

@@ -28,24 +28,58 @@
 
 /* Botón secundario */
 .btn-secundary {
-  background: var(--color-action); /* beige claro */
-  color: var(--color-brand); /* marrón */
-  border: 2px solid var(--color-primary); /* borde marrón más visible */
-  border-radius: 0.75rem; /* igual que .btn */
+  background: var(--color-action);
+  color: var(--color-brand);
+  border: 2px solid var(--color-primary);
+  border-radius: 0.75rem;
   font-weight: 600;
-  font-size: 1rem; /* igual que .btn */
-  padding: 0.75rem 1rem; /* igual que .btn */
-  box-shadow: var(--shadow-sm);
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  box-shadow: var(--shadow-md);
   font-family: var(--font-display);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  width: 100%; /* igual que .btn si aplica */
+  width: 100%;
   transition: background var(--transition-normal), color var(--transition-normal), border var(--transition-normal);
 }
 .btn-secundary:hover {
-  background: var(--color-action-80); /* marrón sólido */
-  color: var(--color-brand); /* dorado */
-  border: 2px solid var(--color-brand); /* borde dorado */
+  background: var(--color-action-80);
+  color: var(--color-brand);
+  border: 2px solid var(--color-brand);
+}
+
+/* Botón cuadrado para navegación y menú */
+.btn-square {
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  border-radius: 0.75rem;
+  background: var(--color-brand);
+  color: var(--color-textSecondary);
+  box-shadow: var(--shadow-md);
+  border: none;
+  transition: background var(--transition-normal), color var(--transition-normal);
+}
+.btn-square.brand {
+  background: var(--color-brand);
+  color: var(--color-textPrimary);
+}
+.btn-square.accent {
+  background: var(--color-accent);
+  color: var(--color-textPrimary);
+}
+.btn-square:hover {
+  background: var(--color-accent);
+  color: var(--color-textPrimary);
+}
+.btn-square:disabled {
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  cursor: not-allowed;
 }
