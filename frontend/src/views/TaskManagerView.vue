@@ -56,8 +56,10 @@ const {
           <div class="bg-secondary rounded-2xl shadow-lg mb-6">
             <div class="flex bg-secondary rounded-t-2xl">
               <button v-for="tab in tabs" :key="tab.id"
-                class="flex-1 px-6 py-4 text-center font-medium transition-all duration-300 first:rounded-tl-2xl last:rounded-tr-2xl"
-                :class="activeTab === tab.id ? 'bg-white text-brand shadow-sm border-b-2 border-brand' : 'text-textSecondary hover:text-primary hover:bg-accent-10'"
+                  class="flex-1 px-6 py-4 text-center font-medium transition-all duration-300 first:rounded-tl-2xl last:rounded-tr-2xl"
+                  :class="activeTab === tab.id
+                    ? 'bg-action text-brand shadow-sm border-b-4 border-brand'
+                    : 'text-textSecondary hover:bg-action-80 hover:text-brand hover:border-2 hover:border-brand'"
                 @click="activeTab = tab.id"
               >
                 <i :class="tab.icon" class="mr-2"></i>{{ tab.label }}
