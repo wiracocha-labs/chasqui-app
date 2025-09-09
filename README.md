@@ -398,6 +398,90 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
+---
+
+## 🐛 **Debug & Development**
+
+### **Enabling Debug Mode**
+
+The project includes a comprehensive logging system for better debugging and development experience.
+
+#### **1. Environment Variables**
+```bash
+# In .env - Controls all logging
+VITE_DEBUG=true
+```
+
+#### **2. URL Parameters**
+```
+http://localhost:5173?debug=true
+```
+
+#### **3. Local Storage**
+```javascript
+// In browser console
+localStorage.setItem('chasqui_debug', 'true')
+```
+
+#### **4. Global Console Access**
+```javascript
+// Enable debug globally
+window.chasquiLogger.enableDebug()
+
+// Disable debug
+window.chasquiLogger.disableDebug()
+
+// Check status
+window.chasquiLogger.isDebugEnabled()
+
+// View configuration
+window.chasquiLogger.getConfig()
+```
+
+### **Using the Logger**
+
+```typescript
+import { log } from '@/services/logger'
+
+// DEBUG - Only in debug mode
+log.debug('Web3Service', 'Connection attempt started')
+
+// INFO - General information
+log.info('Web3Service', 'Successfully connected to network')
+
+// WARN - Warnings
+log.warn('Web3Service', 'Network mismatch detected')
+
+// ERROR - Errors
+log.error('Web3Service', 'Connection failed', error)
+```
+
+### **Logger Benefits**
+
+- **🔇 Silent in Production**: Only ERROR logs in production
+- **🐛 Simple Debug**: Single variable controls all logging
+- **📊 Persistence**: Error logs saved in localStorage
+- **🎯 Contextualized**: Each log includes module and timestamp
+- **🌐 Global Access**: Available globally in development
+
+### **Advanced Configuration**
+
+```javascript
+// View stored errors
+window.chasquiLogger.getStoredErrors()
+
+// Clear errors
+window.chasquiLogger.clearStoredErrors()
+
+// Current network config
+window.chasquiConfig.getCurrentNetworkConfig()
+
+// Contract addresses
+window.chasquiConfig.getContractAddress('authorization')
+```
+
+---
+
 ## 📝 **Useful Commands**
 
 ### **Quick development:**
