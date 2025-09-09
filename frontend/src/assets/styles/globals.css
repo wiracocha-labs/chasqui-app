@@ -1,7 +1,3 @@
-/* Variables globales de sombra */
-:root {
-  --shadow-md: 0 4px 16px 0 rgba(0,0,0,0.12), 0 1.5px 4px 0 rgba(0,0,0,0.10);
-}
 /* Tamaños estándar para títulos */
 h1 {
   font-size: 2.5rem;

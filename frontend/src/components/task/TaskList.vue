@@ -88,13 +88,17 @@
           </div>
           <div class="bg-gray-50 rounded-lg p-4">
             <div class="text-xs text-gray-600 mb-1 font-medium">
-              {{ escrow.isPrivate ? 'PAGO ENCRIPTADO' : 'PAGO' }}
+              {{ escrow.isPrivate ? 'PAGO ENCRIPTADO (eERC20)' : 'PAGO PÚBLICO' }}
             </div>
             <div class="font-semibold text-sm text-gray-900">
               {{ escrow.isPrivate 
                 ? escrow.encryptedAmount.slice(0,12) + '...' 
                 : escrow.publicAmount + ' ETH' 
               }}
+            </div>
+            <div v-if="escrow.isPrivate" class="flex items-center text-xs text-purple-600 mt-2">
+              <i class="fas fa-lock mr-1"></i>
+              <span>Monto encriptado con eERC20</span>
             </div>
           </div>
         </div>

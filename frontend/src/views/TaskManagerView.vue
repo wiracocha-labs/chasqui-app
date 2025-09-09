@@ -43,7 +43,7 @@ const {
         <div class="flex items-center justify-between mb-6">
           <div>
             <h1 class="text-2xl font-bold text-secondary">Gestión de Tareas</h1>
-            <p class="text-sm text-secondary mt-1">Crea, gestiona y completa tareas usando contratos inteligentes</p>
+            <p class="text-sm text-secondary mt-1">Crea, gestiona y completa tareas usando contratos inteligentes con eERC20</p>
           </div>
           <div class="flex items-center space-x-4">
             <div class="bg-accent text-primary px-3 py-1 rounded-full text-sm font-medium">{{ networkName }}</div>
@@ -74,11 +74,11 @@ const {
           <div v-if="account && !isRegisteredForPrivacy" class="bg-brand rounded-2xl p-6 text-white">
             <div class="flex items-center justify-between">
               <div>
-                <h3 class="text-lg font-semibold mb-1"><i class="fas fa-shield-alt mr-2"></i>Funciones de Privacidad</h3>
-                <p class="text-textSecondary text-sm">Regístrate para crear tareas privadas con zero-knowledge proofs</p>
+                <h3 class="text-lg font-semibold mb-1"><i class="fas fa-shield-alt mr-2"></i>Transacciones Privadas eERC20</h3>
+                <p class="text-textSecondary text-sm">Regístrate para crear tareas con pagos encriptados usando eERC20 de Avalanche</p>
               </div>
               <button @click="registerForPrivacy" class="px-6 py-3 bg-white text-brand rounded-xl font-medium hover:bg-secondary transition-all duration-300">
-                <i class="fas fa-user-plus mr-2"></i>Registrarse
+                <i class="fas fa-user-plus mr-2"></i>Registrar para eERC20
               </button>
             </div>
           </div>

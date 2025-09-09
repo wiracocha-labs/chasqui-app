@@ -1,7 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-// Interfaces para interactuar con eERC20
+/**
+ * @title AuthorizationWithEERC20Escrow
+ * @dev Contrato de escrow con soporte para eERC20 (Encrypted ERC20) de Avalanche
+ * Permite crear tareas con pagos públicos (ETH) o privados (eERC20 encriptado)
+ */
+
+// Interfaces para interactuar con eERC20 de Avalanche
 interface IEncryptedERC20 {
     function transferEncrypted(
         address to,
@@ -153,7 +159,11 @@ contract AuthorizationWithEERC20Escrow {
     }
     
     /**
-     * @dev Crear un escrow privado con eERC20
+     * @dev Crea un escrow privado usando eERC20 para encriptar el monto
+     * @param _beneficiary Dirección que recibirá los fondos al completar la tarea
+     * @param _encryptedAmount Monto encriptado usando eERC20 de Avalanche
+     * @param _zkProof Prueba criptográfica para la transacción eERC20
+     * @param _taskDescription Descripción de la tarea a realizar
      */
     function createPrivateEscrow(
         address _beneficiary,

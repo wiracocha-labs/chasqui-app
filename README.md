@@ -10,8 +10,8 @@ Chasqui combines secure messaging, private smart contracts on Avalanche, AI for 
 
 ### 🔐 **Total Privacy**
 - **End-to-end encrypted** messaging
-- **Private payments** with eERC20 (Encrypted ERC20)
-- **Smart escrow** with zero-knowledge proofs
+- **Private payments** with **eERC20** (Encrypted ERC20 de Avalanche)
+- **Smart escrow** con montos encriptados
 - **Hidden amounts** - nobody sees amounts except parties involved
 
 ### 🤖 **Integrated AI**
@@ -100,7 +100,7 @@ chasqui-app/
 - **Solidity ^0.8.9** with optimizations
 - **Hardhat** for development and testing
 - **eERC20** for private transactions
-- **Zero-Knowledge Proofs** for verification
+- **Encrypted amounts** con Avalanche eERC20
 
 ### **Backend** ([Separate Repository](https://github.com/wiracocha-labs/chasqui-server))
 - **Rust** with modern web framework

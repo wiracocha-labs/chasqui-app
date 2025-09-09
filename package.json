@@ -7,13 +7,14 @@
   "keywords": [
     "avalanche",
     "eerc20",
+    "encrypted-erc20",
     "privacy",
-    "zero-knowledge",
     "smart-contracts",
     "vue",
     "decentralized-chat",
     "escrow",
-    "web3"
+    "web3",
+    "avalanche-network"
   ],
   "author": "Wiracocha Labs",
   "license": "MIT",
