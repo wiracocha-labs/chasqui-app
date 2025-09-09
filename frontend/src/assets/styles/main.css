@@ -21,9 +21,6 @@
 /* UI Components */
 @import './ui.css';
 
-/* eERC20 específicos */
-@import './eerc20.css';
-
 /* Chat específicos */
 @import './chat.css';
 
