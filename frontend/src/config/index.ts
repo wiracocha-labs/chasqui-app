@@ -5,15 +5,15 @@
 
 // Environment detection
 export const ENV = {
-  isDev: process.env.NODE_ENV === 'development' || window.location.hostname === 'localhost',
-  isProd: process.env.NODE_ENV === 'production',
-  isTest: process.env.NODE_ENV === 'test'
+  isDev: import.meta.env.DEV || window.location.hostname === 'localhost',
+  isProd: import.meta.env.PROD,
+  isTest: import.meta.env.MODE === 'test'
 } as const
 
 // Debug configuration - Single source of truth
 export const DEBUG = {
   // Single debug flag from multiple sources
-  enabled: process.env.VITE_DEBUG === 'true' || 
+  enabled: import.meta.env.VITE_DEBUG === 'true' || 
            localStorage.getItem('chasqui_debug') === 'true' ||
            new URLSearchParams(window.location.search).get('debug') === 'true'
 } as const
@@ -56,24 +56,24 @@ export const NETWORKS = {
 } as const
 
 // Current network (can be overridden by environment variable)
-export const CURRENT_NETWORK = (process.env.VITE_NETWORK as keyof typeof NETWORKS) || 'localhost'
+export const CURRENT_NETWORK = (import.meta.env.VITE_NETWORK as keyof typeof NETWORKS) || 'localhost'
 
 // Contract addresses configuration
 export const CONTRACT_CONFIG = {
   [NETWORKS.localhost.chainId]: {
-    authorization: process.env.VITE_LOCALHOST_AUTH_CONTRACT || '0x5FbDB2315678afecb367f032d93F642f64180aa3',
-    eerc20: process.env.VITE_LOCALHOST_EERC20_CONTRACT || '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
-    registrar: process.env.VITE_LOCALHOST_REGISTRAR_CONTRACT || '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0'
+    authorization: import.meta.env.VITE_LOCALHOST_AUTH_CONTRACT || '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+    eerc20: import.meta.env.VITE_LOCALHOST_EERC20_CONTRACT || '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
+    registrar: import.meta.env.VITE_LOCALHOST_REGISTRAR_CONTRACT || '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0'
   },
   [NETWORKS.fuji.chainId]: {
-    authorization: process.env.VITE_FUJI_AUTH_CONTRACT || '',
-    eerc20: process.env.VITE_FUJI_EERC20_CONTRACT || '',
-    registrar: process.env.VITE_FUJI_REGISTRAR_CONTRACT || ''
+    authorization: import.meta.env.VITE_FUJI_AUTH_CONTRACT || '',
+    eerc20: import.meta.env.VITE_FUJI_EERC20_CONTRACT || '',
+    registrar: import.meta.env.VITE_FUJI_REGISTRAR_CONTRACT || ''
   },
   [NETWORKS.avalanche.chainId]: {
-    authorization: process.env.VITE_AVALANCHE_AUTH_CONTRACT || '',
-    eerc20: process.env.VITE_AVALANCHE_EERC20_CONTRACT || '',
-    registrar: process.env.VITE_AVALANCHE_REGISTRAR_CONTRACT || ''
+    authorization: import.meta.env.VITE_AVALANCHE_AUTH_CONTRACT || '',
+    eerc20: import.meta.env.VITE_AVALANCHE_EERC20_CONTRACT || '',
+    registrar: import.meta.env.VITE_AVALANCHE_REGISTRAR_CONTRACT || ''
   }
 } as const
 

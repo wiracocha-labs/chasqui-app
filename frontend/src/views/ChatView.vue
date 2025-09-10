@@ -2,12 +2,13 @@
   
     <!-- Left Sidebar - Workspace Icons -->
   <div class="main-container flex flex-row h-screen overflow-hidden bg-bg-primary">
-  <!-- Sidebar como componente -->
-  <AppSidebar @navigate="handleNavigation" />
+  <!-- Sidebar como componente fijo -->
+  <AppSidebar />
     
+  <!-- Contenido principal con margen para el sidebar fijo -->
+  <div class="flex flex-row flex-1 ml-20">
     <!-- Middle Sidebar - Channels and DMs -->
-  <!-- Middle Sidebar -->
-  <div class="middle-sidebar w-[260px] min-w-[260px] flex flex-col border-r border-brand-20 bg-terciary px-3 py-4 shadow-md">
+    <div class="middle-sidebar w-[260px] min-w-[260px] flex flex-col border-r border-brand-20 bg-terciary px-3 py-4 shadow-md">
     <div class="flex flex-col gap-4">
       <!-- Chat header -->
   <div class="mb-4 flex justify-between">
@@ -184,22 +185,11 @@
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import AppSidebar from '../components/ui/AppSidebar.vue'
-
-// Manejo de navegación (puedes expandir esto para cambiar de vista)
-const handleNavigation = (view: string) => {
-  if (view === 'chat') {
-    // Ya estamos en ChatView
-    return
-  }
-  if (view === 'tasks') {
-    // Redirigir a TaskManagerView
-    window.location.href = '/task-manager' // O usa router si tienes Vue Router
-  }
-}
 import { ref, onMounted, onUnmounted, nextTick } from 'vue'
 import { useAuthStore } from '../stores/auth'
 

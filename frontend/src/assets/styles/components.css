@@ -1,5 +1,34 @@
 /* Componentes minimalistas - Solo colores planos */
 
+/* Sidebar fijo */
+.left-sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+}
+
+/* Contenido principal con sidebar fijo */
+.main-content-with-fixed-sidebar {
+  margin-left: 5rem; /* 80px = w-20 */
+}
+
+/* Responsive para sidebar fijo */
+@media (max-width: 768px) {
+  .left-sidebar {
+    transform: translateX(-100%);
+  }
+  
+  .left-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+  
+  .main-content-with-fixed-sidebar {
+    margin-left: 0;
+  }
+}
+
 /* Card minimalista - SIN GRADIENTES */
 /* Tarjeta principal */
 .card {

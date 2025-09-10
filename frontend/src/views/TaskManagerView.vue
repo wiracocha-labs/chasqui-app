@@ -37,7 +37,7 @@ const {
 <template>
   <div class="task-manager-view min-h-screen flex flex-row">
     <AppSidebar />
-    <div class="flex-1 flex flex-col">
+    <div class="flex-1 flex flex-col ml-20">
       <AppHeader />
       <div class="container mx-auto py-6 flex-1">
         <div class="flex items-center justify-between mb-6">
