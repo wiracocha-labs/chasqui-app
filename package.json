@@ -64,7 +64,7 @@
     "@types/minimatch": "^6.0.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "^24.2.1",
-    "@vitejs/plugin-vue": "^5.0.0",
+    "@vitejs/plugin-vue": "^6.0.2",
     "autoprefixer": "^10.4.21",
     "chai": "^4.2.0",
     "dotenv": "^17.2.1",
