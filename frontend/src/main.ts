@@ -9,11 +9,12 @@ import LoginView from './views/LoginView.vue'
 import ChatView from './views/ChatView.vue'
 import TaskManagerView from './views/TaskManagerView.vue'
 import ColorShowcase from './components/common/ColorShowcase.vue'
+import HomeView from './views/HomeView.vue'
 import { useAuthStore } from './stores/auth'
 
 const routes = [
   { path: '/login', component: LoginView, name: 'Login' },
-  { path: '/', redirect: '/chat' },
+  { path: '/', component: HomeView, name: 'Home'  },
   { path: '/chat', component: ChatView, name: 'Chat', meta: { requiresAuth: true } },
   { path: '/tasks', component: TaskManagerView, name: 'Tasks', meta: { requiresAuth: true } },
   { path: '/colors', component: ColorShowcase, name: 'Colors' }, // Ruta de desarrollo
