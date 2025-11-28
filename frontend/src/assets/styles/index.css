@@ -1,0 +1,111 @@
+@import './theme.css';
+@import './components.css';
+@import './buttons.css';
+@import './forms.css';
+@import './layout.css';
+@import './ui.css';
+@import './chat.css';
+
+/* Estilos para el Hero */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 2rem 1rem;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-terciary) 100%);
+  color: var(--color-text-primary);
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  font-family: var(--font-display);
+  line-height: 1.2;
+  max-width: 800px;
+}
+
+.hero .tagline {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--color-brand);
+  font-weight: 500;
+}
+
+.hero .subtagline {
+  font-size: 1.1rem;
+  margin-bottom: 2.5rem;
+  max-width: 600px;
+  opacity: 0.9;
+}
+
+.hero .actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Estilos para las secciones */
+section {
+  min-height: 100vh;
+  padding: 4rem 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+section h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: var(--color-text-primary);
+  font-family: var(--font-display);
+}
+
+section p, section ul {
+  max-width: 800px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+}
+
+section ul {
+  text-align: left;
+  padding-left: 1.5rem;
+}
+
+section li {
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+
+/* Estilos específicos para la sección de filosofía */
+/* .philosophy blockquote {
+  font-style: italic;
+  font-size: 1.5rem;
+  margin: 2rem auto;
+  color: var(--color-brand);
+  max-width: 600px;
+  position: relative;
+  padding: 1rem 2rem;
+} */
+
+/* Alternar colores de fondo para las secciones */
+/* .what-is {
+  background-color: var(--color-secondary);
+  color: var(--color-text-secondary);
+}
+
+.what-is h2,
+.what-is p,
+.what-is li {
+  color: var(--color-text-secondary);
+}
+
+.philosophy {
+  background-color: var(--color-primary);
+  color: var(--color-text-primary);
+} */

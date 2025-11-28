@@ -24,7 +24,3 @@
 /* Chat específicos */
 @import './chat.css';
 
-body, html {
-	background: var(--color-bg-primary);
-	min-height: 100vh;
-}

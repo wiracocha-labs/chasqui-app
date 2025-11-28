@@ -10,7 +10,6 @@
       </div>
     </header>
 
-    <main>
       <section class="what-is">
         <h2>🚀 ¿Qué es Chasqui?</h2>
         <p>Chasqui es una plataforma de comunicación para equipos remotos, construida sobre una arquitectura descentralizada, segura, rápida y de bajo costo operativo.</p>
@@ -178,6 +177,5 @@
           <a href="#" class="button tertiary">👉 Propón features — este proyecto es abierto desde su esencia</a>
         </div>
       </section>
-    </main>
   </div>
 </template>
