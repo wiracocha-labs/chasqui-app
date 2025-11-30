@@ -1,14 +1,47 @@
 <template>
   <div class="home">
-    <header class="hero">
-      <h1>📨 Chasqui — Comunicación descentralizada para equipos remotos</h1>
-      <p class="tagline">Colabora sin fricción. Comparte sin miedo.</p>
-      <p class="subtagline">La plataforma ligera, segura y comunitaria para equipos que valoran la privacidad y el foco.</p>
-      <div class="actions">
-        <a  class="btn">Iniciar Sesión</a>
-        <a  class="btn">Ir al Chat</a>
-      </div>
-    </header>
+    <!-- Hero Section -->
+    <section class="bento-container">
+      <header id="hero-bento" class="bento-grid">
+        <div id="hero-main-content" class="bento-main">
+            <div>
+              <h1>
+                <span class="text-brand">📨 Chasqui</span> — Comunicación descentralizada para equipos remotos
+              </h1>
+              <p class="tagline">
+                Colabora sin fricción. Comparte sin miedo. La plataforma ligera, segura y comunitaria para equipos que valoran la privacidad y el foco.
+              </p>
+            </div>
+            
+            <div class="hero-actions">
+              <button class="btn btn--primary">Empezar Gratis</button>
+              <button class="btn btn--outline">Ver Documentación</button>
+            </div>
+          </div>
+
+          <!-- 2. Box 1: Imagen Pequeña Arriba a la Derecha -->
+          <div id="box1" class="bento-box">
+            <div class="box-placeholder">Imagen 1</div>
+          </div>
+
+          <!-- 3. Box 2: Imagen Larga Vertical a la Derecha (1x2) -->
+          <div id="box2" class="bento-box bento-tall">
+            <div class="box-placeholder">Imagen 2</div>
+          </div>
+
+          <!-- 4. Box 3: Imagen Pequeña Abajo a la Izquierda -->
+          <div id="box3" class="bento-box bento-feature">
+            <div class="feature-icon">🔒</div>
+            <p class="feature-title">Privacidad por Diseño</p>
+            <p class="feature-desc">Tus datos, tu control. Sin rastreo.</p>
+          </div>
+
+          <!-- 5. Box 4: Imagen Pequeña Abajo al Centro -->
+          <div id="box4" class="bento-box">
+            <div class="box-placeholder">Imagen 3</div>
+          </div>
+      </header>
+    </section>
 
       <section class="what-is">
         <h2>🚀 ¿Qué es Chasqui?</h2>
@@ -46,40 +79,36 @@
         </ul>
       </section>
 
-      <section class="features">
-        <h2>⚡ Características principales</h2>
-        <div class="feature-category">
-          <h3>📡 Comunicación en tiempo real</h3>
-          <ul>
-            <li>Canales temáticos</li>
-            <li>Mensajería directa</li>
-            <li>Threads simples</li>
-            <li>Reacciones rápidas</li>
-          </ul>
+    <!-- Features Section -->
+    <section class="bento-grid" id="feature">
+      <div class="bento-tile bento-tile--feature bento-tile--large">
+        <div class="bento-content">
+          <h2>✨ Características Principales</h2>
+          <p>Descubre todo lo que Chasqui tiene para ofrecer</p>
         </div>
-        
-        <div class="feature-category">
-          <h3>🔗 Integraciones esenciales</h3>
-          <ul>
-            <li>GitHub: PRs, issues, comentarios</li>
-            <li>GitLab: MRs, issues, pipelines</li>
-            <li>Google Drive: comentarios, edición, compartidos</li>
-            <li>Figma: cambios en diseños y archivos</li>
-            <li>Webhooks Personalizados</li>
-          </ul>
+      </div>
+      
+      <div class="bento-tile bento-tile--feature">
+        <div class="bento-content">
+          <h3>🔒 Seguridad de Primera</h3>
+          <p>Cifrado de extremo a extremo para todas tus conversaciones</p>
         </div>
-
-        <div class="feature-category">
-          <h3>🧠 Agentes de IA (opcionales)</h3>
-          <ul>
-            <li>Resúmenes diarios de actividad</li>
-            <li>Extractos de discusiones largas</li>
-            <li>Acciones rápidas (crear tareas, etiquetas, notas)</li>
-            <li>Recordatorios inteligentes</li>
-          </ul>
-          <p><em>(Sin moda, sin humo. IA aplicada realmente a productividad.)</em></p>
+      </div>
+      
+      <div class="bento-tile bento-tile--feature">
+        <div class="bento-content">
+          <h3>⚡️ Rendimiento</h3>
+          <p>Velocidad y fluidez en cada interacción</p>
         </div>
-      </section>
+      </div>
+      
+      <div class="bento-tile bento-tile--feature">
+        <div class="bento-content">
+          <h3>🌐 Acceso Universal</h3>
+          <p>Conéctate desde cualquier dispositivo, en cualquier lugar</p>
+        </div>
+      </div>
+    </section>
 
       <section class="ideal-for">
         <h2>🎯 Ideal para equipos que…</h2>
@@ -103,57 +132,49 @@
         </ul>
       </section>
 
-      <section class="pricing">
-        <h2>💰 Precios – Simple y transparente</h2>
-        <p>Chasqui nace para ser accesible, justo y sostenible.</p>
-        
-        <div class="pricing-tier">
-          <h3>🆓 Plan Gratuito – Para equipos pequeños</h3>
-          <p>Ideal si estás empezando o tienes un equipo de hasta 5 personas.</p>
-          <p>Incluye:</p>
+    <!-- Precios Section -->
+    <section class="bento-grid bento-grid--pricing" id="princing">
+      <div class="bento-tile bento-tile--pricing bento-tile--full">
+        <div class="bento-content">
+          <h2>💎 Planes a tu Medida</h2>
+          <p>Elige el plan que mejor se adapte a tus necesidades</p>
+        </div>
+      </div>
+      
+      <div class="bento-tile bento-tile--pricing">
+        <div class="bento-content">
+          <h3>Básico</h3>
+          <p class="price">Gratis</p>
           <ul>
-            <li>Canales ilimitados</li>
-            <li>Mensajes ilimitados</li>
-            <li>Integraciones básicas (GitHub, GitLab, Drive, Figma)</li>
-            <li>Webhooks estándar</li>
-            <li>1 agente de IA básico</li>
-            <li>Historial de 90 días</li>
-            <li>Hasta 5 miembros</li>
+            <li>Chat ilimitado</li>
+            <li>Hasta 10GB de almacenamiento</li>
+            <li>Soporte básico</li>
           </ul>
         </div>
-
-        <div class="pricing-tier">
-          <h3>💼 Plan Pro – Para equipos en crecimiento</h3>
-          <p class="price">$5 por miembro / mes</p>
-          <p>Para equipos que necesitan continuidad, privacidad y herramientas avanzadas.</p>
-          <p>Incluye todo lo del plan gratuito, más:</p>
+      </div>
+      
+      <div class="bento-tile bento-tile--pricing bento-tile--highlight">
+        <div class="bento-content">
+          <div class="popular-tag">Popular</div>
+          <h3>Pro</h3>
+          <p class="price">$9.99/mes</p>
           <ul>
-            <li>Miembros ilimitados</li>
-            <li>Historial ilimitado</li>
-            <li>Integraciones avanzadas (acciones, filtros, resúmenes)</li>
-            <li>3 agentes de IA avanzados</li>
-            <li>Controles administrativos</li>
-            <li>Workspaces privados</li>
+            <li>Todo en Básico +</li>
+            <li>Hasta 100GB de almacenamiento</li>
             <li>Soporte prioritario</li>
+            <li>Integraciones avanzadas</li>
           </ul>
         </div>
-
-        <div class="pricing-tier">
-          <h3>🏢 Plan Enterprise — Seguridad & Escalabilidad</h3>
-          <p class="price">Precio adaptado a cada organización</p>
-          <p>Para empresas que necesitan auditorías, despliegues privados y personalización.</p>
-          <p>Incluye todo lo del plan Pro, más:</p>
-          <ul>
-            <li>Despliegue self-hosted o híbrido</li>
-            <li>Auditorías de seguridad</li>
-            <li>Identidad descentralizada en Avalanche</li>
-            <li>Encriptación E2E avanzada</li>
-            <li>Agentes de IA personalizados</li>
-            <li>SLA dedicado</li>
-            <li>Soporte 1:1</li>
-          </ul>
+      </div>
+      
+      <div class="bento-tile bento-tile--pricing">
+        <div class="bento-content">
+          <h3>Empresas</h3>
+          <p class="price">Personalizado</p>
+          <p>¿Necesitas algo más? Contáctanos para un plan a medida.</p>
         </div>
-      </section>
+      </div>
+    </section>
 
       <section class="roadmap">
         <h2>🔮 Roadmap</h2>
