@@ -31,7 +31,7 @@
   font-size: 1.5rem;
   margin-bottom: 1rem;
   color: var(--color-brand);
-  font-weight: 500;
+  font-weight: 700;
 }
 
 .hero .subtagline {
@@ -96,6 +96,11 @@ section li {
 .bento-grid {
   display: grid;
   gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+ 
+/* Layout específico del Hero con áreas */
+#hero-bento.bento-grid {
   grid-template-areas: 
     "main main box1" 
     "main main box2" 
@@ -106,7 +111,7 @@ section li {
 
 /* Estilos para móvil */
 @media (max-width: 767px) {
-  .bento-grid {
+  #hero-bento.bento-grid {
     grid-template-areas: 
       "main"
       "box1"
@@ -183,7 +188,7 @@ section li {
 }
 
 .bento-box {
-  background: var(--color-bg-secondary);
+  background: var(--color-primary);
   border: 1px solid var(--border-light);
   border-radius: 12px;
   padding: 1.5rem;
@@ -265,4 +270,49 @@ section li {
 
 .btn--outline:hover {
   background: var(--color-brand-10);
+}
+
+/* Tile genérico reutilizable */
+.bento-tile {
+  background: var(--color-primary);
+  border: 1px solid var(--color-brand-20);
+  border-radius: 12px;
+  padding: 1.5rem;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.bento-tile:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.bento-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Título de sección a todo el ancho */
+.bento-tile--full {
+  grid-column: 1 / -1;
+}
+
+/* Destacar plan (pricing) */
+.bento-tile--highlight {
+  border-color: var(--color-brand);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Badge "Popular" */
+.popular-tag {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: var(--color-brand);
+  color: var(--color-textSecondary);
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
 }

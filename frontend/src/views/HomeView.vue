@@ -79,33 +79,24 @@
         </ul>
       </section>
 
-    <!-- Features Section -->
-    <section class="bento-grid" id="feature">
-      <div class="bento-tile bento-tile--feature bento-tile--large">
-        <div class="bento-content">
-          <h2>✨ Características Principales</h2>
-          <p>Descubre todo lo que Chasqui tiene para ofrecer</p>
+    <!-- Sección de Características -->
+    <section class="bento-container">
+      <div class="bento-grid">
+        <!-- Título principal -->
+        <div class="bento-tile bento-tile--full">
+          <div class="bento-content">
+            <h2>✨ Características Principales</h2>
+            <p>Todo lo que necesitas para una comunicación efectiva</p>
+          </div>
         </div>
-      </div>
-      
-      <div class="bento-tile bento-tile--feature">
-        <div class="bento-content">
-          <h3>🔒 Seguridad de Primera</h3>
-          <p>Cifrado de extremo a extremo para todas tus conversaciones</p>
-        </div>
-      </div>
-      
-      <div class="bento-tile bento-tile--feature">
-        <div class="bento-content">
-          <h3>⚡️ Rendimiento</h3>
-          <p>Velocidad y fluidez en cada interacción</p>
-        </div>
-      </div>
-      
-      <div class="bento-tile bento-tile--feature">
-        <div class="bento-content">
-          <h3>🌐 Acceso Universal</h3>
-          <p>Conéctate desde cualquier dispositivo, en cualquier lugar</p>
+
+        <!-- Características -->
+        <div class="bento-tile" v-for="(feature, index) in features" :key="index">
+          <div class="bento-content">
+            <div class="feature-icon">{{ feature.icon }}</div>
+            <h3>{{ feature.title }}</h3>
+            <p>{{ feature.description }}</p>
+          </div>
         </div>
       </div>
     </section>
@@ -132,46 +123,41 @@
         </ul>
       </section>
 
-    <!-- Precios Section -->
-    <section class="bento-grid bento-grid--pricing" id="princing">
-      <div class="bento-tile bento-tile--pricing bento-tile--full">
-        <div class="bento-content">
-          <h2>💎 Planes a tu Medida</h2>
-          <p>Elige el plan que mejor se adapte a tus necesidades</p>
+    <!-- Sección de Precios -->
+    <section class="bento-container">
+      <div class="bento-grid">
+        <!-- Título principal -->
+        <div class="bento-tile bento-tile--full">
+          <div class="bento-content">
+            <h2>💎 Nuestros Planes</h2>
+            <p>Elige el que mejor se adapte a ti</p>
+          </div>
         </div>
-      </div>
-      
-      <div class="bento-tile bento-tile--pricing">
-        <div class="bento-content">
-          <h3>Básico</h3>
-          <p class="price">Gratis</p>
-          <ul>
-            <li>Chat ilimitado</li>
-            <li>Hasta 10GB de almacenamiento</li>
-            <li>Soporte básico</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="bento-tile bento-tile--pricing bento-tile--highlight">
-        <div class="bento-content">
-          <div class="popular-tag">Popular</div>
-          <h3>Pro</h3>
-          <p class="price">$9.99/mes</p>
-          <ul>
-            <li>Todo en Básico +</li>
-            <li>Hasta 100GB de almacenamiento</li>
-            <li>Soporte prioritario</li>
-            <li>Integraciones avanzadas</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="bento-tile bento-tile--pricing">
-        <div class="bento-content">
-          <h3>Empresas</h3>
-          <p class="price">Personalizado</p>
-          <p>¿Necesitas algo más? Contáctanos para un plan a medida.</p>
+
+        <!-- Planes -->
+        <div 
+          v-for="(plan, index) in pricingPlans" 
+          :key="'plan-'+index" 
+          class="bento-tile"
+          :class="{'bento-tile--highlight': plan.featured}"
+        >
+          <div class="bento-content">
+            <div v-if="plan.featured" class="popular-tag">Popular</div>
+            <h3>{{ plan.name }}</h3>
+            <div class="price">{{ plan.price }}<span v-if="plan.period">/{{ plan.period }}</span></div>
+            <p v-if="plan.customText" class="mb-4">{{ plan.customText }}</p>
+            <ul class="features-list">
+              <li v-for="(feature, fIndex) in plan.features" :key="'feature-'+fIndex">
+                ✓ {{ feature }}
+              </li>
+            </ul>
+            <button 
+              class="btn mt-4" 
+              :class="plan.featured ? 'btn--primary' : 'btn--outline'"
+            >
+              {{ plan.buttonText }}
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -200,3 +186,83 @@
       </section>
   </div>
 </template>
+
+<script setup>
+// Datos para características
+const features = [
+  {
+    icon: '🔒',
+    title: 'Seguridad de Primera',
+    description: 'Cifrado de extremo a extremo para mantener tus conversaciones privadas.'
+  },
+  {
+    icon: '⚡',
+    title: 'Rendimiento Óptimo',
+    description: 'Diseñado para ser rápido y eficiente, incluso con conexiones lentas.'
+  },
+  {
+    icon: '🌐',
+    title: 'Acceso Universal',
+    description: 'Disponible en todos tus dispositivos, en cualquier momento y lugar.'
+  },
+  {
+    icon: '🤖',
+    title: 'Agentes Autónomos',
+    description: 'Automatiza tareas con nuestros agentes inteligentes.'
+  }
+];
+
+// Datos para planes de precios
+const pricingPlans = [
+  {
+    name: 'Básico',
+    price: 'Gratis',
+    period: '',
+    features: [
+      'Chat ilimitado',
+      '10GB almacenamiento',
+      'Soporte básico',
+      'Hasta 5 usuarios'
+    ],
+    buttonText: 'Empezar Ahora',
+    featured: false
+  },
+  {
+    name: 'Pro',
+    price: '$9.99',
+    period: 'mes',
+    features: [
+      'Todo en Básico',
+      '100GB almacenamiento',
+      'Soporte prioritario',
+      'Hasta 50 usuarios',
+      'Acceso a agentes'
+    ],
+    buttonText: 'Prueba Gratis',
+    featured: true
+  },
+  {
+    name: 'Empresas',
+    price: 'Personalizado',
+    period: '',
+    customText: '¿Necesitas más? Contáctanos para un plan a medida.',
+    features: [
+      'Todo en Pro',
+      'Almacenamiento ilimitado',
+      'Soporte 24/7',
+      'Usuarios ilimitados',
+      'Personalización total'
+    ],
+    buttonText: 'Contactar Ventas',
+    featured: false
+  }
+];
+</script>
+
+<style scoped>
+/* Solo estilos específicos del componente que no se pueden reutilizar */
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+</style>
