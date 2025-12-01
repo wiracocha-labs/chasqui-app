@@ -98,6 +98,18 @@
             <p>{{ feature.description }}</p>
           </div>
         </div>
+        
+        <!-- Imagen full-width debajo de los planes -->
+        <div class="bento-tile bento-tile--full">
+          <div class="bento-content">
+            <div class="box-placeholder">Imagen 1 de características</div>
+          </div>
+        </div>
+        <div class="bento-tile bento-tile--full">
+          <div class="bento-content">
+            <div class="box-placeholder">Imagen 2 de características</div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -157,6 +169,13 @@
             >
               {{ plan.buttonText }}
             </button>
+          </div>
+        </div>
+        
+        <!-- Imagen full-width debajo de los planes -->
+        <div class="bento-tile bento-tile--full">
+          <div class="bento-content">
+            <div class="box-placeholder">Imagen de Pricing</div>
           </div>
         </div>
       </div>
