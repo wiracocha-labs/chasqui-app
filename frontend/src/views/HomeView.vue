@@ -125,7 +125,7 @@
 
     <!-- Sección de Precios -->
     <section class="bento-container">
-      <div class="bento-grid">
+      <div class="bento-grid bento-grid--pricing">
         <!-- Título principal -->
         <div class="bento-tile bento-tile--full">
           <div class="bento-content">
