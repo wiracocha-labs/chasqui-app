@@ -156,7 +156,6 @@ section li {
 /* Estilos para las cajas */
 .bento-main {
   background: var(--color-terciary);
-  border: 1px solid var(--border-medium);
   border-radius: 12px;
   padding: 2.5rem;
   display: flex;
@@ -190,7 +189,7 @@ section li {
 
 .bento-box {
   background: var(--color-primary);
-  border: 1px solid var(--border-light);
+  border-color: var(--color-brand);
   border-radius: 12px;
   padding: 1.5rem;
   display: flex;
@@ -276,7 +275,9 @@ section li {
 /* Tile genérico reutilizable */
 .bento-tile {
   background: var(--color-primary);
-  border: 1px solid var(--color-brand-20);
+  border-color: var(--color-brand);
+  border-width: 2px !important;
+  border-style: solid !important;
   border-radius: 12px;
   padding: 1.5rem;
   position: relative;
@@ -292,6 +293,15 @@ section li {
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+/* Alternar colores de borde en tiles (Features/Pricing) */
+.bento-grid > .bento-tile:not(.bento-tile--full):not(.bento-tile--highlight):nth-child(odd) {
+  border-color: var(--color-accent);
+}
+
+.bento-grid > .bento-tile:not(.bento-tile--full):not(.bento-tile--highlight):nth-child(even) {
+  border-color: var(--color-action);
 }
 
 /* Título de sección a todo el ancho */
@@ -333,4 +343,13 @@ section li {
   .bento-grid--pricing {
     grid-template-columns: 1fr;
   }
+}
+
+/* Overrides para tiles específicos */
+.feature-image-2 {
+  border-color: var(--color-action) !important;
+}
+
+.pricing-image {
+  border-color: var(--color-accent) !important;
 }
