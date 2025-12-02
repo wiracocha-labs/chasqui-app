@@ -353,3 +353,10 @@ section li {
 .pricing-image {
   border-color: var(--color-accent) !important;
 }
+
+/* Igualar altura entre el título de Pricing y la imagen de Pricing */
+.bento-grid--pricing > .bento-tile--full,
+.bento-grid--pricing > .pricing-image {
+  min-height: 150px;
+  display: flex;
+}
