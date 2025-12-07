@@ -195,16 +195,16 @@ section li {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s ease;
+  /* transition: transform 0.3s ease; */
   border-width: 2px !important;
   border-style: solid !important;
 }
 
-.bento-box:hover {
+/* .bento-box:hover {
   transform: translateY(-5px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transform: translateY(-5px);
-}
+} */
 
 .box-placeholder {
   color: var(--color-text-secondary);
@@ -284,10 +284,10 @@ section li {
   transition: transform 0.3s ease;
 }
 
-.bento-tile:hover {
+/* .bento-tile:hover {
   transform: translateY(-5px);
   box-shadow: var(--shadow-lg);
-}
+} */
 
 .bento-content {
   display: flex;
@@ -337,11 +337,27 @@ section li {
   .bento-grid--pricing {
     grid-template-columns: repeat(2, minmax(280px, 1fr));
   }
+  .pricing-image {
+    /* En tablet ocupar todo el ancho para mejor equilibrio */
+    grid-column: 1 / -1;
+  }
 }
 
 @media (max-width: 767px) {
   .bento-grid--pricing {
     grid-template-columns: 1fr;
+  }
+  .pricing-image {
+    /* En mobile ocupa todo el ancho (única columna) */
+    grid-column: 1 / -1;
+  }
+}
+
+/* Hover solo para tiles de precios (excluye títulos/imagenes full width) */
+@media (hover: hover) {
+  .bento-grid--pricing > .bento-tile:not(.bento-tile--full):hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
   }
 }
 
@@ -352,6 +368,9 @@ section li {
 
 .pricing-image {
   border-color: var(--color-accent) !important;
+  /* En desktop (3 columnas) ocupar 2/3 a la derecha */
+  grid-column: 2 / -1;
+  justify-self: stretch;
 }
 
 /* Igualar altura entre el título de Pricing y la imagen de Pricing */

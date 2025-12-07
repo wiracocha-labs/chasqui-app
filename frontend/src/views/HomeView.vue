@@ -151,7 +151,7 @@
           v-for="(plan, index) in pricingPlans" 
           :key="'plan-'+index" 
           class="bento-tile"
-          :class="{'bento-tile--highlight': plan.featured}"
+          :class="[{'bento-tile--highlight': plan.featured}, { 'pricing-basic': plan.name === 'Básico' }]"
         >
           <div class="bento-content">
             <div v-if="plan.featured" class="popular-tag">Popular</div>
