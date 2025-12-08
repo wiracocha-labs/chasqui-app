@@ -390,9 +390,9 @@ section li {
 
 .pricing-image {
   border-color: var(--color-accent) !important;
-  /* En desktop (3 columnas) ocupar 2/3 a la derecha */
-  grid-column: 2 / -1;
-  justify-self: stretch;
+  /* Ocupar 2/3 del ancho (66.67%) */
+  grid-column: 1 / -1;
+  width: 66.67%;
 }
 
 /* Igualar altura entre el título de Pricing y la imagen de Pricing */

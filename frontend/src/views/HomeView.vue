@@ -139,7 +139,7 @@
     <section class="bento-container">
       <div class="bento-grid bento-grid--pricing">
         <!-- Título principal -->
-        <div class="bento-tile bento-tile--full">
+        <div class="bento-tile bento-tile--full bento-tile--left">
           <div class="bento-content">
             <h2>💎 Nuestros Planes</h2>
             <p>Elige el que mejor se adapte a ti</p>
@@ -173,7 +173,7 @@
         </div>
         
         <!-- Imagen full-width debajo de los planes -->
-        <div class="bento-tile bento-tile--full pricing-image">
+        <div class="bento-tile bento-tile--full bento-tile--right pricing-image">
           <div class="bento-content">
             <div class="box-placeholder">Imagen de Pricing</div>
           </div>
