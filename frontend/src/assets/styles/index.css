@@ -65,7 +65,8 @@ section h2 {
   font-family: var(--font-display);
 }
 
-section p, section ul {
+section p,
+section ul {
   max-width: 800px;
   margin: 0 auto 1.5rem;
   line-height: 1.6;
@@ -99,12 +100,12 @@ section li {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   width: 100%;
 }
- 
+
 /* Layout específico del Hero con áreas */
 #hero-bento.bento-grid {
-  grid-template-areas: 
-    "main main box1" 
-    "main main box2" 
+  grid-template-areas:
+    "main main box1"
+    "main main box2"
     "box3 box4 box2";
   grid-template-columns: repeat(3, 1fr);
   grid-auto-rows: minmax(180px, auto);
@@ -113,7 +114,7 @@ section li {
 /* Estilos para móvil */
 @media (max-width: 767px) {
   #hero-bento.bento-grid {
-    grid-template-areas: 
+    grid-template-areas:
       "main"
       "box1"
       "box3"
@@ -121,34 +122,38 @@ section li {
       "box2";
     grid-template-columns: 1fr;
   }
-  
+
   #hero-main-content {
     min-height: 250px;
   }
-  
+
   .bento-box {
     min-height: 150px;
   }
 }
 
 /* Áreas del grid */
-#hero-main-content { 
+#hero-main-content {
   grid-area: main;
   border-color: var(--color-brand) !important;
 }
-#box1 { 
+
+#box1 {
   grid-area: box1;
   border-color: var(--color-accent) !important;
 }
-#box2 { 
+
+#box2 {
   grid-area: box2;
   border-color: var(--color-action) !important;
 }
-#box3 { 
+
+#box3 {
   grid-area: box3;
   border-color: var(--color-brand) !important;
 }
-#box4 { 
+
+#box4 {
   grid-area: box4;
   border-color: var(--color-accent) !important;
 }
@@ -296,17 +301,32 @@ section li {
 }
 
 /* Alternar colores de borde en tiles (Features/Pricing) */
-.bento-grid > .bento-tile:not(.bento-tile--full):not(.bento-tile--highlight):nth-child(odd) {
+.bento-grid>.bento-tile:not(.bento-tile--full):not(.bento-tile--highlight):nth-child(odd) {
   border-color: var(--color-accent);
 }
 
-.bento-grid > .bento-tile:not(.bento-tile--full):not(.bento-tile--highlight):nth-child(even) {
+.bento-grid>.bento-tile:not(.bento-tile--full):not(.bento-tile--highlight):nth-child(even) {
   border-color: var(--color-action);
 }
 
 /* Título de sección a todo el ancho */
 .bento-tile--full {
   grid-column: 1 / -1;
+  width: 75%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Alineación a la izquierda */
+.bento-tile--left {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+/* Alineación a la derecha */
+.bento-tile--right {
+  margin-left: auto;
+  margin-right: 0;
 }
 
 /* Destacar plan (pricing) */
@@ -337,6 +357,7 @@ section li {
   .bento-grid--pricing {
     grid-template-columns: repeat(2, minmax(280px, 1fr));
   }
+
   .pricing-image {
     /* En tablet ocupar todo el ancho para mejor equilibrio */
     grid-column: 1 / -1;
@@ -347,6 +368,7 @@ section li {
   .bento-grid--pricing {
     grid-template-columns: 1fr;
   }
+
   .pricing-image {
     /* En mobile ocupa todo el ancho (única columna) */
     grid-column: 1 / -1;
@@ -355,7 +377,7 @@ section li {
 
 /* Hover solo para tiles de precios (excluye títulos/imagenes full width) */
 @media (hover: hover) {
-  .bento-grid--pricing > .bento-tile:not(.bento-tile--full):hover {
+  .bento-grid--pricing>.bento-tile:not(.bento-tile--full):hover {
     transform: translateY(-5px);
     box-shadow: var(--shadow-lg);
   }
@@ -374,8 +396,8 @@ section li {
 }
 
 /* Igualar altura entre el título de Pricing y la imagen de Pricing */
-.bento-grid--pricing > .bento-tile--full,
-.bento-grid--pricing > .pricing-image {
+.bento-grid--pricing>.bento-tile--full,
+.bento-grid--pricing>.pricing-image {
   min-height: 150px;
   display: flex;
 }
