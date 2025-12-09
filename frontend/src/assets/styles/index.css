@@ -370,7 +370,7 @@ section li {
   grid-column: span 1;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: flex-end;
 }
 
 .pricing-basic-container .bento-tile {
@@ -407,4 +407,10 @@ section li {
   .pricing-other-container {
     grid-template-columns: 1fr;
   }
+}
+
+/* Overrides para colores de bordes en Pricing: Solo Básico y Empresas */
+.pricing-basic,
+.pricing-other-container .bento-tile:not(.bento-tile--highlight):not(.pricing-image) {
+  border-color: var(--color-action);
 }
