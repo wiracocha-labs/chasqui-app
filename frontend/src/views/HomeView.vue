@@ -146,36 +146,63 @@
           </div>
         </div>
 
-        <!-- Planes -->
-        <div 
-          v-for="(plan, index) in pricingPlans" 
-          :key="'plan-'+index" 
-          class="bento-tile"
-          :class="[{'bento-tile--highlight': plan.featured}, { 'pricing-basic': plan.name === 'Básico' }]"
-        >
-          <div class="bento-content">
-            <div v-if="plan.featured" class="popular-tag">Popular</div>
-            <h3>{{ plan.name }}</h3>
-            <div class="price">{{ plan.price }}<span v-if="plan.period">/{{ plan.period }}</span></div>
-            <p v-if="plan.customText" class="mb-4">{{ plan.customText }}</p>
-            <ul class="features-list">
-              <li v-for="(feature, fIndex) in plan.features" :key="'feature-'+fIndex">
-                ✓ {{ feature }}
-              </li>
-            </ul>
-            <button 
-              class="btn mt-4" 
-              :class="plan.featured ? 'btn--primary' : 'btn--outline'"
-            >
-              {{ plan.buttonText }}
-            </button>
+        <!-- Plan Básico - Separado -->
+        <div class="pricing-basic-container">
+          <div 
+            v-for="(plan, index) in pricingPlans.filter(p => p.name === 'Básico')" 
+            :key="'plan-'+index" 
+            class="bento-tile pricing-basic"
+          >
+            <div class="bento-content">
+              <h3>{{ plan.name }}</h3>
+              <div class="price">{{ plan.price }}<span v-if="plan.period">/{{ plan.period }}</span></div>
+              <p v-if="plan.customText" class="mb-4">{{ plan.customText }}</p>
+              <ul class="features-list">
+                <li v-for="(feature, fIndex) in plan.features" :key="'feature-'+fIndex">
+                  ✓ {{ feature }}
+                </li>
+              </ul>
+              <button 
+                class="btn btn--outline"
+              >
+                {{ plan.buttonText }}
+              </button>
+            </div>
           </div>
         </div>
-        
-        <!-- Imagen full-width debajo de los planes -->
-        <div class="bento-tile bento-tile--full bento-tile--right pricing-image">
-          <div class="bento-content">
-            <div class="box-placeholder">Imagen de Pricing</div>
+
+        <!-- Otros planes (Pro y Empresas) + Imagen - Agrupados -->
+        <div class="pricing-other-container">
+          <div 
+            v-for="(plan, index) in pricingPlans.filter(p => p.name !== 'Básico')" 
+            :key="'plan-'+index" 
+            class="bento-tile"
+            :class="{'bento-tile--highlight': plan.featured}"
+          >
+            <div class="bento-content">
+              <div v-if="plan.featured" class="popular-tag">Popular</div>
+              <h3>{{ plan.name }}</h3>
+              <div class="price">{{ plan.price }}<span v-if="plan.period">/{{ plan.period }}</span></div>
+              <p v-if="plan.customText" class="mb-4">{{ plan.customText }}</p>
+              <ul class="features-list">
+                <li v-for="(feature, fIndex) in plan.features" :key="'feature-'+fIndex">
+                  ✓ {{ feature }}
+                </li>
+              </ul>
+              <button 
+                class="btn mt-4" 
+                :class="plan.featured ? 'btn--primary' : 'btn--outline'"
+              >
+                {{ plan.buttonText }}
+              </button>
+            </div>
+          </div>
+          
+          <!-- Imagen full-width debajo de los planes -->
+          <div class="bento-tile bento-tile--full bento-tile--right pricing-image">
+            <div class="bento-content">
+              <div class="box-placeholder">Imagen de Pricing</div>
+            </div>
           </div>
         </div>
       </div>

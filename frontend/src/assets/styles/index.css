@@ -300,6 +300,22 @@ section li {
   height: 100%;
 }
 
+/* Alinear botones al fondo en tiles de pricing */
+/* Alternativa sin flexbox: usar posicionamiento */
+.bento-grid--pricing .bento-tile {
+  position: relative;
+  padding-bottom: 5rem;
+  /* Espacio para el botón */
+}
+
+.bento-grid--pricing .bento-content .btn {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  right: 1.5rem;
+  width: calc(100% - 3rem);
+}
+
 /* Alternar colores de borde en tiles (Features/Pricing) */
 .bento-grid>.bento-tile:not(.bento-tile--full):not(.bento-tile--highlight):nth-child(odd) {
   border-color: var(--color-accent);
@@ -400,4 +416,54 @@ section li {
 .bento-grid--pricing>.pricing-image {
   min-height: 150px;
   display: flex;
+}
+
+/* Contenedores de pricing - Layout en fila */
+.pricing-basic-container {
+  grid-column: span 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.pricing-basic-container .bento-tile {
+  width: 100%;
+  min-height: 440px;
+}
+
+.pricing-other-container {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.pricing-other-container .pricing-image {
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Responsive para contenedores de pricing */
+@media (max-width: 1024px) {
+
+  .pricing-basic-container,
+  .pricing-other-container {
+    grid-column: 1 / -1;
+  }
+
+  .pricing-basic-container {
+    justify-content: center;
+  }
+
+  .pricing-basic-container .bento-tile {
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 767px) {
+  .pricing-other-container {
+    grid-template-columns: 1fr;
+  }
 }
