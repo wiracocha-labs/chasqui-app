@@ -225,9 +225,9 @@
         <p>Chasqui es más que una herramienta.</p>
         <p>Es una forma de trabajar donde la comunidad y la autonomía son centrales.</p>
         <div class="cta-buttons">
-          <a href="#" class="button primary">👉 Únete a la lista de espera</a>
-          <a href="#" class="button secondary">👉 Participa en el MVP en enero</a>
-          <a href="#" class="button tertiary">👉 Propón features — este proyecto es abierto desde su esencia</a>
+          <a href="#" class="btn btn--primary">👉 Únete a la lista de espera</a>
+          <a href="#" class="btn btn--outline">👉 Participa en el MVP en enero</a>
+          <a href="#" class="btn btn--outline">👉 Propón features — este proyecto es abierto desde su esencia</a>
         </div>
       </section>
   </div>
@@ -307,8 +307,4 @@ const pricingPlans = [
 
 <style scoped>
 /* Solo estilos específicos del componente que no se pueden reutilizar */
-.feature-icon {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-}
 </style>

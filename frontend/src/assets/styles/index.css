@@ -6,46 +6,7 @@
 @import './ui.css';
 @import './chat.css';
 
-/* Estilos para el Hero */
-.hero {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 2rem 1rem;
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-terciary) 100%);
-  color: var(--color-text-primary);
-}
 
-.hero h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
-  font-family: var(--font-display);
-  line-height: 1.2;
-  max-width: 800px;
-}
-
-.hero .tagline {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  color: var(--color-brand);
-  font-weight: 700;
-}
-
-.hero .subtagline {
-  font-size: 1.1rem;
-  margin-bottom: 2.5rem;
-  max-width: 600px;
-  opacity: 0.9;
-}
-
-.hero .actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
 
 /* Estilos para las secciones */
 section {
@@ -159,15 +120,25 @@ section li {
 }
 
 /* Estilos para las cajas */
+/* Estilos compartidos para Bento */
+.bento-main,
+.bento-box,
+.bento-tile {
+  border-width: 2px !important;
+  border-style: solid !important;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+/* Efecto hover compartido eliminado */
+
+
 .bento-main {
   background: var(--color-terciary);
-  border-radius: 12px;
   padding: 2.5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-width: 2px !important;
-  border-style: solid !important;
 }
 
 .bento-main h1 {
@@ -195,21 +166,13 @@ section li {
 .bento-box {
   background: var(--color-primary);
   border-color: var(--color-brand);
-  border-radius: 12px;
   padding: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* transition: transform 0.3s ease; */
-  border-width: 2px !important;
-  border-style: solid !important;
 }
 
-/* .bento-box:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transform: translateY(-5px);
-} */
+
 
 .box-placeholder {
   color: var(--color-text-secondary);
@@ -281,18 +244,11 @@ section li {
 .bento-tile {
   background: var(--color-primary);
   border-color: var(--color-brand);
-  border-width: 2px !important;
-  border-style: solid !important;
-  border-radius: 12px;
   padding: 1.5rem;
   position: relative;
-  transition: transform 0.3s ease;
 }
 
-/* .bento-tile:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
-} */
+
 
 .bento-content {
   display: flex;
@@ -301,11 +257,14 @@ section li {
 }
 
 /* Alinear botones al fondo en tiles de pricing */
-/* Alternativa sin flexbox: usar posicionamiento */
 .bento-grid--pricing .bento-tile {
-  position: relative;
   padding-bottom: 5rem;
-  /* Espacio para el botón */
+}
+
+/* Efecto hover solo para cajas de precios (excluyendo título e imagen full-width) */
+.bento-grid--pricing .bento-tile:not(.bento-tile--full):hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
 }
 
 .bento-grid--pricing .bento-content .btn {
@@ -373,29 +332,11 @@ section li {
   .bento-grid--pricing {
     grid-template-columns: repeat(2, minmax(280px, 1fr));
   }
-
-  .pricing-image {
-    /* En tablet ocupar todo el ancho para mejor equilibrio */
-    grid-column: 1 / -1;
-  }
 }
 
 @media (max-width: 767px) {
   .bento-grid--pricing {
     grid-template-columns: 1fr;
-  }
-
-  .pricing-image {
-    /* En mobile ocupa todo el ancho (única columna) */
-    grid-column: 1 / -1;
-  }
-}
-
-/* Hover solo para tiles de precios (excluye títulos/imagenes full width) */
-@media (hover: hover) {
-  .bento-grid--pricing>.bento-tile:not(.bento-tile--full):hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
   }
 }
 
@@ -404,11 +345,17 @@ section li {
   border-color: var(--color-action) !important;
 }
 
+/* Imagen de pricing - Base */
 .pricing-image {
   border-color: var(--color-accent) !important;
-  /* Ocupar 2/3 del ancho (66.67%) */
   grid-column: 1 / -1;
   width: 66.67%;
+}
+
+/* Imagen de pricing dentro del contenedor de otros planes */
+.pricing-other-container .pricing-image {
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Igualar altura entre el título de Pricing y la imagen de Pricing */
@@ -428,7 +375,7 @@ section li {
 
 .pricing-basic-container .bento-tile {
   width: 100%;
-  min-height: 440px;
+  min-height: 436px;
 }
 
 .pricing-other-container {
@@ -437,12 +384,6 @@ section li {
   grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
   width: 100%;
-}
-
-.pricing-other-container .pricing-image {
-  grid-column: 1 / -1;
-  width: 100%;
-  max-width: 100%;
 }
 
 /* Responsive para contenedores de pricing */
