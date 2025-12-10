@@ -43,191 +43,198 @@
       </header>
     </section>
 
-      <section class="what-is">
-        <h2>🚀 ¿Qué es Chasqui?</h2>
-        <p>Chasqui es una plataforma de comunicación para equipos remotos, construida sobre una arquitectura descentralizada, segura, rápida y de bajo costo operativo.</p>
-        <p>Diseñada para equipos modernos que prefieren:</p>
-        <ul>
-          <li>Privacidad real</li>
-          <li>Propiedad de sus datos</li>
-          <li>Velocidad sin depender de un backend enorme</li>
-          <li>Integraciones simples y útiles</li>
-          <li>Una herramienta que no intenta reemplazar todo, sino hacer una cosa bien: comunicación eficiente y clara</li>
-        </ul>
-      </section>
-
-      <section class="philosophy">
-        <h2>🧬 Filosofía</h2>
-        <blockquote>"Tecnología con alma comunitaria."</blockquote>
-        <p>Chasqui nace con los valores de Wiracocha Labs:</p>
-        <ul>
-          <li>La sabiduría es de todos</li>
-          <li>La comunidad sosteniendo a la comunidad</li>
-          <li>Abrimos caminos</li>
-          <li>Colaboración sobre competencia</li>
-          <li>Llegar más lejos, juntos</li>
-        </ul>
-      </section>
-
-      <section class="security">
-        <h2>🔒 Privacidad y seguridad por diseño</h2>
-        <ul>
-          <li>P2P con GunJS → la mayoría del tráfico fluye entre usuarios</li>
-          <li>Mínimo backend (solo webhooks e IA opcional)</li>
-          <li>Datos controlados por ti</li>
-          <li>Cifrado extremo a extremo para canales privados (roadmap)</li>
-        </ul>
-      </section>
-
-    <!-- Sección de Características -->
-    <section class="bento-container">
-      <div class="bento-grid">
-        <!-- Título principal -->
-        <div class="bento-tile bento-tile--full">
-          <div class="bento-content">
-            <h2>✨ Características Principales</h2>
-            <p>Todo lo que necesitas para una comunicación efectiva</p>
-          </div>
-        </div>
-
-        <!-- Características -->
-        <div class="bento-tile" v-for="(feature, index) in features" :key="index">
-          <div class="bento-content">
-            <div class="feature-icon">{{ feature.icon }}</div>
-            <h3>{{ feature.title }}</h3>
-            <p>{{ feature.description }}</p>
-          </div>
-        </div>
-        
-        <!-- Imagen full-width debajo de los planes -->
-        <div class="bento-tile bento-tile--full bento-tile--right">
-          <div class="bento-content">
-            <div class="box-placeholder">Imagen 1 de características</div>
-          </div>
-        </div>
-        <div class="bento-tile bento-tile--full bento-tile--left feature-image-2">
-          <div class="bento-content">
-            <div class="box-placeholder">Imagen 2 de características</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-      <section class="ideal-for">
-        <h2>🎯 Ideal para equipos que…</h2>
-        <ul>
-          <li>No quieren pagar $800–$3000 al año solo por un chat</li>
-          <li>Valoran la independencia tecnológica</li>
-          <li>Buscan simplicidad, velocidad y foco</li>
-          <li>Prefieren privacidad antes que extracción de datos</li>
-          <li>Trabajan con herramientas como GitHub, GitLab, Figma y Drive</li>
-        </ul>
-      </section>
-
-      <section class="tech">
-        <h2>🛠️ Tecnología</h2>
-        <ul>
-          <li><strong>Frontend:</strong> Svelte / TypeScript</li>
-          <li><strong>P2P core:</strong> GunJS</li>
-          <li><strong>Infra minimalista:</strong> Serverless para webhooks</li>
-          <li><strong>Opcional Web3:</strong> Avalanche (identidades y trazabilidad)</li>
-          <li><strong>Agentes:</strong> pequeñas funciones autónomas conectadas al workspace</li>
-        </ul>
-      </section>
-
-    <!-- Sección de Precios -->
-    <section class="bento-container">
-      <div class="bento-grid bento-grid--pricing">
-        <!-- Título principal -->
-        <div class="bento-tile bento-tile--full bento-tile--left">
-          <div class="bento-content">
-            <h2>💎 Nuestros Planes</h2>
-            <p>Elige el que mejor se adapte a ti</p>
-          </div>
-        </div>
-
-        <!-- Plan Básico - Separado -->
-        <div class="pricing-basic-container">
-          <div 
-            v-for="(plan, index) in pricingPlans.filter(p => p.name === 'Básico')" 
-            :key="'plan-'+index" 
-            class="bento-tile pricing-basic"
-          >
-            <div class="bento-content">
-              <h3>{{ plan.name }}</h3>
-              <div class="price">{{ plan.price }}<span v-if="plan.period">/{{ plan.period }}</span></div>
-              <p v-if="plan.customText" class="mb-4">{{ plan.customText }}</p>
-              <ul class="features-list">
-                <li v-for="(feature, fIndex) in plan.features" :key="'feature-'+fIndex">
-                  ✓ {{ feature }}
-                </li>
-              </ul>
-              <button 
-                class="btn btn--outline"
-              >
-                {{ plan.buttonText }}
-              </button>
+      <!-- 1. BLOQUE IDENTIDAD: ¿Qué es? + Filosofía + Ideal para -->
+      <section class="identity-section">
+        <div class="bento-container split-layout">
+          <div class="identity-content">
+            <h2>🚀 ¿Qué es Chasqui?</h2>
+            <p class="lead">Es una plataforma de comunicación para equipos remotos, construida sobre una arquitectura descentralizada, segura y ligera.</p>
+            
+            <div class="philosophy-box">
+              <blockquote>"Tecnología con alma comunitaria."</blockquote>
+              <p>Valores Wiracocha Labs: Sabiduría compartida y colaboración sobre competencia.</p>
             </div>
           </div>
-        </div>
 
-        <!-- Otros planes (Pro y Empresas) + Imagen - Agrupados -->
-        <div class="pricing-other-container">
-          <div 
-            v-for="(plan, index) in pricingPlans.filter(p => p.name !== 'Básico')" 
-            :key="'plan-'+index" 
-            class="bento-tile"
-            :class="{'bento-tile--highlight': plan.featured}"
-          >
+          <div class="identity-target">
+            <h3>🎯 Ideal para equipos que buscan:</h3>
+            <ul class="check-list">
+              <li>
+                <span class="check-icon">✅</span>
+                <span><strong>Privacidad real:</strong> Propiedad total de tus datos.</span>
+              </li>
+              <li>
+                <span class="check-icon">✅</span>
+                <span><strong>Independencia:</strong> Sin depender de backends monolíticos.</span>
+              </li>
+              <li>
+                <span class="check-icon">✅</span>
+                <span><strong>Ahorro inteligente:</strong> No pagar $800+ al año por un chat.</span>
+              </li>
+              <li>
+                <span class="check-icon">✅</span>
+                <span><strong>Foco:</strong> Una herramienta que hace una cosa bien.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección de Características (Bento Grid existente) -->
+      <section class="bento-container">
+        <div class="bento-grid">
+          <!-- Título principal -->
+          <div class="bento-tile bento-tile--full">
             <div class="bento-content">
-              <div v-if="plan.featured" class="popular-tag">Popular</div>
-              <h3>{{ plan.name }}</h3>
-              <div class="price">{{ plan.price }}<span v-if="plan.period">/{{ plan.period }}</span></div>
-              <p v-if="plan.customText" class="mb-4">{{ plan.customText }}</p>
-              <ul class="features-list">
-                <li v-for="(feature, fIndex) in plan.features" :key="'feature-'+fIndex">
-                  ✓ {{ feature }}
-                </li>
-              </ul>
-              <button 
-                class="btn mt-4" 
-                :class="plan.featured ? 'btn--primary' : 'btn--outline'"
-              >
-                {{ plan.buttonText }}
-              </button>
+              <h2>✨ Características Principales</h2>
+              <p>Todo lo que necesitas para una comunicación efectiva</p>
+            </div>
+          </div>
+  
+          <!-- Características -->
+          <div class="bento-tile" v-for="(feature, index) in features" :key="index">
+            <div class="bento-content">
+              <div class="feature-icon">{{ feature.icon }}</div>
+              <h3>{{ feature.title }}</h3>
+              <p>{{ feature.description }}</p>
             </div>
           </div>
           
           <!-- Imagen full-width debajo de los planes -->
-          <div class="bento-tile bento-tile--full bento-tile--right pricing-image">
+          <div class="bento-tile bento-tile--full bento-tile--right">
             <div class="bento-content">
-              <div class="box-placeholder">Imagen de Pricing</div>
+              <div class="box-placeholder">Imagen 1 de características</div>
+            </div>
+          </div>
+          <div class="bento-tile bento-tile--full bento-tile--left feature-image-2">
+            <div class="bento-content">
+              <div class="box-placeholder">Imagen 2 de características</div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-
-      <section class="roadmap">
-        <h2>🔮 Roadmap</h2>
-        <ul>
-          <li>Cifrado E2E en canales privados</li>
-          <li>Videollamadas P2P</li>
-          <li>Plugins creados por la comunidad</li>
-          <li>Firma de mensajes con identidad descentralizada</li>
-          <li>Panel de métricas minimalista</li>
-          <li>Mobile app ligera</li>
-        </ul>
       </section>
 
-      <section class="cta">
-        <h2>🌄 Únete al camino</h2>
-        <p>Chasqui es más que una herramienta.</p>
-        <p>Es una forma de trabajar donde la comunidad y la autonomía son centrales.</p>
-        <div class="cta-buttons">
-          <a href="#" class="btn btn--primary">👉 Únete a la lista de espera</a>
-          <a href="#" class="btn btn--outline">👉 Participa en el MVP en enero</a>
-          <a href="#" class="btn btn--outline">👉 Propón features — este proyecto es abierto desde su esencia</a>
+      <!-- 2. BLOQUE ARQUITECTURA: Tecnología + Seguridad -->
+      <section class="tech-section">
+        <div class="bento-container">
+          <div class="tech-grid">
+            <div class="tech-card">
+              <h3>🛠️ El Motor (Tech Stack)</h3>
+              <ul class="tech-list">
+                <li><strong>Frontend:</strong> Svelte / TypeScript</li>
+                <li><strong>Core P2P:</strong> GunJS</li>
+                <li><strong>Web3:</strong> Avalanche (Identidad & Trazabilidad)</li>
+                <li><strong>Infra:</strong> Serverless minimalista</li>
+              </ul>
+            </div>
+            
+            <div class="tech-card security-card">
+              <h3>🔒 Seguridad por Diseño</h3>
+              <ul class="tech-list">
+                <li>Tráfico Peer-to-Peer directo</li>
+                <li>Cifrado extremo a extremo (roadmap)</li>
+                <li>Sin minería de datos ni rastreadores</li>
+                <li>Tus conversaciones no entrenan ninguna IA ajena</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección de Precios (Bento Grid existente) -->
+      <section class="bento-container">
+        <div class="bento-grid bento-grid--pricing">
+          <!-- Título principal -->
+          <div class="bento-tile bento-tile--full bento-tile--left">
+            <div class="bento-content">
+              <h2>💎 Nuestros Planes</h2>
+              <p>Elige el que mejor se adapte a ti</p>
+            </div>
+          </div>
+  
+          <!-- Plan Básico - Separado -->
+          <div class="pricing-basic-container">
+            <div 
+              v-for="(plan, index) in pricingPlans.filter(p => p.name === 'Básico')" 
+              :key="'plan-'+index" 
+              class="bento-tile pricing-basic"
+            >
+              <div class="bento-content">
+                <h3>{{ plan.name }}</h3>
+                <div class="price">{{ plan.price }}<span v-if="plan.period">/{{ plan.period }}</span></div>
+                <p v-if="plan.customText" class="mb-4">{{ plan.customText }}</p>
+                <ul class="features-list">
+                  <li v-for="(feature, fIndex) in plan.features" :key="'feature-'+fIndex">
+                    ✓ {{ feature }}
+                  </li>
+                </ul>
+                <button 
+                  class="btn btn--outline"
+                >
+                  {{ plan.buttonText }}
+                </button>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Otros planes (Pro y Empresas) + Imagen - Agrupados -->
+          <div class="pricing-other-container">
+            <div 
+              v-for="(plan, index) in pricingPlans.filter(p => p.name !== 'Básico')" 
+              :key="'plan-'+index" 
+              class="bento-tile"
+              :class="{'bento-tile--highlight': plan.featured}"
+            >
+              <div class="bento-content">
+                <div v-if="plan.featured" class="popular-tag">Popular</div>
+                <h3>{{ plan.name }}</h3>
+                <div class="price">{{ plan.price }}<span v-if="plan.period">/{{ plan.period }}</span></div>
+                <p v-if="plan.customText" class="mb-4">{{ plan.customText }}</p>
+                <ul class="features-list">
+                  <li v-for="(feature, fIndex) in plan.features" :key="'feature-'+fIndex">
+                    ✓ {{ feature }}
+                  </li>
+                </ul>
+                <button 
+                  class="btn mt-4" 
+                  :class="plan.featured ? 'btn--primary' : 'btn--outline'"
+                >
+                  {{ plan.buttonText }}
+                </button>
+              </div>
+            </div>
+            
+            <!-- Imagen full-width debajo de los planes -->
+            <div class="bento-tile bento-tile--full bento-tile--right pricing-image">
+              <div class="bento-content">
+                <div class="box-placeholder">Imagen de Pricing</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. BLOQUE FUTURO: Roadmap + CTA -->
+      <section class="future-section">
+        <div class="bento-container">
+          <div class="roadmap-block">
+            <h2>🔮 Roadmap 2024</h2>
+            <div class="roadmap-items">
+              <span class="roadmap-tag">Videollamadas P2P</span>
+              <span class="roadmap-tag">Plugins Comunitarios</span>
+              <span class="roadmap-tag">Mobile App</span>
+              <span class="roadmap-tag">Panel de Métricas</span>
+            </div>
+          </div>
+          
+          <div class="cta-block">
+            <h2>🌄 Únete al camino</h2>
+            <p>Chasqui es autonomía, comunidad y privacidad.</p>
+            <div class="cta-buttons">
+              <a href="#" class="btn btn--primary">👉 Únete a la lista de espera</a>
+              <a href="#" class="btn btn--outline">Participar en el MVP</a>
+            </div>
+          </div>
         </div>
       </section>
   </div>
@@ -306,5 +313,131 @@ const pricingPlans = [
 </script>
 
 <style scoped>
-/* Solo estilos específicos del componente que no se pueden reutilizar */
+/* Identity Section */
+.split-layout {
+  display: flex;
+  gap: 4rem;
+  align-items: flex-start;
+  padding: 4rem 2rem;
+}
+.identity-content {
+  flex: 1;
+  text-align: left;
+}
+.identity-target {
+  flex: 1;
+  background: var(--color-terciary);
+  padding: 2.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--color-action);
+}
+.philosophy-box {
+  margin-top: 2.5rem;
+  padding-left: 1.5rem;
+  border-left: 4px solid var(--color-brand);
+  background: rgba(0,0,0,0.02);
+  padding: 1.5rem;
+}
+.check-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1.5rem;
+}
+.check-list li {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+  text-align: left;
+}
+.check-icon {
+  font-size: 1.25rem;
+}
+
+/* Tech Section */
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  width: 100%;
+}
+.tech-card {
+  padding: 3rem;
+  background: var(--color-primary);
+  border: 2px solid var(--color-brand);
+  border-radius: 12px;
+  text-align: left;
+}
+.security-card {
+  border-color: var(--color-action);
+}
+.tech-list {
+  padding-left: 1.5rem;
+  margin-top: 1.5rem;
+}
+.tech-list li {
+  margin-bottom: 0.75rem;
+  color: var(--color-text-primary);
+}
+
+/* Future Section */
+.future-section {
+  padding-bottom: 6rem;
+}
+.roadmap-block {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+.roadmap-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.roadmap-tag {
+  background: var(--color-terciary);
+  padding: 0.75rem 1.5rem;
+  border-radius: 100px;
+  border: 1px solid var(--color-brand);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.cta-block {
+  text-align: center;
+  padding: 5rem 2rem;
+  background: linear-gradient(135deg, var(--color-terciary) 0%, var(--color-primary) 100%);
+  border-radius: 20px;
+  border: 2px solid var(--color-action);
+}
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2.5rem;
+  flex-wrap: wrap;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .split-layout {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem 1rem;
+  }
+  .tech-grid {
+    grid-template-columns: 1fr;
+  }
+  .cta-buttons {
+    flex-direction: column;
+  }
+  .btn {
+    width: 100%;
+    text-align: center;
+  }
+}
 </style>
