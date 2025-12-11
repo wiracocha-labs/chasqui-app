@@ -1,46 +1,48 @@
 <template>
   <div class="home">
     <!-- Hero Section -->
-    <section class="bento-container">
-      <header id="hero-bento" class="bento-grid">
-        <div id="hero-main-content" class="bento-main">
-            <div>
-              <h1>
-                <span class="text-brand">📨 Chasqui</span> — Comunicación descentralizada para equipos remotos
-              </h1>
-              <p class="tagline">
-                Colabora sin fricción. Comparte sin miedo. La plataforma ligera, segura y comunitaria para equipos que valoran la privacidad y el foco.
-              </p>
+    <section class="hero-section" :style="{ backgroundImage: `url('${heroBg}')` }">
+      <div class="bento-container">
+        <header id="hero-bento" class="bento-grid">
+          <div id="hero-main-content" class="bento-main">
+              <div>
+                <h1>
+                  <span class="text-brand">📨 Chasqui</span> — Comunicación descentralizada para equipos remotos
+                </h1>
+                <p class="tagline">
+                  Colabora sin fricción. Comparte sin miedo. La plataforma ligera, segura y comunitaria para equipos que valoran la privacidad y el foco.
+                </p>
+              </div>
+              
+              <div class="hero-actions">
+                <button class="btn btn--primary">Empezar Gratis</button>
+                <button class="btn btn--outline">Ver Documentación</button>
+              </div>
             </div>
-            
-            <div class="hero-actions">
-              <button class="btn btn--primary">Empezar Gratis</button>
-              <button class="btn btn--outline">Ver Documentación</button>
+
+            <!-- 2. Box 1: Imagen Pequeña Arriba a la Derecha -->
+            <div id="box1" class="bento-box">
+              <div class="box-placeholder">Imagen 1</div>
             </div>
-          </div>
 
-          <!-- 2. Box 1: Imagen Pequeña Arriba a la Derecha -->
-          <div id="box1" class="bento-box">
-            <div class="box-placeholder">Imagen 1</div>
-          </div>
+            <!-- 3. Box 2: Imagen Larga Vertical a la Derecha (1x2) -->
+            <div id="box2" class="bento-box bento-tall">
+              <div class="box-placeholder">Imagen 2</div>
+            </div>
 
-          <!-- 3. Box 2: Imagen Larga Vertical a la Derecha (1x2) -->
-          <div id="box2" class="bento-box bento-tall">
-            <div class="box-placeholder">Imagen 2</div>
-          </div>
+            <!-- 4. Box 3: Imagen Pequeña Abajo a la Izquierda -->
+            <div id="box3" class="bento-box bento-feature">
+              <div class="feature-icon">🔒</div>
+              <p class="feature-title">Privacidad por Diseño</p>
+              <p class="feature-desc">Tus datos, tu control. Sin rastreo.</p>
+            </div>
 
-          <!-- 4. Box 3: Imagen Pequeña Abajo a la Izquierda -->
-          <div id="box3" class="bento-box bento-feature">
-            <div class="feature-icon">🔒</div>
-            <p class="feature-title">Privacidad por Diseño</p>
-            <p class="feature-desc">Tus datos, tu control. Sin rastreo.</p>
-          </div>
-
-          <!-- 5. Box 4: Imagen Pequeña Abajo al Centro -->
-          <div id="box4" class="bento-box">
-            <div class="box-placeholder">Imagen 3</div>
-          </div>
-      </header>
+            <!-- 5. Box 4: Imagen Pequeña Abajo al Centro -->
+            <div id="box4" class="bento-box">
+              <div class="box-placeholder">Imagen 3</div>
+            </div>
+        </header>
+      </div>
     </section>
 
       <!-- 1. BLOQUE IDENTIDAD: ¿Qué es? + Filosofía + Ideal para -->
@@ -241,6 +243,8 @@
 </template>
 
 <script setup>
+import heroBg from '../assets/images/fondo_wiracocha_redes_copy.webp'
+
 // Datos para características
 const features = [
   {
@@ -311,133 +315,3 @@ const pricingPlans = [
   }
 ];
 </script>
-
-<style scoped>
-/* Identity Section */
-.split-layout {
-  display: flex;
-  gap: 4rem;
-  align-items: flex-start;
-  padding: 4rem 2rem;
-}
-.identity-content {
-  flex: 1;
-  text-align: left;
-}
-.identity-target {
-  flex: 1;
-  background: var(--color-terciary);
-  padding: 2.5rem;
-  border-radius: 12px;
-  border: 1px solid var(--color-action);
-}
-.philosophy-box {
-  margin-top: 2.5rem;
-  padding-left: 1.5rem;
-  border-left: 4px solid var(--color-brand);
-  background: rgba(0,0,0,0.02);
-  padding: 1.5rem;
-}
-.check-list {
-  list-style: none;
-  padding: 0;
-  margin-top: 1.5rem;
-}
-.check-list li {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-  align-items: center;
-  text-align: left;
-}
-.check-icon {
-  font-size: 1.25rem;
-}
-
-/* Tech Section */
-.tech-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-  width: 100%;
-}
-.tech-card {
-  padding: 3rem;
-  background: var(--color-primary);
-  border: 2px solid var(--color-brand);
-  border-radius: 12px;
-  text-align: left;
-}
-.security-card {
-  border-color: var(--color-action);
-}
-.tech-list {
-  padding-left: 1.5rem;
-  margin-top: 1.5rem;
-}
-.tech-list li {
-  margin-bottom: 0.75rem;
-  color: var(--color-text-primary);
-}
-
-/* Future Section */
-.future-section {
-  padding-bottom: 6rem;
-}
-.roadmap-block {
-  text-align: center;
-  margin-bottom: 5rem;
-}
-.roadmap-items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-  margin-top: 2rem;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
-.roadmap-tag {
-  background: var(--color-terciary);
-  padding: 0.75rem 1.5rem;
-  border-radius: 100px;
-  border: 1px solid var(--color-brand);
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.cta-block {
-  text-align: center;
-  padding: 5rem 2rem;
-  background: linear-gradient(135deg, var(--color-terciary) 0%, var(--color-primary) 100%);
-  border-radius: 20px;
-  border: 2px solid var(--color-action);
-}
-.cta-buttons {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  margin-top: 2.5rem;
-  flex-wrap: wrap;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .split-layout {
-    flex-direction: column;
-    gap: 2rem;
-    padding: 2rem 1rem;
-  }
-  .tech-grid {
-    grid-template-columns: 1fr;
-  }
-  .cta-buttons {
-    flex-direction: column;
-  }
-  .btn {
-    width: 100%;
-    text-align: center;
-  }
-}
-</style>
