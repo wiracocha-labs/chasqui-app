@@ -45,6 +45,7 @@
       </div>
     </section>
 
+    <div class="content-background-wrapper" :style="{ backgroundImage: `url('${mainBg}')` }">
       <!-- 1. BLOQUE IDENTIDAD: ¿Qué es? + Filosofía + Ideal para -->
       <section class="identity-section">
         <div class="bento-container split-layout">
@@ -142,6 +143,7 @@
           </div>
         </div>
       </section>
+    </div>
 
       <!-- Sección de Precios (Bento Grid existente) -->
       <section class="bento-container">
@@ -244,6 +246,7 @@
 
 <script setup>
 import heroBg from '../assets/images/fondo_wiracocha_redes_copy.webp'
+import mainBg from '../assets/images/montana.webp'
 
 // Datos para características
 const features = [

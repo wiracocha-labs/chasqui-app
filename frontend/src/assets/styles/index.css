@@ -565,3 +565,26 @@ section li {
     text-align: center;
   }
 }
+
+/* Fixed Background Wrapper -> Now Full Height Scroll */
+.content-background-wrapper {
+  background-size: 100% 100%;
+  /* Force stretch to ensure full image visibility as requested */
+  background-position: top center;
+  background-repeat: no-repeat;
+  padding-bottom: 4rem;
+}
+
+/* Transparency for content to show fixed background */
+.content-background-wrapper .identity-target {
+  background: rgba(46, 30, 26, 0.85);
+  /* Semi-transparent version of --color-terciary */
+  backdrop-filter: blur(8px);
+}
+
+.content-background-wrapper .bento-tile,
+.content-background-wrapper .tech-card {
+  background: rgba(47, 46, 43, 0.85);
+  /* Semi-transparent version of --color-primary */
+  backdrop-filter: blur(8px);
+}
