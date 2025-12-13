@@ -1,10 +1,14 @@
 <template>
   <div class="home">
+    <!-- Fixed Background -->
+    <div class="fixed-background" :style="{ backgroundImage: `url('${heroBg}')` }"></div>
+
     <!-- Hero Section -->
-    <section class="hero-section" :style="{ backgroundImage: `url('${heroBg}')` }">
+    <section class="hero-section">
       <div class="bento-container">
         <header id="hero-bento" class="bento-grid">
-          <div id="hero-main-content" class="bento-main">
+
+          <div id="hero-main-content" class="bento-main reveal">
               <div>
                 <h1>
                   <span class="text-brand">📨 Chasqui</span> — Comunicación descentralizada para equipos remotos
@@ -21,35 +25,35 @@
             </div>
 
             <!-- 2. Box 1: Imagen Pequeña Arriba a la Derecha -->
-            <div id="box1" class="bento-box">
+            <div id="box1" class="bento-box reveal">
               <div class="box-placeholder">Imagen 1</div>
             </div>
 
             <!-- 3. Box 2: Imagen Larga Vertical a la Derecha (1x2) -->
-            <div id="box2" class="bento-box bento-tall">
+            <div id="box2" class="bento-box bento-tall reveal">
               <div class="box-placeholder">Imagen 2</div>
             </div>
 
             <!-- 4. Box 3: Imagen Pequeña Abajo a la Izquierda -->
-            <div id="box3" class="bento-box bento-feature">
+            <div id="box3" class="bento-box bento-feature reveal">
               <div class="feature-icon">🔒</div>
-              <p class="feature-title">Privacidad por Diseño</p>
+              <h3 class="feature-title">Privacidad por Diseño</h3>
               <p class="feature-desc">Tus datos, tu control. Sin rastreo.</p>
             </div>
 
             <!-- 5. Box 4: Imagen Pequeña Abajo al Centro -->
-            <div id="box4" class="bento-box">
+            <div id="box4" class="bento-box reveal">
               <div class="box-placeholder">Imagen 3</div>
             </div>
         </header>
       </div>
     </section>
 
-    <div class="content-background-wrapper" :style="{ backgroundImage: `url('${mainBg}')` }">
+    <div class="content-background-wrapper">
       <!-- 1. BLOQUE IDENTIDAD: ¿Qué es? + Filosofía + Ideal para -->
       <section class="identity-section">
         <div class="bento-container split-layout">
-          <div class="identity-content">
+          <div class="identity-content reveal">
             <h2>🚀 ¿Qué es Chasqui?</h2>
             <p class="lead">Es una plataforma de comunicación para equipos remotos, construida sobre una arquitectura descentralizada, segura y ligera.</p>
             
@@ -59,7 +63,7 @@
             </div>
           </div>
 
-          <div class="identity-target">
+          <div class="identity-target reveal">
             <h3>🎯 Ideal para equipos que buscan:</h3>
             <ul class="check-list">
               <li>
@@ -87,7 +91,7 @@
       <section class="bento-container">
         <div class="bento-grid">
           <!-- Título principal -->
-          <div class="bento-tile bento-tile--full">
+          <div class="bento-tile bento-tile--full reveal">
             <div class="bento-content">
               <h2>✨ Características Principales</h2>
               <p>Todo lo que necesitas para una comunicación efectiva</p>
@@ -95,7 +99,7 @@
           </div>
   
           <!-- Características -->
-          <div class="bento-tile" v-for="(feature, index) in features" :key="index">
+          <div class="bento-tile reveal" v-for="(feature, index) in features" :key="index">
             <div class="bento-content">
               <div class="feature-icon">{{ feature.icon }}</div>
               <h3>{{ feature.title }}</h3>
@@ -104,12 +108,12 @@
           </div>
           
           <!-- Imagen full-width debajo de los planes -->
-          <div class="bento-tile bento-tile--full bento-tile--right">
+          <div class="bento-tile bento-tile--full bento-tile--right reveal">
             <div class="bento-content">
               <div class="box-placeholder">Imagen 1 de características</div>
             </div>
           </div>
-          <div class="bento-tile bento-tile--full bento-tile--left feature-image-2">
+          <div class="bento-tile bento-tile--full bento-tile--left feature-image-2 reveal">
             <div class="bento-content">
               <div class="box-placeholder">Imagen 2 de características</div>
             </div>
@@ -121,7 +125,7 @@
       <section class="tech-section">
         <div class="bento-container">
           <div class="tech-grid">
-            <div class="tech-card">
+            <div class="tech-card reveal">
               <h3>🛠️ El Motor (Tech Stack)</h3>
               <ul class="tech-list">
                 <li><strong>Frontend:</strong> Svelte / TypeScript</li>
@@ -131,7 +135,7 @@
               </ul>
             </div>
             
-            <div class="tech-card security-card">
+            <div class="tech-card security-card reveal">
               <h3>🔒 Seguridad por Diseño</h3>
               <ul class="tech-list">
                 <li>Tráfico Peer-to-Peer directo</li>
@@ -149,7 +153,7 @@
       <section class="bento-container">
         <div class="bento-grid bento-grid--pricing">
           <!-- Título principal -->
-          <div class="bento-tile bento-tile--full bento-tile--left">
+          <div class="bento-tile bento-tile--full bento-tile--left reveal">
             <div class="bento-content">
               <h2>💎 Nuestros Planes</h2>
               <p>Elige el que mejor se adapte a ti</p>
@@ -161,7 +165,7 @@
             <div 
               v-for="(plan, index) in pricingPlans.filter(p => p.name === 'Básico')" 
               :key="'plan-'+index" 
-              class="bento-tile pricing-basic"
+              class="bento-tile pricing-basic reveal"
             >
               <div class="bento-content">
                 <h3>{{ plan.name }}</h3>
@@ -186,7 +190,7 @@
             <div 
               v-for="(plan, index) in pricingPlans.filter(p => p.name !== 'Básico')" 
               :key="'plan-'+index" 
-              class="bento-tile"
+              class="bento-tile reveal"
               :class="{'bento-tile--highlight': plan.featured}"
             >
               <div class="bento-content">
@@ -209,7 +213,7 @@
             </div>
             
             <!-- Imagen full-width debajo de los planes -->
-            <div class="bento-tile bento-tile--full bento-tile--right pricing-image">
+            <div class="bento-tile bento-tile--full bento-tile--right pricing-image reveal">
               <div class="bento-content">
                 <div class="box-placeholder">Imagen de Pricing</div>
               </div>
@@ -221,7 +225,7 @@
       <!-- 3. BLOQUE FUTURO: Roadmap + CTA -->
       <section class="future-section">
         <div class="bento-container">
-          <div class="roadmap-block">
+          <div class="roadmap-block reveal">
             <h2>🔮 Roadmap 2024</h2>
             <div class="roadmap-items">
               <span class="roadmap-tag">Videollamadas P2P</span>
@@ -231,7 +235,7 @@
             </div>
           </div>
           
-          <div class="cta-block">
+          <div class="cta-block reveal">
             <h2>🌄 Únete al camino</h2>
             <p>Chasqui es autonomía, comunidad y privacidad.</p>
             <div class="cta-buttons">
@@ -246,7 +250,6 @@
 
 <script setup>
 import heroBg from '../assets/images/fondo_wiracocha_redes_copy.webp'
-import mainBg from '../assets/images/montana.webp'
 
 // Datos para características
 const features = [
@@ -317,4 +320,25 @@ const pricingPlans = [
     featured: false
   }
 ];
+
+import { onMounted } from 'vue';
+
+onMounted(() => {
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+        observer.unobserve(entry.target); // Animate only once
+      }
+    });
+  }, observerOptions);
+
+  const elements = document.querySelectorAll('.reveal');
+  elements.forEach((el) => observer.observe(el));
+});
 </script>

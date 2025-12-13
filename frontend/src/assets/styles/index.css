@@ -112,6 +112,7 @@ section li {
 #box3 {
   grid-area: box3;
   border-color: var(--color-brand) !important;
+  background: var(--color-action);
 }
 
 #box4 {
@@ -202,8 +203,9 @@ section li {
 
 .feature-desc {
   font-size: 0.9rem;
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
   opacity: 0.8;
+  font-weight: 700;
 }
 
 /* Box alto */
@@ -415,12 +417,6 @@ section li {
   border-color: var(--color-action);
 }
 
-.hero-section {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
 /* Identity Section */
 .split-layout {
   display: flex;
@@ -568,12 +564,23 @@ section li {
 
 /* Fixed Background Wrapper -> Now Full Height Scroll */
 .content-background-wrapper {
-  background-size: 100% 100%;
-  /* Force stretch to ensure full image visibility as requested */
-  background-position: top center;
-  background-repeat: no-repeat;
   padding-bottom: 4rem;
+  background: transparent !important;
 }
+
+/* Scroll Reveal Animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s ease-out;
+  will-change: opacity, transform;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 
 /* Transparency for content to show fixed background */
 .content-background-wrapper .identity-target {
@@ -587,4 +594,17 @@ section li {
   background: rgba(47, 46, 43, 0.85);
   /* Semi-transparent version of --color-primary */
   backdrop-filter: blur(8px);
+}
+
+/* Fixed Background Implementation */
+.fixed-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: -1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
