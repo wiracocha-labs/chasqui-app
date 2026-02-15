@@ -2,6 +2,14 @@
 
 This directory contains project-specific instructions and workflows for the Chasqui App.
 
+## 🛠️ Protocolo de Interacción (CRÍTICO)
+*   **Análisis Previo:** ANTES de editar cualquier archivo, el agente debe realizar un análisis exhaustivo del código afectado.
+*   **Comunicación:** El agente debe reportar primero:
+    1.  Posibles bugs o errores encontrados.
+    2.  Oportunidades de mejora o refactorización.
+    3.  Impacto del cambio propuesto.
+*   **Aprobación:** Solo se debe proceder con la edición del código una vez que el usuario haya validado el análisis y la propuesta.
+
 ## Project Overview
 Chasqui is a decentralized communication platform designed for remote teams. It focuses on privacy and integrated productivity.
 
@@ -40,3 +48,5 @@ If the task involves **contracts, private payments, or data on-chain**:
 - `frontend/`: All Vue.js components, views, and services.
 - `web3/`: All Solidity contracts, Hardhat scripts, and tests.
 - `deployments/`: Contract addresses and deployment history.
+- `.agent/roadmap-web2.md`: Roadmap for Backend, AI, and UI tasks.
+- `.agent/roadmap-web3.md`: Roadmap for Smart Contracts and Blockchain tasks.
