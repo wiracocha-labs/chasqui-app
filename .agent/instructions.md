@@ -4,6 +4,7 @@ This directory contains project-specific instructions and workflows for the Chas
 
 ## 🛠️ Protocolo de Interacción (CRÍTICO)
 *   **Análisis Previo:** ANTES de editar cualquier archivo, el agente debe realizar un análisis exhaustivo del código afectado.
+*   **Estatus Técnico:** Para tareas de Frontend, el agente DEBE seguir los estándares definidos en `[vue-best-practices](file:///Users/renzotincopa/Documents/Wiracocha/chasqui-app/.agents/skills/vue-best-practices/SKILL.md)`.
 *   **Comunicación:** El agente debe reportar primero:
     1.  Posibles bugs o errores encontrados.
     2.  Oportunidades de mejora o refactorización.
