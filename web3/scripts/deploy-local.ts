@@ -87,8 +87,10 @@ async function main(): Promise<void> {
   console.log("\n📋 Creando tareas de ejemplo...");
   
   try {
+    const deadline = Math.floor(Date.now() / 1000) + 7 * 24 * 3600; // 7 días
     // Tarea pública
     const publicTaskTx = await mainContract.connect(user1).createPublicEscrow(
+      deadline,
       user2.address,
       "Desarrollar feature X - Implementar sistema de autenticación",
       { value: ethers.parseEther("1.0") }
@@ -101,6 +103,7 @@ async function main(): Promise<void> {
     const mockProof = "0xabcdef1234567890abcdef1234567890";
     
     const privateTaskTx = await mainContract.connect(user1).createPrivateEscrow(
+      deadline,
       user2.address,
       mockEncryptedAmount,
       mockProof,
@@ -117,7 +120,9 @@ async function main(): Promise<void> {
   // 5. Crear una tarea completada para mostrar el flujo completo
   console.log("\n🎯 Creando escenario de tarea completada...");
   try {
+    const deadlineExample = Math.floor(Date.now() / 1000) + 7 * 24 * 3600;
     const completedTaskTx = await mainContract.connect(user1).createPublicEscrow(
+      deadlineExample,
       user2.address,
       "Tarea completada de ejemplo",
       { value: ethers.parseEther("0.5") }
@@ -126,8 +131,10 @@ async function main(): Promise<void> {
     
     const taskId = await mainContract.getTotalEscrows() - BigInt(1);
     
-    // Marcar como completada
-    await mainContract.markTaskCompleted(taskId);
+    // Ambas partes confirman (Opción A) para poder liberar
+    await mainContract.connect(user1).confirmByDepositor(taskId);
+    await mainContract.connect(user2).confirmByBeneficiary(taskId);
+    await mainContract.connect(user1).releaseFunds(taskId);
     console.log(`✅ Tarea ${taskId} marcada como completada`);
     
   } catch (error) {
@@ -192,7 +199,7 @@ async function main(): Promise<void> {
 
   // 8. Actualizar config del frontend si existe
   try {
-    const frontendConfigPath = '../frontend/src/config/contracts.ts';
+    const frontendConfigPath = 'frontend/src/config/contracts.ts';
     if (existsSync(frontendConfigPath)) {
       const configUpdate = `// Auto-generated from deploy script
 export const CONTRACT_ADDRESSES = {

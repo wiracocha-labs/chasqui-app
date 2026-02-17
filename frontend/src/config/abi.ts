@@ -30,7 +30,10 @@ export const AUTHORIZATION_WITH_ESCROW_ABI = [
       {"internalType": "bool", "name": "isCompleted", "type": "bool"},
       {"internalType": "bool", "name": "isReleased", "type": "bool"},
       {"internalType": "bool", "name": "isPrivate", "type": "bool"},
-      {"internalType": "uint256", "name": "timestamp", "type": "uint256"}
+      {"internalType": "uint256", "name": "timestamp", "type": "uint256"},
+      {"internalType": "uint256", "name": "deadline", "type": "uint256"},
+      {"internalType": "bool", "name": "depositorConfirmed", "type": "bool"},
+      {"internalType": "bool", "name": "beneficiaryConfirmed", "type": "bool"}
     ],
     "stateMutability": "view",
     "type": "function"
@@ -106,6 +109,7 @@ export const AUTHORIZATION_WITH_ESCROW_ABI = [
   },
   {
     "inputs": [
+      {"internalType": "uint256", "name": "_deadline", "type": "uint256"},
       {"internalType": "address", "name": "_beneficiary", "type": "address"},
       {"internalType": "string", "name": "_taskDescription", "type": "string"}
     ],
@@ -116,12 +120,27 @@ export const AUTHORIZATION_WITH_ESCROW_ABI = [
   },
   {
     "inputs": [
+      {"internalType": "uint256", "name": "_deadline", "type": "uint256"},
       {"internalType": "address", "name": "_beneficiary", "type": "address"},
       {"internalType": "bytes32", "name": "_encryptedAmount", "type": "bytes32"},
       {"internalType": "bytes", "name": "_zkProof", "type": "bytes"},
       {"internalType": "string", "name": "_taskDescription", "type": "string"}
     ],
     "name": "createPrivateEscrow",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "uint256", "name": "_escrowId", "type": "uint256"}],
+    "name": "confirmByDepositor",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "uint256", "name": "_escrowId", "type": "uint256"}],
+    "name": "confirmByBeneficiary",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -268,7 +287,7 @@ export const AUTHORIZATION_WITH_ESCROW_ABI = [
 export const AUTHORIZATION_SIMPLE_ABI = [
   // Funciones de lectura
   "function getTotalEscrows() view returns (uint256)",
-  "function getEscrowDetails(uint256) view returns (address,address,bytes32,uint256,string,bool,bool,bool,uint256)",
+  "function getEscrowDetails(uint256) view returns (address,address,bytes32,uint256,string,bool,bool,bool,uint256,uint256,bool,bool)",
   "function getUserEscrows(address) view returns (uint256[])",
   "function isAuthorized(address) view returns (bool)",
   "function isRegisteredForPrivacy(address) view returns (bool)",
@@ -277,8 +296,10 @@ export const AUTHORIZATION_SIMPLE_ABI = [
   "function getTaskVerification(uint256) view returns (bytes32,bytes,address,uint256)",
   
   // Funciones de escritura
-  "function createPublicEscrow(address,string) payable",
-  "function createPrivateEscrow(address,bytes32,bytes,string)",
+  "function createPublicEscrow(uint256,address,string) payable",
+  "function createPrivateEscrow(uint256,address,bytes32,bytes,string)",
+  "function confirmByDepositor(uint256)",
+  "function confirmByBeneficiary(uint256)",
   "function markTaskCompleted(uint256)",
   "function markTaskCompletedWithZK(uint256,bytes32,bytes)",
   "function releaseFunds(uint256)",
