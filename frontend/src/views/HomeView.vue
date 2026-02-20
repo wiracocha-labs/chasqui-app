@@ -25,13 +25,11 @@
             </div>
 
             <!-- 2. Box 1: Imagen Pequeña Arriba a la Derecha -->
-            <div id="box1" class="bento-box reveal">
-              <div class="box-placeholder">Imagen 1</div>
+            <div id="box1" class="bento-box reveal" :style="{ backgroundImage: `url('${heroBox1}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
             </div>
 
             <!-- 3. Box 2: Imagen Larga Vertical a la Derecha (1x2) -->
-            <div id="box2" class="bento-box bento-tall reveal">
-              <div class="box-placeholder">Imagen 2</div>
+            <div id="box2" class="bento-box bento-tall reveal" :style="{ backgroundImage: `url('${heroBox2}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
             </div>
 
             <!-- 4. Box 3: Imagen Pequeña Abajo a la Izquierda -->
@@ -42,8 +40,12 @@
             </div>
 
             <!-- 5. Box 4: Imagen Pequeña Abajo al Centro -->
-            <div id="box4" class="bento-box reveal">
-              <div class="box-placeholder">Imagen 3</div>
+            <div id="box4" class="bento-box reveal" :style="{ backgroundImage: `url('${heroBox3}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
+            </div>
+
+            <!-- Personaje flotante -->
+            <div class="floating-character reveal">
+              <img :src="chasquiCharacter" alt="Chasqui Character" />
             </div>
         </header>
       </div>
@@ -89,7 +91,7 @@
 
       <!-- Sección de Características (Bento Grid existente) -->
       <section class="bento-container">
-        <div class="bento-grid">
+        <div class="bento-grid bento-grid--features">
           <!-- Título principal -->
           <div class="bento-tile bento-tile--full reveal">
             <div class="bento-content">
@@ -107,16 +109,24 @@
             </div>
           </div>
           
-          <!-- Imagen full-width debajo de los planes -->
-          <div class="bento-tile bento-tile--full bento-tile--right reveal">
-            <div class="bento-content">
-              <div class="box-placeholder">Imagen 1 de características</div>
-            </div>
+          <div 
+            class="bento-tile bento-tile--full bento-tile--right reveal" 
+            :style="{ backgroundImage: `url('${featureImage1}')` }"
+          >
           </div>
-          <div class="bento-tile bento-tile--full bento-tile--left feature-image-2 reveal">
-            <div class="bento-content">
-              <div class="box-placeholder">Imagen 2 de características</div>
-            </div>
+          
+          <div 
+            class="bento-tile bento-tile--full bento-tile--left feature-image-2 reveal" 
+            :style="{ backgroundImage: `url('${featureImage2}')` }"
+          >
+          </div>
+
+          <!-- Personajes flotantes laterales (Nivel Grid para evitar problemas de capas) -->
+          <div class="floating-side floating-side--left">
+            <img :src="chasqui2" alt="Chasqui 2" />
+          </div>
+          <div class="floating-side floating-side--right">
+            <img :src="chasqui3" alt="Chasqui 3" />
           </div>
         </div>
       </section>
@@ -250,6 +260,16 @@
 
 <script setup>
 import heroBg from '../assets/images/fondo_wiracocha_redes_copy.webp'
+import heroBox1 from '../assets/images/bg_hero_1.png'
+import heroBox2 from '../assets/images/bg_hero_2.png'
+import heroBox3 from '../assets/images/bg_hero_3.png'
+import chasquiCharacter from '../assets/images/chasqui_character.png'
+
+// Imágenes de características
+import featureImage1 from '../assets/images/imagen_1_caracteristicas.webp'
+import featureImage2 from '../assets/images/imagen_2_caracteristicas.webp'
+import chasqui2 from '../assets/images/chasqui_2.webp'
+import chasqui3 from '../assets/images/chasqui_3.webp'
 
 // Datos para características
 const features = [
