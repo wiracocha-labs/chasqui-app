@@ -5,6 +5,11 @@ import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signer
 
 type Contract = any; // Temporal hasta generar typechain
 
+async function getDeadline(): Promise<number> {
+  const block = await ethers.provider!.getBlock("latest");
+  return (block!.timestamp + 7 * 24 * 3600);
+}
+
 describe("AuthorizationWithEERC20Escrow", function () {
   let contract: Contract;
   let owner: HardhatEthersSigner;
@@ -67,11 +72,13 @@ describe("AuthorizationWithEERC20Escrow", function () {
 
   describe("Escrows Públicos", function () {
     it("Debe crear un escrow público", async function () {
+      const deadline = await getDeadline();
       const taskDescription = "Desarrollar una función";
       const amount = ethers.parseEther("1.0");
 
       await expect(
         contract.connect(user1).createPublicEscrow(
+          deadline,
           user2.address,
           taskDescription,
           { value: amount }
@@ -82,8 +89,10 @@ describe("AuthorizationWithEERC20Escrow", function () {
     });
 
     it("No debe permitir crear escrow sin monto", async function () {
+      const deadline = await getDeadline();
       await expect(
         contract.connect(user1).createPublicEscrow(
+          deadline,
           user2.address,
           "Test task"
         )
@@ -91,8 +100,10 @@ describe("AuthorizationWithEERC20Escrow", function () {
     });
 
     it("No debe permitir ser tu propio beneficiario", async function () {
+      const deadline = await getDeadline();
       await expect(
         contract.connect(user1).createPublicEscrow(
+          deadline,
           user1.address,
           "Test task",
           { value: ethers.parseEther("1.0") }
@@ -105,11 +116,12 @@ describe("AuthorizationWithEERC20Escrow", function () {
     let escrowId: number;
 
     beforeEach(async function () {
-      // Crear un escrow público para las pruebas
+      const deadline = await getDeadline();
       const taskDescription = "Tarea de prueba";
       const amount = ethers.parseEther("1.0");
 
       await contract.connect(user1).createPublicEscrow(
+        deadline,
         user2.address,
         taskDescription,
         { value: amount }
@@ -128,27 +140,24 @@ describe("AuthorizationWithEERC20Escrow", function () {
       ).to.be.revertedWith("No autorizado");
     });
 
-    it("Debe permitir liberar fondos después de completar tarea", async function () {
-      // Marcar como completada
-      await contract.markTaskCompleted(escrowId);
+    it("Debe permitir liberar fondos cuando ambas partes confirman (Opción A)", async function () {
+      await contract.connect(user1).confirmByDepositor(escrowId);
+      await contract.connect(user2).confirmByBeneficiary(escrowId);
 
-      // Verificar balance inicial
       const initialBalance = await ethers.provider.getBalance(user2.address);
 
-      // Liberar fondos
       await expect(
         contract.connect(user1).releaseFunds(escrowId)
       ).to.emit(contract, "PrivateFundsReleased");
 
-      // Verificar que recibió los fondos
       const finalBalance = await ethers.provider.getBalance(user2.address);
       expect(finalBalance).to.be.gt(initialBalance);
     });
 
-    it("No debe permitir liberar fondos sin completar tarea", async function () {
+    it("No debe permitir liberar fondos sin confirmación de ambas partes", async function () {
       await expect(
         contract.connect(user1).releaseFunds(escrowId)
-      ).to.be.revertedWith("Tarea no completada");
+      ).to.be.revertedWith("Ambas partes deben confirmar");
     });
 
     it("Debe permitir cancelar escrow no completado", async function () {
@@ -187,12 +196,14 @@ describe("AuthorizationWithEERC20Escrow", function () {
     });
 
     it("Debe crear un escrow privado", async function () {
+      const deadline = await getDeadline();
       const taskDescription = "Tarea privada";
       const encryptedAmount = "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef";
       const zkProof = "0xabcdef1234567890";
 
       await expect(
         contract.connect(user1).createPrivateEscrow(
+          deadline,
           user2.address,
           encryptedAmount,
           zkProof,
@@ -205,10 +216,9 @@ describe("AuthorizationWithEERC20Escrow", function () {
     });
 
     it("No debe permitir crear escrow privado sin registro", async function () {
-      // Crear un usuario no registrado
+      const deadline = await getDeadline();
       const [, , user3] = await ethers.getSigners();
       
-      // Asegurar que user3 NO está registrado
       await mockEERC20.mockUnregisterUser(user3.address);
       expect(await mockEERC20.isRegistered(user3.address)).to.be.false;
 
@@ -218,7 +228,8 @@ describe("AuthorizationWithEERC20Escrow", function () {
 
       await expect(
         contract.connect(user3).createPrivateEscrow(
-          user1.address, // Cambiar beneficiario a user1 que sí está registrado
+          deadline,
+          user1.address,
           encryptedAmount,
           zkProof,
           taskDescription
@@ -229,10 +240,12 @@ describe("AuthorizationWithEERC20Escrow", function () {
 
   describe("Consultas", function () {
     it("Debe retornar detalles del escrow correctos", async function () {
+      const deadline = await getDeadline();
       const taskDescription = "Tarea de consulta";
       const amount = ethers.parseEther("2.0");
 
       await contract.connect(user1).createPublicEscrow(
+        deadline,
         user2.address,
         taskDescription,
         { value: amount }
@@ -244,16 +257,20 @@ describe("AuthorizationWithEERC20Escrow", function () {
       expect(details[3]).to.equal(amount); // publicAmount
       expect(details[4]).to.equal(taskDescription); // taskDescription
       expect(details[7]).to.be.false; // isPrivate
+      expect(details[9]).to.equal(deadline); // deadline
     });
 
     it("Debe retornar escrows del usuario", async function () {
+      const deadline = await getDeadline();
       await contract.connect(user1).createPublicEscrow(
+        deadline,
         user2.address,
         "Tarea 1",
         { value: ethers.parseEther("1.0") }
       );
 
       await contract.connect(user1).createPublicEscrow(
+        deadline,
         user2.address,
         "Tarea 2",
         { value: ethers.parseEther("1.0") }

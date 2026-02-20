@@ -120,8 +120,10 @@ export function useTaskManager() {
       const taskType = createForm.value.isPrivate ? 'private' : 'public'
       log.info('TaskManager', `Creating ${taskType} escrow for: ${createForm.value.beneficiary}`)
       
+      const deadline = Math.floor(Date.now() / 1000) + 7 * 24 * 3600 // 7 días
       if (createForm.value.isPrivate) {
         await web3Service.createPrivateEscrow(
+          deadline,
           createForm.value.beneficiary,
           createForm.value.encryptedAmount || '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef',
           createForm.value.zkProof || '0xabcdef1234567890abcdef1234567890',
@@ -129,6 +131,7 @@ export function useTaskManager() {
         )
       } else {
         await web3Service.createPublicEscrow(
+          deadline,
           createForm.value.beneficiary,
           createForm.value.taskDescription,
           createForm.value.amount

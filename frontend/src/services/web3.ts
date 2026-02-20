@@ -15,6 +15,9 @@ export interface EscrowDetails {
   isReleased: boolean
   isPrivate: boolean
   timestamp: number
+  deadline: number
+  depositorConfirmed: boolean
+  beneficiaryConfirmed: boolean
 }
 
 export class Web3Service {
@@ -130,7 +133,10 @@ export class Web3Service {
         isCompleted: details[5],
         isReleased: details[6],
         isPrivate: details[7],
-        timestamp: Number(details[8])
+        timestamp: Number(details[8]),
+        deadline: Number(details[9]),
+        depositorConfirmed: details[10],
+        beneficiaryConfirmed: details[11]
       }
       
       log.debug('Web3Service', `Escrow details retrieved for ID ${escrowId}`)
@@ -188,7 +194,7 @@ export class Web3Service {
 
   // FUNCIONES DE ESCRITURA
 
-  async createPublicEscrow(beneficiary: string, taskDescription: string, amount: string) {
+  async createPublicEscrow(deadline: number, beneficiary: string, taskDescription: string, amount: string) {
     if (!this.contract) {
       throw Web3Error.contractNotFound(this.contractAddress)
     }
@@ -196,6 +202,7 @@ export class Web3Service {
     try {
       log.info('Web3Service', `Creating public escrow: ${taskDescription} for ${amount} AVAX`)
       const tx = await this.contract.createPublicEscrow(
+        deadline,
         beneficiary,
         taskDescription,
         { value: ethers.parseEther(amount) }
@@ -211,9 +218,10 @@ export class Web3Service {
   }
 
   async createPrivateEscrow(
-    beneficiary: string, 
-    encryptedAmount: string, 
-    zkProof: string, 
+    deadline: number,
+    beneficiary: string,
+    encryptedAmount: string,
+    zkProof: string,
     taskDescription: string
   ) {
     if (!this.contract) {
@@ -223,6 +231,7 @@ export class Web3Service {
     try {
       log.info('Web3Service', `Creating private escrow: ${taskDescription}`)
       const tx = await this.contract.createPrivateEscrow(
+        deadline,
         beneficiary,
         encryptedAmount,
         zkProof,
@@ -235,6 +244,32 @@ export class Web3Service {
       return receipt
     } catch (error) {
       throw Web3Error.transactionFailed('Failed to create private escrow', error)
+    }
+  }
+
+  async confirmByDepositor(escrowId: number) {
+    if (!this.contract) {
+      throw Web3Error.contractNotFound(this.contractAddress)
+    }
+    try {
+      const tx = await this.contract.confirmByDepositor(escrowId)
+      const receipt = await tx.wait()
+      return receipt
+    } catch (error) {
+      throw Web3Error.transactionFailed(`Failed to confirm as depositor for escrow ${escrowId}`, error)
+    }
+  }
+
+  async confirmByBeneficiary(escrowId: number) {
+    if (!this.contract) {
+      throw Web3Error.contractNotFound(this.contractAddress)
+    }
+    try {
+      const tx = await this.contract.confirmByBeneficiary(escrowId)
+      const receipt = await tx.wait()
+      return receipt
+    } catch (error) {
+      throw Web3Error.transactionFailed(`Failed to confirm as beneficiary for escrow ${escrowId}`, error)
     }
   }
 

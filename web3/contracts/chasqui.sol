@@ -48,6 +48,9 @@ contract AuthorizationWithEERC20Escrow {
     
     // Estructura para manejar depósitos en escrow con eERC20
     struct EEscrowDeposit {
+        uint256 deadline;            // Campo de tiempo límite para que partes acuerden
+        bool depositorConfirmed;     // Si el depositante ha confirmado la tarea
+        bool beneficiaryConfirmed;   // Si el beneficiario ha confirmado la tarea
         address depositor;           // Quien deposita el dinero
         address beneficiary;         // Quien recibirá el dinero
         bytes32 encryptedAmount;     // Cantidad encriptada
@@ -79,6 +82,7 @@ contract AuthorizationWithEERC20Escrow {
     
     // Eventos
     event UserAuthorized(address indexed user, bool isAuthorized);
+    /// @dev Evento de retención de fondos: el dinero queda en escrow hasta acuerdo de partes o cancelación
     event EEscrowCreated(
         uint256 indexed escrowId,
         address indexed depositor,
@@ -87,6 +91,7 @@ contract AuthorizationWithEERC20Escrow {
         string taskDescription,
         bool isPrivate
     );
+    event PartyConfirmed(uint256 indexed escrowId, address indexed party, bool isDepositor);
     event TaskCompletedWithZK(
         uint256 indexed escrowId,
         bytes32 taskHash,
@@ -166,11 +171,13 @@ contract AuthorizationWithEERC20Escrow {
      * @param _taskDescription Descripción de la tarea a realizar
      */
     function createPrivateEscrow(
+        uint256 _deadline,
         address _beneficiary,
         bytes32 _encryptedAmount,
         bytes calldata _zkProof,
         string memory _taskDescription
     ) public onlyRegistered {
+        require(_deadline > block.timestamp, "Deadline debe ser en el futuro");
         require(_beneficiary != address(0), "Beneficiario invalido");
         require(_beneficiary != msg.sender, "No puedes ser tu propio beneficiario");
         require(bytes(_taskDescription).length > 0, "Descripcion de tarea requerida");
@@ -184,6 +191,9 @@ contract AuthorizationWithEERC20Escrow {
         uint256 escrowId = escrowCounter;
         
         escrowDeposits[escrowId] = EEscrowDeposit({
+            deadline: _deadline,
+            depositorConfirmed: false,
+            beneficiaryConfirmed: false,
             depositor: msg.sender,
             beneficiary: _beneficiary,
             encryptedAmount: _encryptedAmount,
@@ -219,10 +229,12 @@ contract AuthorizationWithEERC20Escrow {
      * @dev Crear un escrow público tradicional (fallback)
      */
     function createPublicEscrow(
+        uint256 _deadline,
         address _beneficiary,
         string memory _taskDescription
     ) public payable {
         require(msg.value > 0, "Debe enviar algo de dinero");
+        require(_deadline > block.timestamp, "Deadline debe ser en el futuro");
         require(_beneficiary != address(0), "Beneficiario invalido");
         require(_beneficiary != msg.sender, "No puedes ser tu propio beneficiario");
         require(bytes(_taskDescription).length > 0, "Descripcion de tarea requerida");
@@ -230,6 +242,9 @@ contract AuthorizationWithEERC20Escrow {
         uint256 escrowId = escrowCounter;
         
         escrowDeposits[escrowId] = EEscrowDeposit({
+            deadline: _deadline,
+            depositorConfirmed: false,
+            beneficiaryConfirmed: false,
             depositor: msg.sender,
             beneficiary: _beneficiary,
             encryptedAmount: 0,
@@ -253,6 +268,32 @@ contract AuthorizationWithEERC20Escrow {
             _taskDescription,
             false
         );
+    }
+    
+    /**
+     * @dev El depositante confirma que la tarea fue completada con éxito (acuerdo Opción A)
+     */
+    function confirmByDepositor(uint256 _escrowId) public validEscrow(_escrowId) {
+        EEscrowDeposit storage deposit = escrowDeposits[_escrowId];
+        require(msg.sender == deposit.depositor, "Solo el depositante puede confirmar");
+        require(!deposit.isReleased, "Escrow ya liberado o cancelado");
+        require(block.timestamp <= deposit.deadline, "Plazo vencido");
+        require(!deposit.depositorConfirmed, "Ya confirmaste");
+        deposit.depositorConfirmed = true;
+        emit PartyConfirmed(_escrowId, msg.sender, true);
+    }
+    
+    /**
+     * @dev El beneficiario confirma que la tarea fue completada con éxito (acuerdo Opción A)
+     */
+    function confirmByBeneficiary(uint256 _escrowId) public validEscrow(_escrowId) {
+        EEscrowDeposit storage deposit = escrowDeposits[_escrowId];
+        require(msg.sender == deposit.beneficiary, "Solo el beneficiario puede confirmar");
+        require(!deposit.isReleased, "Escrow ya liberado o cancelado");
+        require(block.timestamp <= deposit.deadline, "Plazo vencido");
+        require(!deposit.beneficiaryConfirmed, "Ya confirmaste");
+        deposit.beneficiaryConfirmed = true;
+        emit PartyConfirmed(_escrowId, msg.sender, false);
     }
     
     /**
@@ -320,7 +361,8 @@ contract AuthorizationWithEERC20Escrow {
             isAuthorized(msg.sender),
             "No autorizado para liberar fondos"
         );
-        require(deposit.isCompleted, "Tarea no completada");
+        require(deposit.depositorConfirmed && deposit.beneficiaryConfirmed, "Ambas partes deben confirmar");
+        require(block.timestamp <= deposit.deadline, "Plazo vencido");
         require(!deposit.isReleased, "Fondos ya liberados");
         
         deposit.isReleased = true;
@@ -351,7 +393,8 @@ contract AuthorizationWithEERC20Escrow {
             isAuthorized(msg.sender),
             "No autorizado para liberar fondos"
         );
-        require(deposit.isCompleted, "Tarea no completada");
+        require(deposit.depositorConfirmed && deposit.beneficiaryConfirmed, "Ambas partes deben confirmar");
+        require(block.timestamp <= deposit.deadline, "Plazo vencido");
         require(!deposit.isReleased, "Fondos ya liberados");
         
         deposit.isReleased = true;
@@ -361,7 +404,7 @@ contract AuthorizationWithEERC20Escrow {
     }
     
     /**
-     * @dev Cancelar escrow privado
+     * @dev Cancelar escrow privado. Antes del deadline: solo si no completado. Tras el deadline: si no hubo acuerdo de ambas partes.
      */
     function cancelPrivateEscrow(
         uint256 _escrowId,
@@ -375,7 +418,11 @@ contract AuthorizationWithEERC20Escrow {
             "Solo el depositante o el owner pueden cancelar"
         );
         require(!deposit.isReleased, "Fondos ya liberados");
-        require(!deposit.isCompleted, "No se puede cancelar una tarea completada");
+        if (block.timestamp <= deposit.deadline) {
+            require(!deposit.isCompleted, "No se puede cancelar una tarea completada");
+        } else {
+            require(!deposit.depositorConfirmed || !deposit.beneficiaryConfirmed, "Ambas partes acordaron, no se puede cancelar");
+        }
         
         deposit.isReleased = true;
         
@@ -393,7 +440,7 @@ contract AuthorizationWithEERC20Escrow {
     }
     
     /**
-     * @dev Cancelar escrow público
+     * @dev Cancelar escrow público. Antes del deadline: solo si no completado. Tras el deadline: si no hubo acuerdo de ambas partes.
      */
     function cancelEscrow(uint256 _escrowId) public validEscrow(_escrowId) {
         EEscrowDeposit storage deposit = escrowDeposits[_escrowId];
@@ -404,7 +451,11 @@ contract AuthorizationWithEERC20Escrow {
             "Solo el depositante o el owner pueden cancelar"
         );
         require(!deposit.isReleased, "Fondos ya liberados");
-        require(!deposit.isCompleted, "No se puede cancelar una tarea completada");
+        if (block.timestamp <= deposit.deadline) {
+            require(!deposit.isCompleted, "No se puede cancelar una tarea completada");
+        } else {
+            require(!deposit.depositorConfirmed || !deposit.beneficiaryConfirmed, "Ambas partes acordaron, no se puede cancelar");
+        }
         
         deposit.isReleased = true;
         payable(deposit.depositor).transfer(deposit.publicAmount);
@@ -426,7 +477,10 @@ contract AuthorizationWithEERC20Escrow {
         bool isCompleted,
         bool isReleased,
         bool isPrivate,
-        uint256 timestamp
+        uint256 timestamp,
+        uint256 deadline,
+        bool depositorConfirmed,
+        bool beneficiaryConfirmed
     ) {
         EEscrowDeposit storage deposit = escrowDeposits[_escrowId];
         return (
@@ -438,7 +492,10 @@ contract AuthorizationWithEERC20Escrow {
             deposit.isCompleted,
             deposit.isReleased,
             deposit.isPrivate,
-            deposit.timestamp
+            deposit.timestamp,
+            deposit.deadline,
+            deposit.depositorConfirmed,
+            deposit.beneficiaryConfirmed
         );
     }
     
