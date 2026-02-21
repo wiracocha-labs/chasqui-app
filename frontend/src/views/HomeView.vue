@@ -11,10 +11,10 @@
           <div id="hero-main-content" class="bento-main reveal">
               <div>
                 <h1>
-                  <span class="text-brand">📨 Chasqui</span> — Comunicación descentralizada para equipos remotos
+                  <span class="text-brand">📨 Chasqui</span> — Privacidad y coordinación para equipos remotos
                 </h1>
                 <p class="tagline">
-                  Colabora sin fricción. Comparte sin miedo. La plataforma ligera, segura y comunitaria para equipos que valoran la privacidad y el foco.
+                  La alternativa ética y eficiente para equipos remotos. Gestiona tu comunicación, coordina por objetivos y asegura tus pagos automáticamente en un solo lugar. Sin vigilancia, sin complicaciones.
                 </p>
               </div>
               
@@ -56,33 +56,33 @@
       <section class="identity-section">
         <div class="bento-container split-layout">
           <div class="identity-content reveal">
-            <h2>🚀 ¿Qué es Chasqui?</h2>
-            <p class="lead">Es una plataforma de comunicación para equipos remotos, construida sobre una arquitectura descentralizada, segura y ligera.</p>
+            <h2>🚀 La Evolución de la Colaboración</h2>
+            <p class="lead">Chasqui nace para quienes creen que el trabajo se mide por <strong>resultados, no por horas</strong>. Optimizamos para la autonomía del equipo y la tranquilidad de los clientes.</p>
             
             <div class="philosophy-box">
-              <blockquote>"Tecnología con alma comunitaria."</blockquote>
-              <p>Valores Wiracocha Labs: Sabiduría compartida y colaboración sobre competencia.</p>
+              <blockquote>"Privacidad real, transparencia radical y pagos sin fricción."</blockquote>
+              <p>Aprendemos juntos: Fomentamos una cultura de comunicación efectiva donde los datos son tuyos y el proceso es 100% abierto.</p>
             </div>
           </div>
 
           <div class="identity-target reveal">
-            <h3>🎯 Ideal para equipos que buscan:</h3>
+            <h3>🎯 Ideal para:</h3>
             <ul class="check-list">
               <li>
                 <span class="check-icon">✅</span>
-                <span><strong>Privacidad real:</strong> Propiedad total de tus datos.</span>
+                <span><strong>Equipos Remotos:</strong> De 10 a 50 personas que buscan eficiencia.</span>
               </li>
               <li>
                 <span class="check-icon">✅</span>
-                <span><strong>Independencia:</strong> Sin depender de backends monolíticos.</span>
+                <span><strong>Freelancers y Agencias:</strong> Pagos seguros sin comisiones del 30%.</span>
               </li>
               <li>
                 <span class="check-icon">✅</span>
-                <span><strong>Ahorro inteligente:</strong> No pagar $800+ al año por un chat.</span>
+                <span><span><strong>Comunidades Open-Source:</strong> Transparencia y soberanía de datos.</span></span>
               </li>
               <li>
                 <span class="check-icon">✅</span>
-                <span><strong>Foco:</strong> Una herramienta que hace una cosa bien.</span>
+                <span><strong>Cualquier equipo</strong> que valore la privacidad estructural.</span>
               </li>
             </ul>
           </div>
@@ -110,10 +110,6 @@
           </div>
           
           <!-- Fila 1: Acento + Imagen 1 -->
-          <div class="bento-tile bento-tile--accent">
-            <div class="accent-icon">🤝</div>
-            <div class="accent-text">100% Open Source</div>
-          </div>
           <div 
             class="bento-tile bento-tile--full bento-tile--right reveal" 
             :style="{ backgroundImage: `url('${featureImage1}')` }"
@@ -126,10 +122,6 @@
             :style="{ backgroundImage: `url('${featureImage2}')` }"
           >
           </div>
-          <div class="bento-tile bento-tile--accent">
-            <div class="accent-icon">🌍</div>
-            <div class="accent-text">Nodos Globales</div>
-          </div>
 
           <!-- Personajes flotantes laterales (Nivel Grid para evitar problemas de capas) -->
           <div class="floating-side floating-side--left">
@@ -141,28 +133,32 @@
         </div>
       </section>
 
-      <!-- 2. BLOQUE ARQUITECTURA: Tecnología + Seguridad -->
+      <!-- 2. BLOQUE VALORES Y EDUCACIÓN -->
       <section class="tech-section">
         <div class="bento-container">
           <div class="tech-grid">
             <div class="tech-card reveal">
-              <h3>🛠️ El Motor (Tech Stack)</h3>
+              <h3>🌱 Mentalidad Chasqui</h3>
               <ul class="tech-list">
-                <li><strong>Frontend:</strong> Svelte / TypeScript</li>
-                <li><strong>Core P2P:</strong> GunJS</li>
-                <li><strong>Web3:</strong> Avalanche (Identidad & Trazabilidad)</li>
-                <li><strong>Infra:</strong> Serverless minimalista</li>
+                <li><strong>Comunicación Efectiva:</strong> Menos ruido, más foco en objetivos.</li>
+                <li><strong>Soberanía de Datos:</strong> Tu información es tuya, no de la plataforma.</li>
+                <li><strong>100% Open Source:</strong> Construimos en público, para la comunidad.</li>
+                <li><strong>Transparencia Radical:</strong> Roadmap y procesos siempre visibles.</li>
               </ul>
             </div>
             
             <div class="tech-card security-card reveal">
-              <h3>🔒 Seguridad por Diseño</h3>
-              <ul class="tech-list">
-                <li>Tráfico Peer-to-Peer directo</li>
-                <li>Cifrado extremo a extremo (roadmap)</li>
-                <li>Sin minería de datos ni rastreadores</li>
-                <li>Tus conversaciones no entrenan ninguna IA ajena</li>
+              <h3>🔍 Arquitectura Técnica del MVP</h3>
+              <p>Diseñado para ser ligero, seguro y escalable. Nuestra arquitectura separa la comunicación del valor:</p>
+              <ul class="tech-list tech-list--grid">
+                <li><strong>Comunicación:</strong> Actix-web (Mensajería P2P y canales)</li>
+                <li><strong>Frontend:</strong> VueJS / Vite (UI rápida y sin backend)</li>
+                <li><strong>Webhooks:</strong> Actix-web (GitHub, Figma, Drive integration)</li>
+                <li><strong>Web3:</strong> Avalanche (Identidad, firma y trazabilidad)</li>
+                <li><strong>AI:</strong> OpenAI API (Resúmenes de conversaciones)</li>
+                <li><strong>Infra:</strong> Fly.io / Railway (Hospedaje liviano)</li>
               </ul>
+              <a href="#" class="tech-link">Ver documentación técnica en GitHub →</a>
             </div>
           </div>
         </div>
@@ -235,12 +231,12 @@
       <section class="future-section">
         <div class="bento-container">
           <div class="roadmap-block reveal">
-            <h2>🔮 Roadmap 2024</h2>
+            <h2>🔮 Roadmap 2026</h2>
             <div class="roadmap-items">
-              <span class="roadmap-tag">Videollamadas P2P</span>
-              <span class="roadmap-tag">Plugins Comunitarios</span>
+              <span class="roadmap-tag">Integración GitHub/GitLab</span>
+              <span class="roadmap-tag">Escrow por Tareas</span>
               <span class="roadmap-tag">Mobile App</span>
-              <span class="roadmap-tag">Panel de Métricas</span>
+              <span class="roadmap-tag">Auditoría eERC20</span>
             </div>
           </div>
           
@@ -273,67 +269,66 @@ import chasqui3 from '../assets/images/chasqui_3.webp'
 // Datos para características
 const features = [
   {
-    icon: '🔒',
-    title: 'Seguridad de Primera',
-    description: 'Cifrado de extremo a extremo para mantener tus conversaciones privadas.'
+    icon: '🤝',
+    title: 'Tranquilidad Total',
+    description: 'Los freelancers trabajan tranquilos y los clientes pagan por resultados verificados automáticamente.'
   },
   {
-    icon: '⚡',
-    title: 'Rendimiento Óptimo',
-    description: 'Diseñado para ser rápido y eficiente, incluso con conexiones lentas.'
+    icon: '💰',
+    title: 'Pagos Automáticos',
+    description: 'Utiliza eERC20 para pagos automáticos al completar tareas. Sin intermediarios y 100% privados.'
   },
   {
-    icon: '🌐',
-    title: 'Acceso Universal',
-    description: 'Disponible en todos tus dispositivos, en cualquier momento y lugar.'
+    icon: '🏗️',
+    title: 'Gestión de Grants',
+    description: 'Administra presupuestos comunitarios y proyectos Open Source con transparencia radical.'
   },
   {
-    icon: '🤖',
-    title: 'Agentes Autónomos',
-    description: 'Automatiza tareas con nuestros agentes inteligentes.'
+    icon: '🎯',
+    title: 'Trabajo por Objetivos',
+    description: 'Una interfaz diseñada para la eficiencia. Menos reuniones, más cumplimiento de metas.'
   }
 ];
 
 // Datos para planes de precios
 const pricingPlans = [
   {
-    name: 'Básico',
+    name: 'Free',
     price: 'Gratis',
     period: '',
     features: [
-      'Chat ilimitado',
-      '10GB almacenamiento',
-      'Soporte básico',
-      'Hasta 5 usuarios'
+      'Comunicación core',
+      'Resúmenes por IA',
+      'Integración GitHub/GitLab',
+      'Usuarios ilimitados'
     ],
     buttonText: 'Empezar Ahora',
     featured: false
   },
   {
     name: 'Pro',
-    price: '$9.99',
-    period: 'mes',
+    price: '$25',
+    period: 'workspace/mes',
     features: [
-      'Todo en Básico',
-      '100GB almacenamiento',
+      'Todo en Free',
+      'Escrow inteligente',
+      'Pagos eERC20 ilimitados',
       'Soporte prioritario',
-      'Hasta 50 usuarios',
-      'Acceso a agentes'
+      'Más almacenamiento'
     ],
     buttonText: 'Prueba Gratis',
     featured: true
   },
   {
-    name: 'Empresas',
-    price: 'Personalizado',
+    name: 'Enterprise',
+    price: 'Custom',
     period: '',
-    customText: '¿Necesitas más? Contáctanos para un plan a medida.',
+    customText: 'Soluciones autohospedadas y despliegues a medida.',
     features: [
-      'Todo en Pro',
-      'Almacenamiento ilimitado',
+      'SLA garantizado',
+      'Infraestructura dedicada',
       'Soporte 24/7',
-      'Usuarios ilimitados',
-      'Personalización total'
+      'Auditorías personalizadas'
     ],
     buttonText: 'Contactar Ventas',
     featured: false

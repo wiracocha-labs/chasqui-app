@@ -64,6 +64,24 @@ section li {
 
 .bento-grid--features {
   position: relative;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.bento-grid--features .bento-tile--header {
+  grid-column: 1 / -1;
+  text-align: center;
+}
+
+@media (max-width: 1024px) {
+  .bento-grid--features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .bento-grid--features {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Layout específico del Hero con áreas */
@@ -565,6 +583,31 @@ section li {
 .tech-list li {
   margin-bottom: 0.75rem;
   color: var(--color-text-primary);
+}
+
+.tech-link {
+  display: inline-block;
+  margin-top: 1.5rem;
+  color: var(--color-brand);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.tech-list--grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.5rem 1.5rem;
+  margin-top: 1rem;
+}
+
+.tech-list--grid li {
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.tech-link:hover {
+  text-decoration: underline;
 }
 
 /* Future Section */
