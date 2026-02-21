@@ -25,7 +25,7 @@
     "preview": "vite preview",
     "hardhat:node": "hardhat node",
     "hardhat:compile": "hardhat compile",
-    "hardhat:test": "hardhat test",
+    "hardhat:test": "hardhat test web3/tests",
     "hardhat:clean": "hardhat clean",
     "hardhat:deploy-local": "hardhat run web3/scripts/deploy-authorization.ts --network localhost",
     "hardhat:deploy-local-full": "hardhat run web3/scripts/deploy-local.ts --network localhost",
