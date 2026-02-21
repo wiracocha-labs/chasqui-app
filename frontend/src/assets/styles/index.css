@@ -146,22 +146,55 @@ section li {
 /* Personaje Flotante del Hero */
 .floating-character {
   position: absolute;
-  top: 40%;
-  left: 80%;
-  transform: translate(-50%, -50%);
   z-index: 10;
   pointer-events: none;
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
 }
 
+.floating-character img {
+  width: 151px;
+  height: auto;
+}
+
+.floating-character--hero {
+  top: 40%;
+  left: 80%;
+  transform: translate(-50%, -50%);
+}
+
+.floating-character--pricing {
+  top: 75%;
+  left: 33.33%;
+  transform: translate(-50%, -50%);
+}
+
+.bento-grid--pricing {
+  position: relative;
+}
+
 /* Overrides para que el reveal no rompa el centrado */
 .floating-character.reveal {
   opacity: 0;
+  transition: all 0.8s ease-out;
+}
+
+.floating-character--hero.reveal {
+  transform: translate(-50%, calc(-50% + 30px));
+}
+
+.floating-character--pricing.reveal {
   transform: translate(-50%, calc(-50% + 30px));
 }
 
 .floating-character.reveal.active {
   opacity: 1;
+}
+
+.floating-character--hero.reveal.active {
+  transform: translate(-50%, -50%);
+}
+
+.floating-character--pricing.reveal.active {
   transform: translate(-50%, -50%);
 }
 
@@ -386,8 +419,8 @@ section li {
   padding-bottom: 5rem;
 }
 
-/* Efecto hover solo para cajas de precios (excluyendo título e imagen full-width) */
-.bento-grid--pricing .bento-tile:not(.bento-tile--full):hover {
+/* Efecto hover solo para las tarjetas de planes (Free, Pro, Enterprise) */
+.bento-grid--pricing .pricing-plan:hover {
   transform: translateY(-5px);
   box-shadow: var(--shadow-lg);
 }

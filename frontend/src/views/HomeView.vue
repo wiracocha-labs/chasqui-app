@@ -43,10 +43,10 @@
             <div id="box4" class="bento-box reveal" :style="{ backgroundImage: `url('${heroBox3}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
             </div>
 
-            <!-- Personaje flotante -->
-            <div class="floating-character reveal">
-              <img :src="chasquiCharacter" alt="Chasqui Character" />
-            </div>
+            <!-- Personaje flotante del Hero -->
+          <div class="floating-character floating-character--hero reveal">
+            <img :src="chasquiCharacter" alt="Chasqui Hero" />
+          </div>
         </header>
       </div>
     </section>
@@ -166,8 +166,12 @@
     </div>
 
       <!-- Sección de Precios (Bento Grid existente) -->
-      <section class="bento-container">
-        <div class="bento-grid bento-grid--pricing">
+      <section class="pricing-section">
+        <div class="bento-container bento-grid bento-grid--pricing">
+          <!-- Personaje flotante en Precios -->
+          <div class="floating-character floating-character--pricing reveal">
+            <img :src="chasqui4" alt="Chasqui Pricing" />
+          </div>
           <!-- Título principal -->
           <div class="bento-tile bento-tile--2-3 reveal">
             <div class="bento-content">
@@ -177,18 +181,18 @@
           </div>
 
           <!-- Caja Decorativa Superior -->
-          <div class="bento-tile bento-tile--1-3 bento-tile--accent reveal">
-            <div class="bento-content flex-center">
-              <div class="accent-icon">🚀</div>
-              <div class="accent-text">Escala tu equipo</div>
-            </div>
+          <div 
+            class="bento-tile bento-tile--1-3 bento-tile--accent reveal"
+            :style="{ backgroundImage: `url('${precioBg1}')`, backgroundSize: 'cover', backgroundPosition: 'center' }"
+          >
+            <!-- Imagen fondo (Escala tu equipo) -->
           </div>
   
           <!-- Planes de Precios Unificados -->
           <div 
             v-for="(plan, index) in pricingPlans" 
             :key="'plan-'+index" 
-            class="bento-tile reveal"
+            class="bento-tile pricing-plan reveal"
             :class="{'bento-tile--highlight': plan.featured}"
           >
             <div class="bento-content">
@@ -211,17 +215,20 @@
           </div>
   
           <!-- Caja Decorativa Inferior -->
-          <div class="bento-tile bento-tile--1-3 bento-tile--accent reveal">
-            <div class="bento-content flex-center">
-              <div class="accent-icon">🛡️</div>
-              <div class="accent-text">Privacidad Total</div>
-            </div>
+          <div 
+            class="bento-tile bento-tile--1-3 bento-tile--accent reveal"
+            :style="{ backgroundImage: `url('${precioBg3}')`, backgroundSize: 'cover', backgroundPosition: 'center' }"
+          >
+            <!-- Imagen fondo (Privacidad Total) -->
           </div>
   
           <!-- Imagen de Pricing -->
-          <div class="bento-tile bento-tile--2-3 pricing-image reveal">
+          <div 
+            class="bento-tile bento-tile--2-3 pricing-image reveal"
+            :style="{ backgroundImage: `url('${pricingBg2}')`, backgroundSize: 'cover', backgroundPosition: 'center' }"
+          >
             <div class="bento-content">
-              <div class="box-placeholder">Imagen de Pricing</div>
+              <!-- El contenido puede ir aquí si es necesario -->
             </div>
           </div>
         </div>
@@ -259,6 +266,12 @@ import heroBox1 from '../assets/images/bg_hero_1.png'
 import heroBox2 from '../assets/images/bg_hero_2.png'
 import heroBox3 from '../assets/images/bg_hero_3.png'
 import chasquiCharacter from '../assets/images/chasqui_character.png'
+import chasqui4 from '../assets/images/chasqui_4.webp'
+
+// Imágenes de Pricing
+import precioBg1 from '../assets/images/precio_bg_1.webp'
+import pricingBg2 from '../assets/images/pricing_bg_2.webp'
+import precioBg3 from '../assets/images/precio_bg_3.webp'
 
 // Imágenes de características
 import featureImage1 from '../assets/images/imagen_1_caracteristicas.webp'
