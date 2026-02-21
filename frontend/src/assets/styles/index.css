@@ -403,6 +403,25 @@ section li {
   background-position: center;
 }
 
+/* Nuevas clases para distribución 2/3 y 1/3 */
+.bento-tile--2-3 {
+  grid-column: span 2;
+  min-height: 180px;
+}
+
+.bento-tile--1-3 {
+  grid-column: span 1;
+  min-height: 180px;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.5rem;
+}
+
 /* Alineación a la izquierda */
 .bento-tile--left {
   margin-left: 0;
@@ -459,8 +478,6 @@ section li {
 /* Imagen de pricing */
 .pricing-image {
   border-color: var(--color-accent) !important;
-  grid-column: 1 / -1;
-  width: 75%;
 }
 
 /* Igualar altura entre el título de Pricing y la imagen de Pricing */

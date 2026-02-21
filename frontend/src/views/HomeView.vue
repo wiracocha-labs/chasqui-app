@@ -173,10 +173,18 @@
       <section class="bento-container">
         <div class="bento-grid bento-grid--pricing">
           <!-- Título principal -->
-          <div class="bento-tile bento-tile--full bento-tile--left reveal">
+          <div class="bento-tile bento-tile--2-3 reveal">
             <div class="bento-content">
               <h2>💎 Nuestros Planes</h2>
               <p>Elige el que mejor se adapte a ti</p>
+            </div>
+          </div>
+
+          <!-- Caja Decorativa Superior -->
+          <div class="bento-tile bento-tile--1-3 bento-tile--accent reveal">
+            <div class="bento-content flex-center">
+              <div class="accent-icon">🚀</div>
+              <div class="accent-text">Escala tu equipo</div>
             </div>
           </div>
   
@@ -206,8 +214,16 @@
             </div>
           </div>
   
+          <!-- Caja Decorativa Inferior -->
+          <div class="bento-tile bento-tile--1-3 bento-tile--accent reveal">
+            <div class="bento-content flex-center">
+              <div class="accent-icon">🛡️</div>
+              <div class="accent-text">Privacidad Total</div>
+            </div>
+          </div>
+  
           <!-- Imagen de Pricing -->
-          <div class="bento-tile bento-tile--full bento-tile--right pricing-image reveal">
+          <div class="bento-tile bento-tile--2-3 pricing-image reveal">
             <div class="bento-content">
               <div class="box-placeholder">Imagen de Pricing</div>
             </div>
