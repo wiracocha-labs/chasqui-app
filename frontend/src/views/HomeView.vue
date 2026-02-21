@@ -43,11 +43,11 @@
             <div id="box4" class="bento-box reveal" :style="{ backgroundImage: `url('${heroBox3}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
             </div>
 
-            <!-- Personaje flotante del Hero -->
-          <div class="floating-character floating-character--hero reveal">
-            <img :src="chasquiCharacter" alt="Chasqui Hero" />
-          </div>
         </header>
+      </div>
+      <!-- Personaje flotante del Hero (Nivel sección para independencia total) -->
+      <div class="floating-character floating-character--hero reveal">
+        <img :src="chasquiCharacter" alt="Chasqui Hero" />
       </div>
     </section>
 

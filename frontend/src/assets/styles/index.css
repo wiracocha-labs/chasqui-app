@@ -8,6 +8,10 @@
 
 
 
+.hero-section {
+  position: relative;
+}
+
 /* Estilos para las secciones */
 section {
   min-height: 100vh;
@@ -151,15 +155,23 @@ section li {
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
 }
 
-.floating-character img {
-  width: 151px;
+.hero-section .floating-character--hero img {
+  width: 500px;
+  /* Controla el tamaño del personaje en el Hero */
   height: auto;
+  max-width: none !important;
 }
 
 .floating-character--hero {
-  top: 40%;
-  left: 80%;
+  top: 50%;
+  left: 75%;
   transform: translate(-50%, -50%);
+}
+
+.floating-character--pricing img {
+  width: 250px;
+  /* Controla el tamaño del personaje en Precios */
+  height: auto;
 }
 
 .floating-character--pricing {
@@ -198,20 +210,8 @@ section li {
   transform: translate(-50%, -50%);
 }
 
-.floating-character img {
-  width: auto;
-  max-width: none;
-  height: auto;
-  transform: scale(0.7);
-  transform-origin: center;
-}
 
-/* Ajustes para móviles */
-@media (max-width: 1024px) {
-  .floating-character {
-    width: 220px;
-  }
-}
+/* Los anchos se manejan por sección arriba */
 
 @media (max-width: 767px) {
   .floating-character {
@@ -224,6 +224,7 @@ section li {
 .floating-side {
   position: absolute;
   width: 300px;
+  /* Controla el tamaño de personajes en Características (lados) */
   z-index: 100;
   /* Prioridad absoluta */
   pointer-events: none;
@@ -247,13 +248,13 @@ section li {
 
 .floating-side--left {
   left: 2%;
-  bottom: 40px;
+  bottom: 0px;
   /* Bajado más para estar casi en el borde del último box */
 }
 
 .floating-side--right {
   right: 2%;
-  bottom: 40px;
+  bottom: 0px;
   /* Bajado más para estar casi en el borde del último box */
 }
 
