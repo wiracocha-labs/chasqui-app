@@ -456,74 +456,21 @@ section li {
   border-color: var(--color-action) !important;
 }
 
-/* Imagen de pricing - Base */
+/* Imagen de pricing */
 .pricing-image {
   border-color: var(--color-accent) !important;
   grid-column: 1 / -1;
-  width: 66.67%;
-}
-
-/* Imagen de pricing dentro del contenedor de otros planes */
-.pricing-other-container .pricing-image {
-  width: 100%;
-  max-width: 100%;
+  width: 75%;
 }
 
 /* Igualar altura entre el título de Pricing y la imagen de Pricing */
-.bento-grid--pricing>.bento-tile--full,
-.bento-grid--pricing>.pricing-image {
-  min-height: 150px;
-  display: flex;
+/* Overrides para colores de bordes en Pricing */
+.bento-grid--pricing .bento-tile:not(.bento-tile--highlight):not(.pricing-image):nth-child(even) {
+  border-color: var(--color-action) !important;
 }
 
-/* Contenedores de pricing - Layout en fila */
-.pricing-basic-container {
-  grid-column: span 1;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-}
-
-.pricing-basic-container .bento-tile {
-  width: 100%;
-  min-height: 436px;
-}
-
-.pricing-other-container {
-  grid-column: span 2;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  width: 100%;
-}
-
-/* Responsive para contenedores de pricing */
-@media (max-width: 1024px) {
-
-  .pricing-basic-container,
-  .pricing-other-container {
-    grid-column: 1 / -1;
-  }
-
-  .pricing-basic-container {
-    justify-content: center;
-  }
-
-  .pricing-basic-container .bento-tile {
-    max-width: 400px;
-  }
-}
-
-@media (max-width: 767px) {
-  .pricing-other-container {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Overrides para colores de bordes en Pricing: Solo Básico y Empresas */
-.pricing-basic,
-.pricing-other-container .bento-tile:not(.bento-tile--highlight):not(.pricing-image) {
-  border-color: var(--color-action);
+.bento-grid--pricing .bento-tile:not(.bento-tile--highlight):not(.pricing-image):nth-child(odd) {
+  border-color: var(--color-accent) !important;
 }
 
 /* Identity Section */

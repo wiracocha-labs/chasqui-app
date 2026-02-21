@@ -93,7 +93,7 @@
       <section class="bento-container">
         <div class="bento-grid bento-grid--features">
           <!-- Título principal -->
-          <div class="bento-tile bento-tile--full reveal">
+          <div class="bento-tile bento-tile--header reveal">
             <div class="bento-content">
               <h2>✨ Características Principales</h2>
               <p>Todo lo que necesitas para una comunicación efectiva</p>
@@ -109,16 +109,26 @@
             </div>
           </div>
           
+          <!-- Fila 1: Acento + Imagen 1 -->
+          <div class="bento-tile bento-tile--accent">
+            <div class="accent-icon">🤝</div>
+            <div class="accent-text">100% Open Source</div>
+          </div>
           <div 
             class="bento-tile bento-tile--full bento-tile--right reveal" 
             :style="{ backgroundImage: `url('${featureImage1}')` }"
           >
           </div>
           
+          <!-- Fila 2: Imagen 2 + Acento -->
           <div 
             class="bento-tile bento-tile--full bento-tile--left feature-image-2 reveal" 
             :style="{ backgroundImage: `url('${featureImage2}')` }"
           >
+          </div>
+          <div class="bento-tile bento-tile--accent">
+            <div class="accent-icon">🌍</div>
+            <div class="accent-text">Nodos Globales</div>
           </div>
 
           <!-- Personajes flotantes laterales (Nivel Grid para evitar problemas de capas) -->
@@ -170,63 +180,36 @@
             </div>
           </div>
   
-          <!-- Plan Básico - Separado -->
-          <div class="pricing-basic-container">
-            <div 
-              v-for="(plan, index) in pricingPlans.filter(p => p.name === 'Básico')" 
-              :key="'plan-'+index" 
-              class="bento-tile pricing-basic reveal"
-            >
-              <div class="bento-content">
-                <h3>{{ plan.name }}</h3>
-                <div class="price">{{ plan.price }}<span v-if="plan.period">/{{ plan.period }}</span></div>
-                <p v-if="plan.customText" class="mb-4">{{ plan.customText }}</p>
-                <ul class="features-list">
-                  <li v-for="(feature, fIndex) in plan.features" :key="'feature-'+fIndex">
-                    ✓ {{ feature }}
-                  </li>
-                </ul>
-                <button 
-                  class="btn btn--outline"
-                >
-                  {{ plan.buttonText }}
-                </button>
-              </div>
+          <!-- Planes de Precios Unificados -->
+          <div 
+            v-for="(plan, index) in pricingPlans" 
+            :key="'plan-'+index" 
+            class="bento-tile reveal"
+            :class="{'bento-tile--highlight': plan.featured}"
+          >
+            <div class="bento-content">
+              <div v-if="plan.featured" class="popular-tag">Popular</div>
+              <h3>{{ plan.name }}</h3>
+              <div class="price">{{ plan.price }}<span v-if="plan.period">/{{ plan.period }}</span></div>
+              <p v-if="plan.customText" class="mb-4">{{ plan.customText }}</p>
+              <ul class="features-list">
+                <li v-for="(feature, fIndex) in plan.features" :key="'feature-'+fIndex">
+                  ✓ {{ feature }}
+                </li>
+              </ul>
+              <button 
+                class="btn mt-4" 
+                :class="plan.featured ? 'btn--primary' : 'btn--outline'"
+              >
+                {{ plan.buttonText }}
+              </button>
             </div>
           </div>
   
-          <!-- Otros planes (Pro y Empresas) + Imagen - Agrupados -->
-          <div class="pricing-other-container">
-            <div 
-              v-for="(plan, index) in pricingPlans.filter(p => p.name !== 'Básico')" 
-              :key="'plan-'+index" 
-              class="bento-tile reveal"
-              :class="{'bento-tile--highlight': plan.featured}"
-            >
-              <div class="bento-content">
-                <div v-if="plan.featured" class="popular-tag">Popular</div>
-                <h3>{{ plan.name }}</h3>
-                <div class="price">{{ plan.price }}<span v-if="plan.period">/{{ plan.period }}</span></div>
-                <p v-if="plan.customText" class="mb-4">{{ plan.customText }}</p>
-                <ul class="features-list">
-                  <li v-for="(feature, fIndex) in plan.features" :key="'feature-'+fIndex">
-                    ✓ {{ feature }}
-                  </li>
-                </ul>
-                <button 
-                  class="btn mt-4" 
-                  :class="plan.featured ? 'btn--primary' : 'btn--outline'"
-                >
-                  {{ plan.buttonText }}
-                </button>
-              </div>
-            </div>
-            
-            <!-- Imagen full-width debajo de los planes -->
-            <div class="bento-tile bento-tile--full bento-tile--right pricing-image reveal">
-              <div class="bento-content">
-                <div class="box-placeholder">Imagen de Pricing</div>
-              </div>
+          <!-- Imagen de Pricing -->
+          <div class="bento-tile bento-tile--full bento-tile--right pricing-image reveal">
+            <div class="bento-content">
+              <div class="box-placeholder">Imagen de Pricing</div>
             </div>
           </div>
         </div>
