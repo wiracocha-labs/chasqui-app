@@ -8,40 +8,40 @@
       <div class="bento-container">
         <header id="hero-bento" class="bento-grid">
 
-          <div id="hero-main-content" class="bento-main reveal">
-              <div>
-                <h1>
-                  <span class="text-brand">📨 Chasqui</span> — Privacidad y coordinación para equipos remotos
-                </h1>
-                <p class="tagline">
-                  La alternativa ética y eficiente para equipos remotos. Gestiona tu comunicación, coordina por objetivos y asegura tus pagos automáticamente en un solo lugar. Sin vigilancia, sin complicaciones.
-                </p>
-              </div>
-              
-              <div class="hero-actions">
-                <button class="btn btn--primary">Empezar Gratis</button>
-                <button class="btn btn--outline">Ver Documentación</button>
-              </div>
-            </div>
+          <!-- 1. Box Título: Largo y Delgado -->
+          <div id="hero-title-box" class="bento-main reveal">
+            <h1>
+              <span class="text-brand">📨 Chasqui</span> — Privacidad y coordinación para equipos remotos
+            </h1>
+            <p class="tagline">
+              La alternativa ética y eficiente para equipos remotos. Gestiona tu comunicación, coordina por objetivos y asegura tus pagos automáticamente.
+            </p>
+          </div>
 
-            <!-- 2. Box 1: Imagen Pequeña Arriba a la Derecha -->
-            <div id="box1" class="bento-box reveal" :style="{ backgroundImage: `url('${heroBox1}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
+          <!-- 2. Box Botones: A la izquierda bajo el título -->
+          <div id="hero-actions-box" class="bento-box reveal">
+            <div class="hero-actions">
+              <button class="btn btn--primary">Empezar Gratis</button>
+              <button class="btn btn--outline">Documentación</button>
             </div>
+          </div>
 
-            <!-- 3. Box 2: Imagen Larga Vertical a la Derecha (1x2) -->
-            <div id="box2" class="bento-box bento-tall reveal" :style="{ backgroundImage: `url('${heroBox2}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
-            </div>
+          <!-- 3. Box Centro: Solo la imagen del chat -->
+          <div id="hero-center-box" class="bento-box reveal">
+            <img :src="heroCenter" alt="Chasqui Chat Preview" class="hero-center-img" />
+          </div>
 
-            <!-- 4. Box 3: Imagen Pequeña Abajo a la Izquierda -->
-            <div id="box3" class="bento-box bento-feature reveal">
-              <div class="feature-icon">🔒</div>
-              <h3 class="feature-title">Privacidad por Diseño</h3>
-              <p class="feature-desc">Tus datos, tu control. Sin rastreo.</p>
-            </div>
+          <!-- 4. Box 1: Imagen Pequeña Arriba a la Derecha -->
+          <div id="box1" class="bento-box reveal" :style="{ backgroundImage: `url('${heroBox1}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
+          </div>
 
-            <!-- 5. Box 4: Imagen Pequeña Abajo al Centro -->
-            <div id="box4" class="bento-box reveal" :style="{ backgroundImage: `url('${heroBox3}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
-            </div>
+          <!-- 5. Box 2: Imagen Larga Vertical a la Derecha -->
+          <div id="box2" class="bento-box bento-tall reveal" :style="{ backgroundImage: `url('${heroBox2}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
+          </div>
+
+          <!-- 6. Box 4: Comentado temporalmente -->
+          <!-- <div id="box4" class="bento-box reveal" :style="{ backgroundImage: `url('${heroBox3}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
+          </div> -->
 
         </header>
       </div>
@@ -52,83 +52,94 @@
     </section>
 
     <div class="content-background-wrapper">
-      <!-- 1. BLOQUE IDENTIDAD: ¿Qué es? + Filosofía + Ideal para -->
+      <!-- 1. BLOQUE CARACTERÍSTICAS + EXPERIENCIA (Diseño Integrado) -->
       <section class="identity-section">
-        <div class="bento-container split-layout">
-          <div class="identity-content reveal">
-            <h2>🚀 La Evolución de la Colaboración</h2>
-            <p class="lead">Chasqui nace para quienes creen que el trabajo se mide por <strong>resultados, no por horas</strong>. Optimizamos para la autonomía del equipo y la tranquilidad de los clientes.</p>
-            
-            <div class="philosophy-box">
-              <blockquote>"Privacidad real, transparencia radical y pagos sin fricción."</blockquote>
-              <p>Aprendemos juntos: Fomentamos una cultura de comunicación efectiva donde los datos son tuyos y el proceso es 100% abierto.</p>
+        <div class="bento-container">
+          <div class="section-header reveal mb-12 text-center">
+            <h2 class="text-4xl font-bold mb-4">✨ Características Principales</h2>
+            <p class="text-textSecondary text-xl">Todo lo que necesitas para una comunicación efectiva</p>
+          </div>
+          
+          <div class="bento-grid bento-grid--features reveal mb-8">
+            <!-- Características en formato Bento Tiles -->
+            <div class="bento-tile reveal" v-for="(feature, index) in features" :key="'feat-'+index">
+              <div class="bento-content">
+                <div class="feature-icon">{{ feature.icon }}</div>
+                <h3>{{ feature.title }}</h3>
+                <p>{{ feature.description }}</p>
+              </div>
             </div>
           </div>
 
-          <div class="identity-target reveal">
-            <h3>🎯 Ideal para:</h3>
-            <ul class="check-list">
-              <li>
-                <span class="check-icon">✅</span>
-                <span><strong>Equipos Remotos:</strong> De 10 a 50 personas que buscan eficiencia.</span>
-              </li>
-              <li>
-                <span class="check-icon">✅</span>
-                <span><strong>Freelancers y Agencias:</strong> Pagos seguros sin comisiones del 30%.</span>
-              </li>
-              <li>
-                <span class="check-icon">✅</span>
-                <span><span><strong>Comunidades Open-Source:</strong> Transparencia y soberanía de datos.</span></span>
-              </li>
-              <li>
-                <span class="check-icon">✅</span>
-                <span><strong>Cualquier equipo</strong> que valore la privacidad estructural.</span>
-              </li>
-            </ul>
+          <!-- Product Preview integrado en la misma sección -->
+          <div class="product-preview-block reveal text-center">
+            <div class="preview-glass">
+              <div class="preview-header">
+                <div class="dots"><span></span><span></span><span></span></div>
+                <div class="url-bar">app.chasqui.io/chat</div>
+              </div>
+              <div class="preview-body">
+                <img :src="featureImage1" alt="Chasqui Dashboard Preview" class="preview-img" />
+                <div class="preview-overlay">
+                  <div class="overlay-card">
+                    <span class="status-dot"></span>
+                    <p>Escrow verificado: 1,500 eERC20</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- Sección de Características (Bento Grid existente) -->
-      <section class="bento-container">
-        <div class="bento-grid bento-grid--features">
-          <!-- Título principal -->
-          <div class="bento-tile bento-tile--header reveal">
-            <div class="bento-content">
-              <h2>✨ Características Principales</h2>
-              <p>Todo lo que necesitas para una comunicación efectiva</p>
+      <!-- 2. BLOQUE IDENTIDAD + VISUALES (Restaurando Diseño Original) -->
+      <section class="identity-section identity-section--secondary">
+        <div class="bento-container reveal">
+          <!-- 2.1 Texto de Identidad (Split Layout) -->
+          <div class="split-layout mb-12">
+            <div class="identity-content">
+              <h2>🚀 La Evolución de la Colaboración</h2>
+              <p class="lead">Chasqui nace para quienes creen que el trabajo se mide por <strong>resultados, no por horas</strong>. Optimizamos para la autonomía del equipo y la tranquilidad de los clientes.</p>
+              
+              <div class="philosophy-box">
+                <blockquote>"Privacidad real, transparencia radical y pagos sin fricción."</blockquote>
+                <p>Aprendemos juntos: Fomentamos una cultura de comunicación efectiva donde los datos son tuyos y el proceso es 100% abierto.</p>
+              </div>
             </div>
-          </div>
-  
-          <!-- Características -->
-          <div class="bento-tile reveal" v-for="(feature, index) in features" :key="index">
-            <div class="bento-content">
-              <div class="feature-icon">{{ feature.icon }}</div>
-              <h3>{{ feature.title }}</h3>
-              <p>{{ feature.description }}</p>
+
+            <div class="identity-target">
+              <h3>🎯 Ideal para:</h3>
+              <ul class="check-list">
+                <li><span>✅ <strong>Equipos Remotos</strong></span></li>
+                <li><span>✅ <strong>Freelancers</strong></span></li>
+                <li><span>✅ <strong>Open-Source</strong></span></li>
+              </ul>
             </div>
-          </div>
-          
-          <!-- Fila 1: Acento + Imagen 1 -->
-          <div 
-            class="bento-tile bento-tile--full bento-tile--right reveal" 
-            :style="{ backgroundImage: `url('${featureImage1}')` }"
-          >
-          </div>
-          
-          <!-- Fila 2: Imagen 2 + Acento -->
-          <div 
-            class="bento-tile bento-tile--full bento-tile--left feature-image-2 reveal" 
-            :style="{ backgroundImage: `url('${featureImage2}')` }"
-          >
           </div>
 
-          <!-- Personajes flotantes laterales (Nivel Grid para evitar problemas de capas) -->
-          <div class="floating-side floating-side--left">
-            <img :src="chasqui2" alt="Chasqui 2" />
-          </div>
-          <div class="floating-side floating-side--right">
-            <img :src="chasqui3" alt="Chasqui 3" />
+          <!-- 2.2 Visuales (Bento Layout para imágenes escalonadas) -->
+          <div class="bento-grid bento-grid--features mt-12">
+            <!-- Fila 1: Acento + Imagen 1 -->
+            <div 
+              class="bento-tile bento-tile--full bento-tile--right reveal" 
+              :style="{ backgroundImage: `url('${featureImage1}')` }"
+            >
+            </div>
+            
+            <!-- Fila 2: Imagen 2 + Acento -->
+            <div 
+              class="bento-tile bento-tile--full bento-tile--left feature-image-2 reveal" 
+              :style="{ backgroundImage: `url('${featureImage2}')` }"
+            >
+            </div>
+
+            <!-- Personajes flotantes laterales -->
+            <div class="floating-side floating-side--left">
+              <img :src="chasqui2" alt="Chasqui 2" />
+            </div>
+            <div class="floating-side floating-side--right">
+              <img :src="chasqui3" alt="Chasqui 3" />
+            </div>
           </div>
         </div>
       </section>
@@ -234,6 +245,23 @@
         </div>
       </section>
 
+      <!-- 5. FAQ SECTION -->
+      <section class="faq-section reveal">
+        <div class="bento-container">
+          <h2 class="text-center mb-12">Preguntas Frecuentes</h2>
+          <div class="faq-grid">
+            <div class="faq-item" v-for="(item, index) in faqs" :key="index">
+              <div class="faq-question">
+                <h3>{{ item.question }}</h3>
+              </div>
+              <div class="faq-answer">
+                <p>{{ item.answer }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- 3. BLOQUE FUTURO: Roadmap + CTA -->
       <section class="future-section">
         <div class="bento-container">
@@ -265,6 +293,7 @@ import heroBg from '../assets/images/fondo_wiracocha_redes_copy.webp'
 import heroBox1 from '../assets/images/bg_hero_1.png'
 import heroBox2 from '../assets/images/bg_hero_2.png'
 import heroBox3 from '../assets/images/bg_hero_3.png'
+import heroCenter from '../assets/images/hero_bg_1.webp'
 import chasquiCharacter from '../assets/images/chasqui_character.png'
 import chasqui4 from '../assets/images/chasqui_4.webp'
 
@@ -345,6 +374,25 @@ const pricingPlans = [
     ],
     buttonText: 'Contactar Ventas',
     featured: false
+  }
+];
+
+const faqs = [
+  {
+    question: '¿Necesito una wallet para usar Chasqui?',
+    answer: 'No necesariamente. Puedes usar la versión Web2 con email/password, pero para pagos eERC20 privados sí requerirás conectar una wallet.'
+  },
+  {
+    question: '¿Qué tan privados son mis mensajes?',
+    answer: 'Implementamos cifrado de extremo a extremo y opciones de almacenamiento descentralizado. Ni nosotros podemos leer tus conversaciones.'
+  },
+  {
+    question: '¿Qué es eERC20?',
+    answer: 'Es un estándar de token encriptado que permite realizar transacciones privadas en la red Avalanche, ocultando el monto y el saldo.'
+  },
+  {
+    question: '¿Cómo funciona el Escrow por tareas?',
+    answer: 'El cliente deposita los fondos; estos se liberan automáticamente una vez que el freelancer completa la tarea y se verifica el resultado.'
   }
 ];
 
