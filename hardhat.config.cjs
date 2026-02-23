@@ -33,9 +33,17 @@ module.exports = {
     },
     fuji: {
       url: "https://api.avax-test.network/ext/bc/C/rpc",
-      gasPrice: 225000000000,
       chainId: 43113,
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      accounts:
+        process.env.PRIVATE_KEY && process.env.PRIVATE_KEY_USER1 && process.env.PRIVATE_KEY_USER2
+          ? [
+              process.env.PRIVATE_KEY,
+              process.env.PRIVATE_KEY_USER1,
+              process.env.PRIVATE_KEY_USER2,
+            ]
+          : process.env.PRIVATE_KEY
+            ? [process.env.PRIVATE_KEY]
+            : [],
     },
     avalanche: {
       url: "https://api.avax.network/ext/bc/C/rpc",
