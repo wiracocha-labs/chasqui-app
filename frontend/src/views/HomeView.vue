@@ -8,21 +8,19 @@
       <div class="bento-container">
         <header id="hero-bento" class="bento-grid">
 
-          <!-- 1. Box Título: Largo y Delgado -->
+          <!-- 1. Box Título: Texto + Botones lado a lado -->
           <div id="hero-title-box" class="bento-main reveal">
-            <h1>
-              <span class="text-brand">📨 Chasqui</span> — Privacidad y coordinación para equipos remotos
-            </h1>
-            <p class="tagline">
-              La alternativa ética y eficiente para equipos remotos. Gestiona tu comunicación, coordina por objetivos y asegura tus pagos automáticamente.
-            </p>
-          </div>
-
-          <!-- 2. Box Botones: A la izquierda bajo el título -->
-          <div id="hero-actions-box" class="bento-box reveal">
-            <div class="hero-actions">
+            <div class="hero-title-content">
+              <h1>
+                <span class="text-brand">📨 Chasqui</span> — El chat de gestión para startups y proyectos Open Source
+              </h1>
+              <p class="tagline">
+                Comunicación optimizada para equipos remotos a un precio accesible.
+              </p>
+            </div>
+            <div class="hero-actions-side">
               <button class="btn btn--primary">Empezar Gratis</button>
-              <button class="btn btn--outline">Documentación</button>
+              <a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" rel="noopener noreferrer" class="btn btn--outline">Documentación</a>
             </div>
           </div>
 
@@ -31,24 +29,27 @@
             <img :src="heroCenter" alt="Chasqui Chat Preview" class="hero-center-img" />
           </div>
 
-          <!-- 4. Box 1: Imagen Pequeña Arriba a la Derecha -->
-          <div id="box1" class="bento-box reveal" :style="{ backgroundImage: `url('${heroBox1}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
+          <!-- 4. Box 1: Small Feature (Growth) -->
+          <div id="box1" class="bento-box reveal flex-col-center">
+            <div class="text-3xl mb-1">🌱</div>
+            <h3 class="text-sm font-bold text-textPrimary text-center">Crece sin límites</h3>
+            <p class="text-xs text-textSecondary mt-1 text-center">No te penalizamos porque tu equipo crezca, celebramos tu crecimiento.</p>
           </div>
 
-          <!-- 5. Box 2: Imagen Larga Vertical a la Derecha -->
-          <div id="box2" class="bento-box bento-tall reveal" :style="{ backgroundImage: `url('${heroBox2}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
+          <!-- 5. Box 2: Tall Feature (Payments) -->
+          <div id="box2" class="bento-box bento-tall reveal flex-col-center">
+            <div class="text-4xl mb-4">🚀</div>
+            <h3 class="text-lg font-bold text-textPrimary mb-2 text-center">De la charla al pago</h3>
+            <p class="text-sm text-textSecondary text-center">
+              Automatiza tus pagos vinculando el chat con tareas por resultados.
+            </p>
           </div>
-
-          <!-- 6. Box 4: Comentado temporalmente -->
-          <!-- <div id="box4" class="bento-box reveal" :style="{ backgroundImage: `url('${heroBox3}')`, backgroundSize: 'cover', backgroundPosition: 'center' }">
-          </div> -->
-
         </header>
       </div>
-      <!-- Personaje flotante del Hero (Nivel sección para independencia total) -->
-      <div class="floating-character floating-character--hero reveal">
+      <!-- Personaje flotante del Hero (Removido para dar un look más B2B en el primer segundo) -->
+      <!-- <div class="floating-character floating-character--hero reveal">
         <img :src="chasquiCharacter" alt="Chasqui Hero" />
-      </div>
+      </div> -->
     </section>
 
     <div class="content-background-wrapper">
@@ -102,44 +103,27 @@
               <p class="lead">Chasqui nace para quienes creen que el trabajo se mide por <strong>resultados, no por horas</strong>. Optimizamos para la autonomía del equipo y la tranquilidad de los clientes.</p>
               
               <div class="philosophy-box">
-                <blockquote>"Privacidad real, transparencia radical y pagos sin fricción."</blockquote>
-                <p>Aprendemos juntos: Fomentamos una cultura de comunicación efectiva donde los datos son tuyos y el proceso es 100% abierto.</p>
+                <blockquote>"Menos administración, más ejecución."</blockquote>
+                <p>Fomentamos una cultura de comunicación efectiva donde el foco es el avance del proyecto y la transparencia total entre colaboradores.</p>
               </div>
             </div>
 
             <div class="identity-target">
               <h3>🎯 Ideal para:</h3>
               <ul class="check-list">
+                <li><span>✅ <strong>Startups Emergentes</strong></span></li>
                 <li><span>✅ <strong>Equipos Remotos</strong></span></li>
                 <li><span>✅ <strong>Freelancers</strong></span></li>
-                <li><span>✅ <strong>Open-Source</strong></span></li>
               </ul>
             </div>
           </div>
 
-          <!-- 2.2 Visuales (Bento Layout para imágenes escalonadas) -->
-          <div class="bento-grid bento-grid--features mt-12">
-            <!-- Fila 1: Acento + Imagen 1 -->
-            <div 
-              class="bento-tile bento-tile--full bento-tile--right reveal" 
-              :style="{ backgroundImage: `url('${featureImage1}')` }"
-            >
-            </div>
-            
-            <!-- Fila 2: Imagen 2 + Acento -->
-            <div 
-              class="bento-tile bento-tile--full bento-tile--left feature-image-2 reveal" 
-              :style="{ backgroundImage: `url('${featureImage2}')` }"
-            >
-            </div>
-
-            <!-- Personajes flotantes laterales -->
-            <div class="floating-side floating-side--left">
-              <img :src="chasqui2" alt="Chasqui 2" />
-            </div>
-            <div class="floating-side floating-side--right">
-              <img :src="chasqui3" alt="Chasqui 3" />
-            </div>
+          <!-- Personajes flotantes laterales (Acompañando el texto sin cajas de imágenes) -->
+          <div class="floating-side floating-side--left">
+            <img :src="chasqui2" alt="Chasqui 2" />
+          </div>
+          <div class="floating-side floating-side--right">
+            <img :src="chasqui3" alt="Chasqui 3" />
           </div>
         </div>
       </section>
@@ -152,7 +136,7 @@
               <h3>🌱 Mentalidad Chasqui</h3>
               <ul class="tech-list">
                 <li><strong>Comunicación Efectiva:</strong> Menos ruido, más foco en objetivos.</li>
-                <li><strong>Soberanía de Datos:</strong> Tu información es tuya, no de la plataforma.</li>
+                <li><strong>Gestión Ágil:</strong> Herramientas simples para un crecimiento rápido.</li>
                 <li><strong>100% Open Source:</strong> Construimos en público, para la comunidad.</li>
                 <li><strong>Transparencia Radical:</strong> Roadmap y procesos siempre visibles.</li>
               </ul>
@@ -162,14 +146,15 @@
               <h3>🔍 Arquitectura Técnica del MVP</h3>
               <p>Diseñado para ser ligero, seguro y escalable. Nuestra arquitectura separa la comunicación del valor:</p>
               <ul class="tech-list tech-list--grid">
-                <li><strong>Comunicación:</strong> Actix-web (Mensajería P2P y canales)</li>
-                <li><strong>Frontend:</strong> VueJS / Vite (UI rápida y sin backend)</li>
-                <li><strong>Webhooks:</strong> Actix-web (GitHub, Figma, Drive integration)</li>
-                <li><strong>Web3:</strong> Avalanche (Identidad, firma y trazabilidad)</li>
-                <li><strong>AI:</strong> OpenAI API (Resúmenes de conversaciones)</li>
-                <li><strong>Infra:</strong> Fly.io / Railway (Hospedaje liviano)</li>
+                <li><span class="tech-badge">Actix-web</span> Comunicación P2P y webhooks rápidos</li>
+                <li><span class="tech-badge">VueJS / Vite</span> UI reactiva y sin backend pesado</li>
+                <li><span class="tech-badge">Avalanche</span> Identidad, firma y trazabilidad pura</li>
+                <li><span class="tech-badge">OpenAI</span> Resúmenes inteligentes de conversaciones</li>
+                <li><span class="tech-badge">Fly.io / Railway</span> Hospedaje liviano y escalable</li>
               </ul>
-              <a href="#" class="tech-link">Ver documentación técnica en GitHub →</a>
+              <div class="mt-auto pt-6">
+                <a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" rel="noopener noreferrer" class="btn btn--outline w-full text-center" style="padding: 0.75rem;">Ver arquitectura en GitHub &rarr;</a>
+              </div>
             </div>
           </div>
         </div>
@@ -191,12 +176,12 @@
             </div>
           </div>
 
-          <!-- Caja Decorativa Superior -->
-          <div 
-            class="bento-tile bento-tile--1-3 bento-tile--accent reveal"
-            :style="{ backgroundImage: `url('${precioBg1}')`, backgroundSize: 'cover', backgroundPosition: 'center' }"
-          >
-            <!-- Imagen fondo (Escala tu equipo) -->
+          <!-- Caja Decorativa Superior (Convertida a texto) -->
+          <div class="bento-tile bento-tile--1-3 bento-tile--accent reveal" style="display: flex; align-items: center; justify-content: center; background: var(--color-terciary);">
+            <div class="bento-content text-center">
+              <h3 class="text-brand">Privacidad por Diseño</h3>
+              <p class="text-sm mt-2">Tus datos te pertenecen. Eres dueño de tu propia información y del proceso.</p>
+            </div>
           </div>
   
           <!-- Planes de Precios Unificados -->
@@ -224,24 +209,7 @@
               </button>
             </div>
           </div>
-  
-          <!-- Caja Decorativa Inferior -->
-          <div 
-            class="bento-tile bento-tile--1-3 bento-tile--accent reveal"
-            :style="{ backgroundImage: `url('${precioBg3}')`, backgroundSize: 'cover', backgroundPosition: 'center' }"
-          >
-            <!-- Imagen fondo (Privacidad Total) -->
-          </div>
-  
-          <!-- Imagen de Pricing -->
-          <div 
-            class="bento-tile bento-tile--2-3 pricing-image reveal"
-            :style="{ backgroundImage: `url('${pricingBg2}')`, backgroundSize: 'cover', backgroundPosition: 'center' }"
-          >
-            <div class="bento-content">
-              <!-- El contenido puede ir aquí si es necesario -->
-            </div>
-          </div>
+          <!-- Cajas inferiores eliminadas -->
         </div>
       </section>
 
@@ -249,38 +217,34 @@
       <section class="faq-section reveal">
         <div class="bento-container">
           <h2 class="text-center mb-12">Preguntas Frecuentes</h2>
-          <div class="faq-grid">
-            <div class="faq-item" v-for="(item, index) in faqs" :key="index">
-              <div class="faq-question">
+          <div class="faq-accordion" style="max-width: 800px; margin: 0 auto;">
+            <div 
+              class="faq-item" 
+              v-for="(item, index) in faqs" 
+              :key="'faq-'+index"
+              :class="{ 'is-open': openFaqIndex === index }"
+            >
+              <button class="faq-question" @click="toggleFaq(index)">
                 <h3>{{ item.question }}</h3>
-              </div>
-              <div class="faq-answer">
-                <p>{{ item.answer }}</p>
+                <span class="faq-icon" style="color: var(--color-brand); font-size: 1.5rem; line-height: 1;">{{ openFaqIndex === index ? '−' : '+' }}</span>
+              </button>
+              <div class="faq-answer" v-show="openFaqIndex === index">
+                <p v-html="item.answer"></p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- 3. BLOQUE FUTURO: Roadmap + CTA -->
+      <!-- 3. BLOQUE FUTURO: CTA -->
       <section class="future-section">
         <div class="bento-container">
-          <div class="roadmap-block reveal">
-            <h2>🔮 Roadmap 2026</h2>
-            <div class="roadmap-items">
-              <span class="roadmap-tag">Integración GitHub/GitLab</span>
-              <span class="roadmap-tag">Escrow por Tareas</span>
-              <span class="roadmap-tag">Mobile App</span>
-              <span class="roadmap-tag">Auditoría eERC20</span>
-            </div>
-          </div>
-          
           <div class="cta-block reveal">
             <h2>🌄 Únete al camino</h2>
             <p>Chasqui es autonomía, comunidad y privacidad.</p>
             <div class="cta-buttons">
-              <a href="#" class="btn btn--primary">👉 Únete a la lista de espera</a>
-              <a href="#" class="btn btn--outline">Participar en el MVP</a>
+              <a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" rel="noopener noreferrer" class="btn btn--primary">👉 Visítanos en GitHub</a>
+              <a href="https://tally.so/r/YOUR_ID" target="_blank" rel="noopener noreferrer" class="btn btn--outline">Unirse a la Beta</a>
             </div>
           </div>
         </div>
@@ -313,90 +277,90 @@ const features = [
   {
     icon: '🤝',
     title: 'Tranquilidad Total',
-    description: 'Los freelancers trabajan tranquilos y los clientes pagan por resultados verificados automáticamente.'
+    description: 'Tus colaboradores trabajan con objetivos claros y los pagos se liberan solo al finalizar el trabajo.'
   },
   {
     icon: '💰',
-    title: 'Pagos Automáticos',
-    description: 'Utiliza eERC20 para pagos automáticos al completar tareas. Sin intermediarios y 100% privados.'
+    title: 'Pagos por Objetivos',
+    description: 'Automatiza tu nómina o pagos a freelancers basándote en hitos completados, sin procesos manuales.'
   },
   {
     icon: '🏗️',
-    title: 'Gestión de Grants',
-    description: 'Administra presupuestos comunitarios y proyectos Open Source con transparencia radical.'
+    title: 'Escalabilidad para Startups',
+    description: 'Una infraestructura que no te penaliza por crecer. Administra presupuestos y equipos de forma ágil.'
   },
   {
     icon: '🎯',
-    title: 'Trabajo por Objetivos',
-    description: 'Una interfaz diseñada para la eficiencia. Menos reuniones, más cumplimiento de metas.'
+    title: 'Foco en la Entrega',
+    description: 'Una interfaz optimizada para la ejecución. Menos ruido de chat, más cumplimiento de metas.'
   }
 ];
 
 // Datos para planes de precios
 const pricingPlans = [
   {
-    name: 'Free',
+    name: 'Free Beta',
     price: 'Gratis',
-    period: '',
+    period: 'durante el MVP',
     features: [
-      'Comunicación core',
-      'Resúmenes por IA',
+      'Comunicación core (Canales)',
+      'Resúmenes de hilos por IA',
       'Integración GitHub/GitLab',
       'Usuarios ilimitados'
     ],
-    buttonText: 'Empezar Ahora',
-    featured: false
-  },
-  {
-    name: 'Pro',
-    price: '$25',
-    period: 'workspace/mes',
-    features: [
-      'Todo en Free',
-      'Escrow inteligente',
-      'Pagos eERC20 ilimitados',
-      'Soporte prioritario',
-      'Más almacenamiento'
-    ],
-    buttonText: 'Prueba Gratis',
+    buttonText: 'Acceso Temprano',
     featured: true
   },
   {
-    name: 'Enterprise',
-    price: 'Custom',
+    name: 'Pro',
+    price: '-',
     period: '',
-    customText: 'Soluciones autohospedadas y despliegues a medida.',
-    features: [
-      'SLA garantizado',
-      'Infraestructura dedicada',
-      'Soporte 24/7',
-      'Auditorías personalizadas'
-    ],
-    buttonText: 'Contactar Ventas',
+    customText: 'Lanzamiento próximamente. Únete a la lista.',
+    features: [],
+    buttonText: 'Lista de Espera',
+    featured: false
+  },
+  {
+    name: 'Enterprise',
+    price: '-',
+    period: '',
+    customText: 'Soluciones a medida para corporaciones.',
+    features: [],
+    buttonText: 'Proximamente',
     featured: false
   }
 ];
 
 const faqs = [
   {
-    question: '¿Necesito una wallet para usar Chasqui?',
-    answer: 'No necesariamente. Puedes usar la versión Web2 con email/password, pero para pagos eERC20 privados sí requerirás conectar una wallet.'
+    question: 'Si es gratis, ¿cómo gana dinero Chasqui?',
+    answer: 'La versión Core es y será siempre 100% gratuita y Open Source. Hoy estamos financiados y usamos tecnologías innovadoras para minimizar costos. En el futuro, el plan Pro y donaciones mantendrán la plataforma. Nuestra cultura es la transparencia radical: todos los gastos son visibles para demostrar que tu equipo tiene el control total y que <strong>nunca usamos ni vendemos tus datos</strong>.'
   },
   {
-    question: '¿Qué tan privados son mis mensajes?',
-    answer: 'Implementamos cifrado de extremo a extremo y opciones de almacenamiento descentralizado. Ni nosotros podemos leer tus conversaciones.'
+    question: '¿Por qué Chasqui y no Slack o Discord?',
+    answer: 'Las versiones gratuitas de otras apps terminan ocultando tu historial y su versión de pago te cobra por usuario, lo que es difícil para startups jóvenes. Discord es excelente para la comunicación de comunidades y gaming, pero sufre de mucho ruido y le faltan integraciones nativas para flujos de trabajo. Chasqui nace para separar espacios: priorizamos la <strong>productividad, la salud y el bienestar</strong>, dándote control real sobre tu información a un precio accesible.'
   },
   {
-    question: '¿Qué es eERC20?',
-    answer: 'Es un estándar de token encriptado que permite realizar transacciones privadas en la red Avalanche, ocultando el monto y el saldo.'
+    question: '¿Qué significa que sea "Privacy by Design"?',
+    answer: 'Cumplimos con estrictos estándares de seguridad y cifrado. La verdadera novedad es que <strong>ni siquiera tenemos control sobre tus pagos</strong>: interactuamos a través de contratos inteligentes que son 100% transparentes, automáticos y autónomos, eliminando a los intermediarios.'
   },
   {
-    question: '¿Cómo funciona el Escrow por tareas?',
-    answer: 'El cliente deposita los fondos; estos se liberan automáticamente una vez que el freelancer completa la tarea y se verifica el resultado.'
+    question: '¿Necesito saber de Web3/Crypto para usar la plataforma?',
+    answer: 'Para el MVP, sí necesitarás una wallet para interactuar con la automatización de pagos. Sin embargo, ya estamos planificando integrar opciones tradicionales. Constantemente daremos talleres para compartir por qué amamos la tecnología Web3 y cómo tu equipo puede ser más eficiente al ingresar a este ecosistema.'
+  },
+  {
+    question: '¿Cuándo estará lista la versión final?',
+    answer: 'Actualmente estamos en Fase Beta. Lanzaremos actualizaciones periódicas de forma transparente. Puedes seguir nuestro roadmap o aportar al ecosistema directamente en nuestro repositorio de código.<br><br><a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" rel="noopener noreferrer" class="btn btn--outline" style="display:inline-block; margin-top:0.75rem;">Visitar GitHub</a>'
   }
 ];
 
-import { onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
+
+const openFaqIndex = ref(null);
+
+const toggleFaq = (index) => {
+  openFaqIndex.value = openFaqIndex.value === index ? null : index;
+};
 
 onMounted(() => {
   const observerOptions = {
