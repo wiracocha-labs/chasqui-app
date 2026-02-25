@@ -4,7 +4,7 @@
     <div class="fixed-background" :style="{ backgroundImage: `url('${heroBg}')` }"></div>
 
     <!-- Hero Section -->
-    <section class="hero-section">
+    <section id="inicio" class="hero-section !pt-[70px] !justify-start">
       <div class="bento-container">
         <header id="hero-bento" class="bento-grid">
 
@@ -31,22 +31,26 @@
 
           <!-- 4. Box 1: Small Feature (Growth) -->
           <div id="box1" class="bento-box reveal flex-col-center">
-            <div class="text-3xl mb-1">🌱</div>
-            <h3 class="text-sm font-bold text-textPrimary text-center">Crece sin límites</h3>
-            <p class="text-xs text-textSecondary mt-1 text-center">No te penalizamos porque tu equipo crezca, celebramos tu crecimiento.</p>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-2xl">🌱</span>
+              <h3 class="text-sm font-bold text-textPrimary">Crece sin límites</h3>
+            </div>
+            <p class="text-xs text-textSecondary text-center">No te penalizamos porque tu equipo crezca, celebramos tu crecimiento.</p>
           </div>
 
-          <!-- 5. Box 2: Tall Feature (Payments) -->
-          <div id="box2" class="bento-box bento-tall reveal flex-col-center">
-            <div class="text-4xl mb-4">🚀</div>
-            <h3 class="text-lg font-bold text-textPrimary mb-2 text-center">De la charla al pago</h3>
-            <p class="text-sm text-textSecondary text-center">
-              Automatiza tus pagos vinculando el chat con tareas por resultados.
-            </p>
+          <!-- 5. Box 2: Atmospheric Anchor (Nature/Mood) -->
+          <div id="box2" class="bento-box bento-tall reveal atmospheric-anchor">
+            <img :src="heroBox2" alt="Naturaleza Inka" class="anchor-img" />
+            <div class="anchor-overlay">
+              <div class="bento-sub-box--minimal">
+                <span class="sub-box-tag--mini">Wiracocha Labs</span>
+                <p class="sub-box-text--small">Open Source Heritage</p>
+              </div>
+            </div>
           </div>
         </header>
       </div>
-      <!-- Personaje flotante del Hero (Removido para dar un look más B2B en el primer segundo) -->
+      <!-- Personaje flotante del Hero -->
       <!-- <div class="floating-character floating-character--hero reveal">
         <img :src="chasquiCharacter" alt="Chasqui Hero" />
       </div> -->
@@ -54,7 +58,7 @@
 
     <div class="content-background-wrapper">
       <!-- 1. BLOQUE CARACTERÍSTICAS + EXPERIENCIA (Diseño Integrado) -->
-      <section class="identity-section">
+      <section id="caracteristicas" class="identity-section">
         <div class="bento-container">
           <div class="section-header reveal mb-12 text-center">
             <h2 class="text-4xl font-bold mb-4">✨ Características Principales</h2>
@@ -94,7 +98,7 @@
       </section>
 
       <!-- 2. BLOQUE IDENTIDAD + VISUALES (Restaurando Diseño Original) -->
-      <section class="identity-section identity-section--secondary">
+      <section id="vision" class="identity-section identity-section--secondary">
         <div class="bento-container reveal">
           <!-- 2.1 Texto de Identidad (Split Layout) -->
           <div class="split-layout mb-12">
@@ -162,7 +166,7 @@
     </div>
 
       <!-- Sección de Precios (Bento Grid existente) -->
-      <section class="pricing-section">
+      <section id="precios" class="pricing-section">
         <div class="bento-container bento-grid bento-grid--pricing">
           <!-- Personaje flotante en Precios -->
           <div class="floating-character floating-character--pricing reveal">
@@ -214,7 +218,7 @@
       </section>
 
       <!-- 5. FAQ SECTION -->
-      <section class="faq-section reveal">
+      <section id="faq" class="faq-section reveal">
         <div class="bento-container">
           <h2 class="text-center mb-12">Preguntas Frecuentes</h2>
           <div class="faq-accordion" style="max-width: 800px; margin: 0 auto;">
