@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <Navbar />
     <!-- Fixed Background -->
     <div class="fixed-background" :style="{ backgroundImage: `url('${heroBg}')` }"></div>
 
@@ -359,6 +360,7 @@ const faqs = [
 ];
 
 import { ref, onMounted } from 'vue';
+import Navbar from '../components/ui/Navbar.vue'
 
 const openFaqIndex = ref(null);
 
