@@ -1,5 +1,5 @@
 <template>
-  <div class="w-1/2 mx-auto flex flex-col items-center justify-center border border-brand rounded-lg p-6">
+  <div class="w-1/2 mx-auto flex flex-col items-center justify-center border-4 border-brand rounded-2xl p-6 bg-white shadow-sm">
     <form @submit.prevent="onSubmit" class="w-full">
       <h2 class="title mb-2">Crear nueva tarea</h2>
       <div class="form-group">

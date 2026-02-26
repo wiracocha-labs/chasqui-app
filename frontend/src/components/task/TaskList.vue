@@ -14,11 +14,12 @@
       <div 
         v-for="(task, index) in mockedTasks" 
         :key="task.id"
-        class="bg-white border-4 rounded-2xl transition-all cursor-pointer overflow-hidden border-brand/20"
+        class="bg-white border-4 rounded-2xl overflow-hidden border-brand cursor-default"
+        :class="{ 'hover:bg-gray-100 transition-colors': expandedTask !== index }"
         @click="toggleTask(index)"
       >
         <!-- Header always visible -->
-        <div class="p-5 flex justify-between items-center hover:bg-gray-50 transition-colors">
+        <div class="p-5 flex justify-between items-center transition-colors">
           <div class="flex items-center gap-4">
             <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 group-hover:text-brand transition-colors">
               <i :class="expandedTask === index ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
@@ -29,17 +30,21 @@
             </div>
           </div>
           
-          <span 
-            class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border"
-            :class="{
-              'bg-emerald-50 text-emerald-600 border-emerald-200': task.status === 'Pagada',
-              'bg-amber-50 text-amber-600 border-amber-200': task.status === 'Pendiente',
-              'bg-blue-50 text-blue-600 border-blue-200': task.status === 'Completada',
-              'bg-rose-50 text-rose-600 border-rose-200': task.status === 'Cancelada'
-            }"
-          >
-            {{ task.status }}
-          </span>
+          <div class="flex items-center gap-2">
+            <button 
+              class="btn-secundary !py-1 !px-4 !text-[10px] !w-auto !rounded-full !min-h-0 uppercase tracking-wider"
+              @click.stop="goToChat(task.id)"
+            ><span>Chat</span></button>
+            <span 
+              class="flex items-center justify-center px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border min-w-[100px] text-center"
+              :class="{
+                'bg-emerald-50 text-emerald-600 border-emerald-200': task.status === 'Pagada',
+                'bg-amber-50 text-amber-600 border-amber-200': task.status === 'Pendiente',
+                'bg-blue-50 text-blue-600 border-blue-200': task.status === 'Completada',
+                'bg-rose-50 text-rose-600 border-rose-200': task.status === 'Cancelada'
+              }"
+            ><span>{{ task.status }}</span></span>
+          </div>
         </div>
 
         <!-- Expanded content -->
@@ -48,17 +53,17 @@
           class="px-5 pb-5 border-t border-gray-100 animate-in fade-in slide-in-from-top-2 duration-300"
         >
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
-            <div class="bg-gray-50 rounded-lg p-3">
+            <div class="rounded-lg p-3" style="background-color: #D9D9D9">
               <div class="text-[10px] text-gray-400 font-bold uppercase mb-1 tracking-widest">Ejecutor</div>
               <div class="font-mono text-xs text-gray-600">{{ task.beneficiary }}</div>
             </div>
-            <div class="bg-gray-50 rounded-lg p-3">
+            <div class="rounded-lg p-3" style="background-color: #D9D9D9">
               <div class="text-[10px] text-gray-400 font-bold uppercase mb-1 tracking-widest">Presupuesto Escrow</div>
               <div class="font-bold text-gray-700">{{ task.amount }} {{ task.unit }}</div>
             </div>
           </div>
 
-          <div class="text-sm text-gray-600 leading-relaxed italic p-3 bg-blue-50/30 rounded-lg border border-blue-100/50">
+          <div class="text-sm text-gray-600 leading-relaxed italic p-3 rounded-lg border border-blue-100/50" style="background-color: #D9D9D9">
             <i class="fas fa-info-circle mr-2 text-blue-400"></i>
             "{{ task.description }}"
           </div>
@@ -70,8 +75,15 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const expandedTask = ref<number | null>(0)
+
+const goToChat = (taskId: string) => {
+  console.log('Redirecting to chat for task:', taskId)
+  router.push('/chat')
+}
 
 const toggleTask = (index: number) => {
   if (expandedTask.value === index) {
