@@ -1,110 +1,67 @@
 <template>
-  <div class="task-list space-y-6">
-    <div class="flex items-center justify-between mb-4">
-      <div>
-        <h2 class="text-2xl font-bold text-textSecondary">
-          <i class="fas fa-list text-action mr-3"></i>Mis Tareas
-        </h2>
-        <p class="text-textSecondary mt-1">Todas las tareas que has creado</p>
-      </div>
-      <button 
-        class="btn-primary"
-        :disabled="loading" 
-        @click="$emit('refresh')"
-      >
-        <i class="fas fa-refresh mr-2" :class="{ 'animate-spin': loading }"></i> 
-        {{ loading ? 'Actualizando...' : 'Actualizar Lista' }}
+  <div class="task-list space-y-4">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-bold text-gray-800">
+        <i class="fas fa-tasks mr-2 text-gray-400"></i>Gestión de Proyectos
+      </h2>
+      <button class="text-sm text-gray-500 hover:text-gray-800 transition-colors" @click="mockedTasks = [...mockedTasks]">
+        <i class="fas fa-sync-alt mr-1"></i> Sincronizar
       </button>
     </div>
 
-    <!-- Loading state -->
-    <div v-if="loading" class="flex items-center justify-center py-16">
-      <div class="text-center">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-chat-brand mx-auto mb-4"></div>
-        <p class="text-textSecondary font-medium">Cargando tareas...</p>
-      </div>
-    </div>
-
-    <!-- Empty state -->
-    <div v-else-if="tasks.length === 0" class="text-center py-16">
-      <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <i class="fas fa-inbox text-3xl text-textSecondary"></i>
-      </div>
-      <h3 class="text-xl font-semibold text-textSecondary mb-2">No hay tareas creadas</h3>
-      <p class="text-textSecondary mb-6">¡Crea tu primera tarea usando la pestaña "Crear Tarea"!</p>
-      <button 
-        @click="$emit('create')"
-        class="btn-primary"
-      >
-        <i class="fas fa-plus mr-2"></i> Crear Primera Tarea
-      </button>
-    </div>
-
-    <!-- Tasks list -->
-    <div v-else class="grid gap-4">
+    <!-- MOCK: Lista de tareas y acordeón para video showcase -->
+    <div class="grid gap-4">
       <div 
-        v-for="escrow in tasks" 
-        :key="escrow.id"
-        class="bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300"
+        v-for="(task, index) in mockedTasks" 
+        :key="task.id"
+        class="bg-white border-4 rounded-2xl transition-all cursor-pointer overflow-hidden border-brand/20"
+        @click="toggleTask(index)"
       >
-        <div class="flex justify-between items-start mb-4">
-          <div>
-            <div class="text-xl font-bold text-textSecondary mb-1">
-              <i class="fas fa-hashtag text-action mr-2"></i>Tarea {{ escrow.id }}
+        <!-- Header always visible -->
+        <div class="p-5 flex justify-between items-center hover:bg-gray-50 transition-colors">
+          <div class="flex items-center gap-4">
+            <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-400 group-hover:text-brand transition-colors">
+              <i :class="expandedTask === index ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
             </div>
-            <div class="flex items-center gap-2">
-              <span v-if="escrow.isPrivate" 
-                    class="px-2 py-1 rounded-full text-xs font-medium bg-chat-brand-light text-chat-brand border border-chat-brand"
-              >
-                <i class="fas fa-shield-alt mr-1 text-action"></i> Privada
-              </span>
-              <span 
-                class="px-3 py-1 rounded-full text-xs font-medium"
-                :class="{
-                  'bg-chat-accent-light text-chat-accent border border-chat-accent': escrow.isReleased,
-                  'bg-chat-brand-light text-chat-brand border border-chat-brand': escrow.isCompleted && !escrow.isReleased,
-                  'bg-chat-action-light text-chat-action border border-chat-action': !escrow.isCompleted
-                }"
-              >
-                <i :class="{
-                  'fas fa-check-circle': escrow.isReleased,
-                  'fas fa-check': escrow.isCompleted && !escrow.isReleased,
-                  'fas fa-clock': !escrow.isCompleted
-                }" class="mr-1 text-action"></i>
-                {{ escrow.isReleased ? 'Pagada' : escrow.isCompleted ? 'Completada' : 'Pendiente' }}
-              </span>
+            <div class="flex flex-col gap-1">
+              <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Canal / Tarea</span>
+              <span class="text-lg font-bold text-gray-800">{{ task.id }}</span>
             </div>
           </div>
-          <div class="text-right text-sm text-textSecondary">
-            {{ formatDate(escrow.timestamp) }}
-          </div>
+          
+          <span 
+            class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border"
+            :class="{
+              'bg-emerald-50 text-emerald-600 border-emerald-200': task.status === 'Pagada',
+              'bg-amber-50 text-amber-600 border-amber-200': task.status === 'Pendiente',
+              'bg-blue-50 text-blue-600 border-blue-200': task.status === 'Completada',
+              'bg-rose-50 text-rose-600 border-rose-200': task.status === 'Cancelada'
+            }"
+          >
+            {{ task.status }}
+          </span>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div class="bg-gray-50 rounded-lg p-4">
-            <div class="text-xs text-textSecondary mb-1 font-medium">EJECUTOR</div>
-            <div class="font-mono text-sm text-textSecondary">
-              {{ escrow.beneficiary.slice(0,8) }}...{{ escrow.beneficiary.slice(-6) }}
+
+        <!-- Expanded content -->
+        <div 
+          v-if="expandedTask === index"
+          class="px-5 pb-5 border-t border-gray-100 animate-in fade-in slide-in-from-top-2 duration-300"
+        >
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+            <div class="bg-gray-50 rounded-lg p-3">
+              <div class="text-[10px] text-gray-400 font-bold uppercase mb-1 tracking-widest">Ejecutor</div>
+              <div class="font-mono text-xs text-gray-600">{{ task.beneficiary }}</div>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-3">
+              <div class="text-[10px] text-gray-400 font-bold uppercase mb-1 tracking-widest">Presupuesto Escrow</div>
+              <div class="font-bold text-gray-700">{{ task.amount }} {{ task.unit }}</div>
             </div>
           </div>
-          <div class="bg-gray-50 rounded-lg p-4">
-            <div class="text-xs text-textSecondary mb-1 font-medium">
-              {{ escrow.isPrivate ? 'PAGO ENCRIPTADO (eERC20)' : 'PAGO PÚBLICO' }}
-            </div>
-            <div class="font-semibold text-sm text-textSecondary">
-              {{ escrow.isPrivate 
-                ? escrow.encryptedAmount.slice(0,12) + '...' 
-                : escrow.publicAmount + ' ETH' 
-              }}
-            </div>
-            <div v-if="escrow.isPrivate" class="flex items-center text-xs text-textSecondary mt-2">
-              <i class="fas fa-lock mr-1 text-action"></i>
-              <span>Monto encriptado con eERC20</span>
-            </div>
+
+          <div class="text-sm text-gray-600 leading-relaxed italic p-3 bg-blue-50/30 rounded-lg border border-blue-100/50">
+            <i class="fas fa-info-circle mr-2 text-blue-400"></i>
+            "{{ task.description }}"
           </div>
-        </div>
-        <div class="bg-blue-50 rounded-lg p-4">
-          <div class="text-xs text-textSecondary font-medium mb-2">DESCRIPCIÓN DE LA TAREA</div>
-          <div class="text-sm text-textSecondary leading-relaxed">{{ escrow.taskDescription }}</div>
         </div>
       </div>
     </div>
@@ -112,16 +69,83 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-const props = defineProps<{ tasks: any[], loading: boolean }>()
-const emit = defineEmits(['refresh', 'create'])
-const formatDate = (timestamp: number) => {
-  return new Date(timestamp).toLocaleDateString('es-ES', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
+import { ref } from 'vue'
+
+const expandedTask = ref<number | null>(0)
+
+const toggleTask = (index: number) => {
+  if (expandedTask.value === index) {
+    expandedTask.value = null
+  } else {
+    expandedTask.value = index
+  }
 }
+
+const mockedTasks = ref([
+  {
+    id: "bug contrato inteligente",
+    description: "Corrección de vulnerabilidad en el sistema de subastas asincrónicas.",
+    beneficiary: "0x71C765...d897",
+    amount: "400.00",
+    unit: "USDC",
+    status: "Pagada"
+  },
+  {
+    id: "backend-api",
+    description: "Desarrollo de microservicio para indexación de eventos on-chain.",
+    beneficiary: "0x3A21...F901",
+    amount: "0.85",
+    unit: "ETH",
+    status: "Pendiente"
+  },
+  {
+    id: "despliegue mainnet",
+    description: "Configuración de parámetros finales y despliegue del protocolo en red principal.",
+    beneficiary: "0x4B21...E202",
+    amount: "1.50",
+    unit: "ETH",
+    status: "Pendiente"
+  },
+  {
+    id: "frontend refactor",
+    description: "Migración de componentes base a la nueva interfaz v2 y optimización de carga.",
+    beneficiary: "0x9C33...A112",
+    amount: "1200.00",
+    unit: "USDT",
+    status: "Pendiente"
+  },
+  {
+    id: "diseño ux v2",
+    description: "Iteración final del prototipo de alta fidelidad para el dashboard de gestión.",
+    beneficiary: "0xDesign...6677",
+    amount: "500.00",
+    unit: "USDC",
+    status: "Pendiente"
+  },
+  {
+    id: "infraestructura-cli",
+    description: "Script de automatización para despliegues en redes de prueba.",
+    beneficiary: "0x882A...77BC",
+    amount: "250.00",
+    unit: "USDT",
+    status: "Cancelada"
+  }
+])
 </script>
+
+<style scoped>
+.animate-in {
+  animation: fadeInDown 0.3s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

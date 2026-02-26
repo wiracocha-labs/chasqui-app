@@ -10,31 +10,47 @@
         <label for="amount" class="form-label required">Monto (ETH)</label>
         <input id="amount" v-model="form.amount" type="number" min="0" step="0.01" class="form-input" placeholder="0.1" required />
       </div>
+      
+      <div class="grid grid-cols-2 gap-4">
+        <div class="form-group">
+          <label for="startDate" class="form-label required">Fecha Inicio</label>
+          <input id="startDate" v-model="form.startDate" type="date" class="form-input" required />
+        </div>
+        <div class="form-group">
+          <label for="endDate" class="form-label required">Fecha Fin</label>
+          <input id="endDate" v-model="form.endDate" type="date" class="form-input" required />
+        </div>
+      </div>
+
       <div class="form-group">
         <label for="taskDescription" class="form-label required">Descripción</label>
         <textarea id="taskDescription" v-model="form.taskDescription" class="form-textarea" rows="3" placeholder="Describe la tarea a realizar..." required></textarea>
       </div>
-      <div class="form-group flex items-center">
-        <input id="isPrivate" v-model="form.isPrivate" type="checkbox" class="form-checkbox" />
-        <label for="isPrivate" class="form-label mb-0 ml-2">Privada (pago encriptado con eERC20)</label>
-      </div>
-      <button type="submit" class="btn-secundary w-full">Crear tarea</button>
+      
+      <button type="submit" class="btn-secundary w-full mt-4">Crear tarea</button>
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 const emit = defineEmits(['submit'])
+
+const today = new Date().toISOString().split('T')[0]
+const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+
+// MOCK: Información pre-llenada para demostración en video
 const form = ref({
-  beneficiary: '',
-  amount: '',
-  taskDescription: '',
-  isPrivate: false
+  beneficiary: '0x3A216E98dB49987A4F234234234234234234F901',
+  amount: '0.75',
+  startDate: today,
+  endDate: nextWeek,
+  taskDescription: 'Integración de la capa frontend con el contrato inteligente de Escrow. Implementación de llamadas a métodos de creación de tareas, eventos de escucha y manejo de estados de transacción con Wagmi/Viem.'
 })
+
 const onSubmit = () => {
   emit('submit', { ...form.value })
   // Opcional: limpiar el formulario
-  form.value = { beneficiary: '', amount: '', taskDescription: '', isPrivate: false }
+  // form.value = { beneficiary: '', amount: '', startDate: '', endDate: '', taskDescription: '' }
 }
 </script>

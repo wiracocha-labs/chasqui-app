@@ -5,7 +5,7 @@
     <div class="fixed-background" :style="{ backgroundImage: `url('${heroBg}')` }"></div>
 
     <!-- Hero Section -->
-    <section id="inicio" class="hero-section !pt-[70px] !justify-start">
+    <section id="inicio" class="hero-section">
       <div class="bento-container">
         <header id="hero-bento" class="bento-grid">
 

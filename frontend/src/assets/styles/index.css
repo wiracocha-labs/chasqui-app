@@ -14,9 +14,6 @@ html {
 
 
 
-.hero-section {
-  position: relative;
-}
 
 /* Estilos para las secciones */
 section {
@@ -988,11 +985,6 @@ section li {
 .check-icon {
   font-size: 1.25rem;
   line-height: 1;
-}
-
-/* FAQ Section */
-.faq-section {
-  /* Dynamic spacing based on baseline */
 }
 
 .faq-grid {
