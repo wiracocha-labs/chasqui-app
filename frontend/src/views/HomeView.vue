@@ -4,6 +4,9 @@
     <!-- Fixed Background -->
     <div class="fixed-background" :style="{ backgroundImage: `url('${heroBg}')` }"></div>
 
+    <!-- Login Modal -->
+    <LoginModal :is-open="isLoginModalOpen" @close="closeLoginModal" />
+
     <!-- Hero Section -->
     <section id="inicio" class="hero-section">
       <div class="bento-container">
@@ -20,7 +23,7 @@
               </p>
             </div>
             <div class="hero-actions-side">
-              <button class="btn btn--primary">Empezar Gratis</button>
+              <button @click="openLoginModal" class="btn btn--primary">Iniciar Sesión</button>
               <a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" rel="noopener noreferrer" class="btn btn--outline">Documentación</a>
             </div>
           </div>
@@ -360,15 +363,34 @@ const faqs = [
 ];
 
 import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import Navbar from '../components/ui/Navbar.vue'
+import LoginModal from '../components/LoginModal.vue'
 
+const route = useRoute();
 const openFaqIndex = ref(null);
+const isLoginModalOpen = ref(false);
+
+const openLoginModal = () => {
+  isLoginModalOpen.value = true;
+};
+
+const closeLoginModal = () => {
+  isLoginModalOpen.value = false;
+};
 
 const toggleFaq = (index) => {
   openFaqIndex.value = openFaqIndex.value === index ? null : index;
 };
 
+// Check if user was redirected from a protected route
 onMounted(() => {
+  // Check if there's a redirect query parameter
+  if (route.query.redirect || route.path === '/') {
+    // You could show a message like "Please login to continue"
+    // For now, we'll just let the user click the login button
+  }
+
   const observerOptions = {
     threshold: 0.1,
     rootMargin: '0px 0px -50px 0px'

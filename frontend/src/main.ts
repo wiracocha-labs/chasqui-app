@@ -41,8 +41,8 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth) {
     // Verificar si el usuario está autenticado
     if (!authStore.address) {
-      // Redirigir a login si no está autenticado
-      next('/login')
+      // Redirigir a home si no está autenticado (el modal se mostrará allí)
+      next('/')
       return
     }
   }

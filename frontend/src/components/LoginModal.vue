@@ -1,8 +1,23 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center p-4">
-    <!-- Login form container -->
-    <div class="w-full max-w-4xl">
+  <!-- Modal backdrop with transparent background -->
+  <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background-color: rgba(0, 0, 0, 0.5);">
+    <!-- Modal content -->
+    <div class="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
       <div class="rounded-2xl shadow-lg p-8 border border-accent bg-secondary">
+        <!-- Modal header with close button -->
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-textSecondary text-xl font-semibold">Iniciar Sesión</h2>
+          <button 
+            @click="closeModal"
+            class="text-textSecondary hover:text-brand transition-colors p-2 rounded-lg hover:bg-brand-10"
+            style="background-color: transparent; border: none; cursor: pointer;"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+
         <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
           <!-- Left side - Forms -->
           <div class="w-full lg:w-1/2">
@@ -174,6 +189,18 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 
+// Props
+interface Props {
+  isOpen: boolean
+}
+
+const props = defineProps<Props>()
+
+// Emits
+const emit = defineEmits<{
+  close: []
+}>()
+
 type WalletType = 'metamask' | 'walletconnect' | 'coinbase'
 
 const router = useRouter()
@@ -188,6 +215,10 @@ const showPassword = ref(false)
 onMounted(() => {
   authStore.initializeProvider()
 })
+
+const closeModal = () => {
+  emit('close')
+}
 
 const handleEmailLogin = async () => {
   try {
@@ -206,6 +237,7 @@ const handleEmailLogin = async () => {
       // Store login info (in a real app, you'd get a token from your backend)
       localStorage.setItem('userEmail', email.value)
       localStorage.setItem('loginMethod', 'email')
+      closeModal()
       router.push('/chat')
     } else {
       error.value = 'Por favor, completa todos los campos'
@@ -227,6 +259,7 @@ const connectWallet = async (walletType: WalletType) => {
       const isAuthorized = await authStore.checkAuthorization(authStore.address)
       if (isAuthorized) {
         localStorage.setItem('connectedWallet', walletType)
+        closeModal()
         router.push('/chat')
       } else {
         error.value = 'Tu dirección no está autorizada para acceder a esta aplicación.'
