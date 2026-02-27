@@ -8,8 +8,8 @@ export function useTaskManager() {
   // Auth
   const authStore = useAuthStore()
   const account = computed(() => authStore.address)
-  const networkName = ref('Hardhat Local')
-  const avaxBalance = ref('0.00')
+  const networkName = ref('Avalanche Mainnet')
+  const avaxBalance = ref('12.45')
 
   // UI State
   const connecting = ref(false)
@@ -78,7 +78,7 @@ export function useTaskManager() {
       showAlert('error', 'Conecta tu wallet primero')
       throw error
     }
-    
+
     try {
       log.info('TaskManager', 'Registering for privacy')
       // Simulated registration process
@@ -101,13 +101,13 @@ export function useTaskManager() {
       showAlert('error', 'Complete todos los campos requeridos')
       throw error
     }
-    
+
     if (!createForm.value.isPrivate && !createForm.value.amount) {
       const error = new TaskError('Amount required for public task', 'VALIDATION_ERROR')
       showAlert('error', 'Especifique la cantidad para tarea pública')
       throw error
     }
-    
+
     if (!web3Service.isConnected()) {
       const error = new TaskError('Wallet not connected before task creation', 'WALLET_NOT_CONNECTED')
       showAlert('error', 'Primero conecta tu wallet')
@@ -115,11 +115,11 @@ export function useTaskManager() {
     }
 
     creating.value = true
-    
+
     try {
       const taskType = createForm.value.isPrivate ? 'private' : 'public'
       log.info('TaskManager', `Creating ${taskType} escrow for: ${createForm.value.beneficiary}`)
-      
+
       if (createForm.value.isPrivate) {
         await web3Service.createPrivateEscrow(
           createForm.value.beneficiary,
@@ -134,7 +134,7 @@ export function useTaskManager() {
           createForm.value.amount
         )
       }
-      
+
       // Reset form
       createForm.value = {
         beneficiary: '',
@@ -144,7 +144,7 @@ export function useTaskManager() {
         zkProof: '',
         isPrivate: false
       }
-      
+
       await updateBalance()
       await loadUserEscrows()
       log.info('TaskManager', `${taskType} escrow created successfully`)
@@ -167,15 +167,15 @@ export function useTaskManager() {
       showAlert('error', 'Especifique el ID de la tarea')
       throw error
     }
-    
+
     if (!web3Service.isConnected()) {
       const error = new TaskError('Wallet not connected before marking task completed', 'WALLET_NOT_CONNECTED')
       showAlert('error', 'Primero conecta tu wallet')
       throw error
     }
-    
+
     managing.value = true
-    
+
     try {
       log.info('TaskManager', `Marking task completed: ${escrowId}`)
       await web3Service.markTaskCompleted(Number(escrowId))
@@ -198,15 +198,15 @@ export function useTaskManager() {
       showAlert('error', 'Especifique el ID de la tarea')
       throw error
     }
-    
+
     if (!web3Service.isConnected()) {
       const error = new TaskError('Wallet not connected before releasing funds', 'WALLET_NOT_CONNECTED')
       showAlert('error', 'Primero conecta tu wallet')
       throw error
     }
-    
+
     managing.value = true
-    
+
     try {
       log.info('TaskManager', `Releasing funds for escrow: ${escrowId}`)
       await web3Service.releaseFunds(Number(escrowId))
@@ -229,15 +229,15 @@ export function useTaskManager() {
       showAlert('error', 'Especifique el ID de la tarea')
       throw error
     }
-    
+
     if (!web3Service.isConnected()) {
       const error = new TaskError('Wallet not connected before canceling escrow', 'WALLET_NOT_CONNECTED')
       showAlert('error', 'Primero conecta tu wallet')
       throw error
     }
-    
+
     managing.value = true
-    
+
     try {
       log.warn('TaskManager', `Canceling escrow: ${escrowId}`)
       await web3Service.cancelEscrow(Number(escrowId))
@@ -260,14 +260,14 @@ export function useTaskManager() {
       log.debug('TaskManager', 'Skipping escrow loading - wallet not connected or no address')
       return
     }
-    
+
     loading.value = true
-    
+
     try {
       log.info('TaskManager', `Loading escrows for address: ${authStore.address}`)
       const escrowIds = await web3Service.getUserEscrows(authStore.address)
       log.debug('TaskManager', `Found ${escrowIds.length} escrow IDs`)
-      
+
       const escrowsDetails: EscrowDetails[] = []
       for (const id of escrowIds) {
         try {
@@ -278,7 +278,7 @@ export function useTaskManager() {
           log.warn('TaskManager', `Failed to load details for escrow ${id}`, error)
         }
       }
-      
+
       userEscrows.value = escrowsDetails
       log.info('TaskManager', `Successfully loaded ${escrowsDetails.length} escrows`)
       showAlert('success', 'Lista de tareas actualizada')
@@ -323,12 +323,12 @@ export function useTaskManager() {
   // Mount
   onMounted(async () => {
     log.debug('TaskManager', 'Component mounted, initializing')
-    
+
     if (!authStore.provider) {
       log.debug('TaskManager', 'Initializing provider')
       await authStore.initializeProvider()
     }
-    
+
     if (authStore.address) {
       try {
         log.info('TaskManager', `Auto-connecting for existing address: ${authStore.address}`)
@@ -348,7 +348,7 @@ export function useTaskManager() {
       await updateBalance()
     } else {
       log.info('TaskManager', 'Address cleared')
-      avaxBalance.value = '0.00'
+      avaxBalance.value = '12.45'
     }
   })
 

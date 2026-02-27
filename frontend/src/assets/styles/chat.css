@@ -195,5 +195,100 @@ button:disabled {
 }
 
 .sc-executed-card .content-text {
-    font-size: 15px; color: #e5e7eb; line-height: 1.375;
+    font-size: 15px;
+    color: #e5e7eb;
+    line-height: 1.375;
+}
+
+/* Day Separator */
+.day-separator {
+    display: flex;
+    align-items: center;
+    margin: 2.5rem 0 1.5rem;
+}
+
+.day-separator .line {
+    flex: 1;
+    height: 1px;
+    background: var(--color-brand-20);
+    opacity: 0.2;
+}
+
+.day-separator .day-text {
+    padding: 0 1.25rem;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--color-brand);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    background: var(--color-bg-primary);
+}
+
+/* GitHub Bot Card */
+.github-bot-card {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
+    background-color: #0d1117;
+    padding: 1rem 1.25rem;
+    display: flex;
+    gap: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    max-width: 42rem;
+    position: relative;
+    border-left: 4px solid #238636;
+    margin-bottom: 0.5rem;
+}
+
+.github-bot-card.pr-opened {
+    border-left-color: #1f6feb;
+}
+
+.github-bot-card .bot-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: #30363d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: #c9d1d9;
+}
+
+.github-bot-card .bot-details {
+    flex: 1;
+}
+
+.github-bot-card .bot-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+    font-size: 13px;
+    color: #8b949e;
+}
+
+.github-bot-card .bot-name {
+    color: #c9d1d9;
+    font-weight: 600;
+}
+
+.github-bot-card .bot-action {
+    color: #c9d1d9;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.github-bot-card .repo-link {
+    color: #58a6ff;
+    text-decoration: none;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.github-bot-card .repo-link:hover {
+    text-decoration: underline;
+}
+
+.github-bot-card .pr-number {
+    color: #8b949e;
 }
