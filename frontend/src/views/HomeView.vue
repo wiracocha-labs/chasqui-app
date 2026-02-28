@@ -16,15 +16,18 @@
           <div id="hero-title-box" class="bento-main reveal">
             <div class="hero-title-content">
               <h1>
-                <span class="text-brand">📨 Chasqui</span> — El chat de gestión para startups y proyectos Open Source
+                <span class="text-brand">📨 Chasqui</span> — Resultados, no horas.
               </h1>
               <p class="tagline">
-                Comunicación optimizada para equipos remotos a un precio accesible.
+                Conversación que ejecuta. Pagos que se automatizan.
+              </p>
+              <p class="tagline-sm">
+                Menos administración. Más ejecución.
               </p>
             </div>
             <div class="hero-actions-side">
-              <button @click="openLoginModal" class="btn btn--primary">Iniciar Sesión</button>
-              <a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" rel="noopener noreferrer" class="btn btn--outline">Documentación</a>
+              <button @click="openLoginModal" class="btn btn--primary">Ingresar</button>
+              <a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" rel="noopener noreferrer" class="btn btn--outline">Ver cómo funciona</a>
             </div>
           </div>
 
@@ -37,9 +40,9 @@
           <div id="box1" class="bento-box reveal flex-col-center">
             <div class="flex items-center gap-2 mb-2">
               <span class="text-2xl">🌱</span>
-              <h3 class="text-sm font-bold text-textPrimary">Crece sin límites</h3>
+              <h3 class="text-sm font-bold text-textPrimary">Crece por resultados</h3>
             </div>
-            <p class="text-xs text-textSecondary text-center">No te penalizamos porque tu equipo crezca, celebramos tu crecimiento.</p>
+            <p class="text-xs text-textSecondary text-center">Usuarios ilimitados. Sin penalización por crecimiento.</p>
           </div>
 
           <!-- 5. Box 2: Atmospheric Anchor (Nature/Mood) -->
@@ -65,8 +68,8 @@
       <section id="caracteristicas" class="identity-section">
         <div class="bento-container">
           <div class="section-header reveal mb-12 text-center">
-            <h2 class="text-4xl font-bold mb-4">✨ Características Principales</h2>
-            <p class="text-textSecondary text-xl">Todo lo que necesitas para una comunicación efectiva</p>
+            <h2 class="text-4xl font-bold mb-4">⚡ El flujo completo de ejecución</h2>
+            <p class="text-textSecondary text-xl">Desde la conversación hasta el pago, en un solo sistema.</p>
           </div>
           
           <div class="bento-grid bento-grid--features reveal mb-8">
@@ -108,20 +111,24 @@
           <div class="split-layout mb-12">
             <div class="identity-content">
               <h2>🚀 La Evolución de la Colaboración</h2>
-              <p class="lead">Chasqui nace para quienes creen que el trabajo se mide por <strong>resultados, no por horas</strong>. Optimizamos para la autonomía del equipo y la tranquilidad de los clientes.</p>
+              <p class="lead">Chasqui nace para quienes creen que el trabajo se mide por <strong>resultados, no por horas</strong>.</p>
+              <p>Optimizamos para la autonomía del equipo y la tranquilidad de quien contrata.</p>
+              <p>Reducimos la fricción administrativa.</p>
+              <p>Integramos la gestión de pagos dentro del flujo natural del trabajo.</p>
               
               <div class="philosophy-box">
-                <blockquote>"Menos administración, más ejecución."</blockquote>
-                <p>Fomentamos una cultura de comunicación efectiva donde el foco es el avance del proyecto y la transparencia total entre colaboradores.</p>
+                <blockquote>"Menos administración. Más ejecución."</blockquote>
+                <p>La conversación no se queda en el chat.</p>
+                <p>Se transforma en compromiso y termina en pago.</p>
               </div>
             </div>
 
             <div class="identity-target">
               <h3>🎯 Ideal para:</h3>
               <ul class="check-list">
-                <li><span>✅ <strong>Startups Emergentes</strong></span></li>
-                <li><span>✅ <strong>Equipos Remotos</strong></span></li>
-                <li><span>✅ <strong>Freelancers</strong></span></li>
+                <li><span>✅ <strong>Startups en etapa temprana</strong></span></li>
+                <li><span>✅ <strong>Equipos remotos que trabajan por objetivos</strong></span></li>
+                <li><span>✅ <strong>Proyectos Open Source con colaboradores distribuidos</strong></span></li>
               </ul>
             </div>
           </div>
@@ -143,25 +150,32 @@
             <div class="tech-card reveal">
               <h3>🌱 Mentalidad Chasqui</h3>
               <ul class="tech-list">
-                <li><strong>Comunicación Efectiva:</strong> Menos ruido, más foco en objetivos.</li>
-                <li><strong>Gestión Ágil:</strong> Herramientas simples para un crecimiento rápido.</li>
-                <li><strong>100% Open Source:</strong> Construimos en público, para la comunidad.</li>
-                <li><strong>Transparencia Radical:</strong> Roadmap y procesos siempre visibles.</li>
+                <li><strong>Resultados sobre horas</strong><br>El trabajo se mide por lo que se entrega.</li>
+                <li><strong>Autonomía real</strong><br>Los equipos trabajan con claridad y responsabilidad.</li>
+                <li><strong>Pagos sin fricción</strong><br>La administración financiera es parte del sistema, no una carga adicional.</li>
+                <li><strong>Transparencia radical</strong><br>Procesos visibles y pagos verificables.</li>
               </ul>
             </div>
             
             <div class="tech-card security-card reveal">
-              <h3>🔍 Arquitectura Técnica del MVP</h3>
-              <p>Diseñado para ser ligero, seguro y escalable. Nuestra arquitectura separa la comunicación del valor:</p>
+              <h3>🔍 Arquitectura del MVP</h3>
+              <p>Chasqui separa tres capas fundamentales:</p>
               <ul class="tech-list tech-list--grid">
-                <li><span class="tech-badge">Actix-web</span> Comunicación P2P y webhooks rápidos</li>
-                <li><span class="tech-badge">VueJS / Vite</span> UI reactiva y sin backend pesado</li>
-                <li><span class="tech-badge">Avalanche</span> Identidad, firma y trazabilidad pura</li>
-                <li><span class="tech-badge">OpenAI</span> Resúmenes inteligentes de conversaciones</li>
-                <li><span class="tech-badge">Fly.io / Railway</span> Hospedaje liviano y escalable</li>
+                <li><strong>Conversación</strong></li>
+                <li><strong>Compromiso</strong></li>
+                <li><strong>Liquidación</strong></li>
               </ul>
-              <div class="mt-auto pt-6">
-                <a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" rel="noopener noreferrer" class="btn btn--outline w-full text-center" style="padding: 0.75rem;">Ver arquitectura en GitHub &rarr;</a>
+              <p>Diseñado para ser ligero, seguro y escalable.</p>
+              <h4>Stack Tecnológico</h4>
+              <ul class="tech-list tech-list--grid">
+                <li><span class="tech-badge">Actix-web</span> — Comunicación eficiente</li>
+                <li><span class="tech-badge">VueJS / Vite</span> — Interfaz reactiva</li>
+                <li><span class="tech-badge">Avalanche</span> — Identidad y trazabilidad de pagos</li>
+                <li><span class="tech-badge">OpenAI</span> — Resúmenes inteligentes</li>
+                <li><span class="tech-badge">Fly.io / Railway</span> — Infraestructura desplegable y liviana</li>
+              </ul>
+              <div class="tech-cta">
+                <a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" rel="noopener noreferrer" class="btn btn--outline">Ver arquitectura en GitHub →</a>
               </div>
             </div>
           </div>
@@ -284,23 +298,23 @@ import chasqui3 from '../assets/images/chasqui_3.webp'
 const features = [
   {
     icon: '🤝',
-    title: 'Tranquilidad Total',
-    description: 'Tus colaboradores trabajan con objetivos claros y los pagos se liberan solo al finalizar el trabajo.'
+    title: 'Objetivos Claros',
+    description: 'Define qué se va a hacer, quién lo hace y cuándo está terminado. Sin ambigüedad. Sin seguimiento manual eterno.'
   },
   {
     icon: '💰',
-    title: 'Pagos por Objetivos',
-    description: 'Automatiza tu nómina o pagos a freelancers basándote en hitos completados, sin procesos manuales.'
+    title: 'Pagos Integrados al Trabajo',
+    description: 'Los pagos no viven en otra plataforma. No requieren hojas de cálculo. No dependen de recordatorios. Cuando el trabajo se completa y se valida, el pago se ejecuta automáticamente. Administración financiera sin fricción.'
   },
   {
     icon: '🏗️',
-    title: 'Escalabilidad para Startups',
-    description: 'Una infraestructura que no te penaliza por crecer. Administra presupuestos y equipos de forma ágil.'
+    title: 'Infraestructura para Startups',
+    description: 'Diseñado para equipos que necesitan velocidad y claridad. Usuarios ilimitados. Presupuestos visibles. Arquitectura ligera y escalable. Crece sin reestructurar tu herramienta cada seis meses.'
   },
   {
     icon: '🎯',
-    title: 'Foco en la Entrega',
-    description: 'Una interfaz optimizada para la ejecución. Menos ruido de chat, más cumplimiento de metas.'
+    title: 'Foco en Resultados',
+    description: 'No optimizamos para que envíes más mensajes. Optimizamos para que entregues más valor. Cada conversación tiene dirección. Cada entrega tiene consecuencia.'
   }
 ];
 
@@ -311,10 +325,12 @@ const pricingPlans = [
     price: 'Gratis',
     period: 'durante el MVP',
     features: [
-      'Comunicación core (Canales)',
-      'Resúmenes de hilos por IA',
-      'Integración GitHub/GitLab',
-      'Usuarios ilimitados'
+      'Comunicación por canales',
+      'Conversión de conversaciones en objetivos',
+      'Resúmenes inteligentes',
+      'Integración GitHub / GitLab',
+      'Usuarios ilimitados',
+      'Sin historial oculto'
     ],
     buttonText: 'Acceso Temprano',
     featured: true
@@ -346,19 +362,19 @@ const faqs = [
   },
   {
     question: '¿Por qué Chasqui y no Slack o Discord?',
-    answer: 'Las versiones gratuitas de otras apps terminan ocultando tu historial y su versión de pago te cobra por usuario, lo que es difícil para startups jóvenes. Discord es excelente para la comunicación de comunidades y gaming, pero sufre de mucho ruido y le faltan integraciones nativas para flujos de trabajo. Chasqui nace para separar espacios: priorizamos la <strong>productividad, la salud y el bienestar</strong>, dándote control real sobre tu información a un precio accesible.'
+    answer: 'Slack optimiza la comunicación corporativa masiva. Discord optimiza la comunidad social. Chasqui optimiza la ejecución con responsabilidad financiera. Aquí la conversación no termina en mensajes. Termina en resultados y pagos verificables.'
   },
   {
     question: '¿Qué significa que sea "Privacy by Design"?',
-    answer: 'Cumplimos con estrictos estándares de seguridad y cifrado. La verdadera novedad es que <strong>ni siquiera tenemos control sobre tus pagos</strong>: interactuamos a través de contratos inteligentes que son 100% transparentes, automáticos y autónomos, eliminando a los intermediarios.'
+    answer: 'Cumplimos con estrictos estándares de seguridad y cifrado. La verdadera novedad es que ni siquiera tenemos control sobre tus pagos: interactuamos a través de contratos inteligentes que son 100% transparentes, automáticos y autónomos, eliminando a los intermediarios.'
   },
   {
     question: '¿Necesito saber de Web3/Crypto para usar la plataforma?',
-    answer: 'Para el MVP, sí necesitarás una wallet para interactuar con la automatización de pagos. Sin embargo, ya estamos planificando integrar opciones tradicionales. Constantemente daremos talleres para compartir por qué amamos la tecnología Web3 y cómo tu equipo puede ser más eficiente al ingresar a este ecosistema.'
+    answer: 'Durante el MVP necesitarás una wallet para la automatización de pagos. Estamos trabajando en integrar opciones tradicionales para reducir fricción. La tecnología es un medio. El foco es la ejecución.'
   },
   {
     question: '¿Cuándo estará lista la versión final?',
-    answer: 'Actualmente estamos en Fase Beta. Lanzaremos actualizaciones periódicas de forma transparente. Puedes seguir nuestro roadmap o aportar al ecosistema directamente en nuestro repositorio de código.<br><br><a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" rel="noopener noreferrer" class="btn btn--outline" style="display:inline-block; margin-top:0.75rem;">Visitar GitHub</a>'
+    answer: 'Estamos en fase Beta con roadmap público y actualizaciones periódicas. Puedes seguir el progreso o contribuir directamente al proyecto.<br><br><a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" rel="noopener noreferrer" class="btn btn--outline" style="display:inline-block; margin-top:0.75rem;">Visitar GitHub</a>'
   }
 ];
 

@@ -3,21 +3,23 @@
   <div v-if="isOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="background-color: rgba(0, 0, 0, 0.5);">
     <!-- Modal content -->
     <div class="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-      <div class="rounded-2xl shadow-lg p-8 border border-accent bg-secondary">
+      <div class="rounded-2xl shadow-lg p-8 border border-accent" style="background-color: var(--color-primary); border-width: 2px;">
         <!-- Modal header with close button -->
         <div class="flex justify-between items-center mb-6">
           <div class="flex gap-6 items-center">
             <h2 
-              class="text-textSecondary text-xl font-semibold cursor-pointer hover:text-brand transition-colors"
-              :class="{ 'text-brand': activeTab === 'login' }"
+              class="text-xl font-semibold cursor-pointer transition-colors"
+              :class="{ 'text-brand': activeTab === 'login', 'text-primary': activeTab !== 'login' }"
+              style="color: var(--color-text-primary);"
               @click="activeTab = 'login'"
             >
               Iniciar Sesión
             </h2>
-            <span class="text-textSecondary">|</span>
+            <span style="color: var(--color-text-primary);">|</span>
             <h2 
-              class="text-textSecondary text-xl font-semibold cursor-pointer hover:text-brand transition-colors"
-              :class="{ 'text-brand': activeTab === 'register' }"
+              class="text-xl font-semibold cursor-pointer transition-colors"
+              :class="{ 'text-brand': activeTab === 'register', 'text-primary': activeTab !== 'register' }"
+              style="color: var(--color-text-primary);"
               @click="activeTab = 'register'"
             >
               Inscribirse
@@ -25,8 +27,8 @@
           </div>
           <button 
             @click="closeModal"
-            class="text-textSecondary hover:text-brand transition-colors p-2 rounded-lg hover:bg-brand-10"
-            style="background-color: transparent; border: none; cursor: pointer;"
+            class="transition-colors p-2 rounded-lg hover:bg-brand-10"
+            style="background-color: transparent; border: none; cursor: pointer; color: var(--color-text-primary);"
           >
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -36,15 +38,15 @@
 
         <!-- Divider line -->
         <div class="mb-6">
-          <div class="h-px" style="background-color: var(--color-textSecondary)"></div>
+          <div class="h-px" style="background-color: var(--color-text-primary);"></div>
         </div>
 
         <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
           <!-- Left side - Forms -->
           <div class="w-full lg:w-1/2">
             <div class="text-center mb-8">
-              <h2 class="text-textSecondary">Bienvenido</h2>
-              <p class="text-textSecondary">
+              <h2 style="color: var(--color-text-primary);">Bienvenido</h2>
+              <p style="color: var(--color-text-primary);">
                 <span v-if="activeTab === 'login'">Inicia sesión o conecta tu wallet</span>
                 <span v-else>Crea tu cuenta para comenzar</span>
               </p>
@@ -53,13 +55,13 @@
             <!-- Login Form -->
             <div v-if="activeTab === 'login'" class="mb-6">
               <div class="flex items-center justify-center mb-4">
-                <div class="flex-1 h-px" style="background-color: var(--color-textSecondary)"></div>
-                <div class="flex-1 h-px" style="background-color: var(--color-textSecondary)"></div>
+                <div class="flex-1 h-px" style="background-color: var(--color-text-primary);"></div>
+                <div class="flex-1 h-px" style="background-color: var(--color-text-primary);"></div>
               </div>
               
               <form @submit.prevent="handleEmailLogin" class="space-y-4">
                 <div class="form-group">
-                  <label for="email" class="form-label required">
+                  <label for="email" class="form-label required" style="color: var(--color-text-primary);">
                     Correo electrónico
                   </label>
                   <input
@@ -70,11 +72,12 @@
                     class="form-input"
                     placeholder="tu@email.com"
                     :disabled="isConnecting"
+                    style="background-color: var(--color-secondary); color: var(--color-text-primary);"
                   />
                 </div>
                 
                 <div class="form-group">
-                  <label for="password" class="form-label required">
+                  <label for="password" class="form-label required" style="color: var(--color-text-primary);">
                     Contraseña
                   </label>
                   <div class="relative">
@@ -84,15 +87,16 @@
                       :type="showPassword ? 'text' : 'password'"
                       required
                       class="form-input pr-10"
-                      placeholder="••••••••"
+                      placeholder="•••••••"
                       :disabled="isConnecting"
+                      style="background-color: var(--color-secondary); color: var(--color-text-primary);"
                     />
                     <button
                       type="button"
                       @click="showPassword = !showPassword"
                       class="absolute inset-y-0 right-0 pr-3 flex items-center"
                       :disabled="isConnecting"
-                      style="color: var(--color-textSecondary)"
+                      style="color: var(--color-text-primary);"
                     >
                       <span v-if="showPassword" class="text-sm">👁️</span>
                       <span v-else class="text-sm">🔒</span>
@@ -113,13 +117,13 @@
             <!-- Register Form -->
             <div v-else class="mb-6">
               <div class="flex items-center justify-center mb-4">
-                <div class="flex-1 h-px" style="background-color: var(--color-textSecondary)"></div>
-                <div class="flex-1 h-px" style="background-color: var(--color-textSecondary)"></div>
+                <div class="flex-1 h-px" style="background-color: var(--color-text-primary);"></div>
+                <div class="flex-1 h-px" style="background-color: var(--color-text-primary);"></div>
               </div>
               
               <form @submit.prevent="handleEmailRegister" class="space-y-4">
                 <div class="form-group">
-                  <label for="register-name" class="form-label required">
+                  <label for="register-name" class="form-label required" style="color: var(--color-text-primary);">
                     Nombre completo
                   </label>
                   <input
@@ -130,11 +134,12 @@
                     class="form-input"
                     placeholder="Tu nombre completo"
                     :disabled="isConnecting"
+                    style="background-color: var(--color-secondary); color: var(--color-text-primary);"
                   />
                 </div>
 
                 <div class="form-group">
-                  <label for="register-email" class="form-label required">
+                  <label for="register-email" class="form-label required" style="color: var(--color-text-primary);">
                     Correo electrónico
                   </label>
                   <input
@@ -145,11 +150,12 @@
                     class="form-input"
                     placeholder="tu@email.com"
                     :disabled="isConnecting"
+                    style="background-color: var(--color-secondary); color: var(--color-text-primary);"
                   />
                 </div>
                 
                 <div class="form-group">
-                  <label for="register-password" class="form-label required">
+                  <label for="register-password" class="form-label required" style="color: var(--color-text-primary);">
                     Contraseña
                   </label>
                   <div class="relative">
@@ -159,15 +165,16 @@
                       :type="showPassword ? 'text' : 'password'"
                       required
                       class="form-input pr-10"
-                      placeholder="••••••••"
+                      placeholder="•••••••"
                       :disabled="isConnecting"
+                      style="background-color: var(--color-secondary); color: var(--color-text-primary);"
                     />
                     <button
                       type="button"
                       @click="showPassword = !showPassword"
                       class="absolute inset-y-0 right-0 pr-3 flex items-center"
                       :disabled="isConnecting"
-                      style="color: var(--color-textSecondary)"
+                      style="color: var(--color-text-primary);"
                     >
                       <span v-if="showPassword" class="text-sm">👁️</span>
                       <span v-else class="text-sm">🔒</span>
@@ -176,7 +183,7 @@
                 </div>
 
                 <div class="form-group">
-                  <label for="register-confirm-password" class="form-label required">
+                  <label for="register-confirm-password" class="form-label required" style="color: var(--color-text-primary);">
                     Confirmar contraseña
                   </label>
                   <input
@@ -185,8 +192,9 @@
                     :type="showPassword ? 'text' : 'password'"
                     required
                     class="form-input"
-                    placeholder="••••••••"
+                    placeholder="•••••••"
                     :disabled="isConnecting"
+                    style="background-color: var(--color-secondary); color: var(--color-text-primary);"
                   />
                 </div>
                 
@@ -203,8 +211,8 @@
             <!-- Wallet connection section -->
             <div class="mb-6">
               <div class="flex items-center justify-center mb-4">
-                <div class="flex-1 h-px" style="background-color: var(--color-textSecondary)"></div>
-                <div class="flex-1 h-px" style="background-color: var(--color-textSecondary)"></div>
+                <div class="flex-1 h-px" style="background-color: var(--color-text-primary);"></div>
+                <div class="flex-1 h-px" style="background-color: var(--color-text-primary);"></div>
               </div>
             </div>
             
@@ -212,7 +220,7 @@
             <div v-if="error" class="error-alert mb-6">
               <div class="error-content">
                 <span class="error-icon">⚠️</span>
-                <p class="error-text">{{ error }}</p>
+                <p class="error-text" style="color: var(--color-text-primary);">{{ error }}</p>
               </div>
             </div>
             
@@ -250,7 +258,7 @@
             <!-- Loading state -->
             <div v-if="isConnecting" class="loading-state">
               <div class="loading-spinner" style="border-color: var(--color-brand); border-top-color: var(--color-accent);"></div>
-              <span class="loading-text" style="color: var(--color-primary);">Conectando wallet...</span>
+              <span class="loading-text" style="color: var(--color-text-primary);">Conectando wallet...</span>
             </div>
           </div>
           
@@ -259,37 +267,37 @@
             <div class="mb-6 flex justify-center lg:justify-start">
               <img src="/src/assets/images/logo.webp" alt="Logo Chasqui" class="h-20 w-20" />
             </div>
-            <h2 class="brand-title-sm mb-3 text-textSecondary">Chasqui</h2>
-            <p class="brand-desc-sm mb-8 text-textSecondary">Privado. Claro. Hecho para tu equipo.</p>
+            <h2 class="brand-title-sm mb-3" style="color: var(--color-text-primary);">Chasqui</h2>
+            <p class="brand-desc-sm mb-8" style="color: var(--color-text-primary);">Resultados, no horas.</p>
             
             <!-- Features -->
             <div class="flex flex-col gap-6 mb-8">
               <div class="flex items-start gap-4">
                 <div class="feature-icon mt-1">✓</div>
                 <div>
-                  <h3 class="brand-title-sm text-textSecondary">Descentralizado</h3>
-                  <p class="brand-desc-sm text-textSecondary">Sin servidores centrales, tus datos son privados</p>
+                  <h3 class="brand-title-sm" style="color: var(--color-text-primary);">Descentralizado</h3>
+                  <p class="brand-desc-sm" style="color: var(--color-text-primary);">Controlas tu identidad y tus pagos.</p>
                 </div>
               </div>
               <div class="flex items-start gap-4">
                 <div class="feature-icon mt-1">✓</div>
                 <div>
-                  <h3 class="brand-title-sm text-textSecondary">Seguro</h3>
-                  <p class="brand-desc-sm text-textSecondary">Conecta con tu wallet, sin contraseñas</p>
+                  <h3 class="brand-title-sm" style="color: var(--color-text-primary);">Seguro</h3>
+                  <p class="brand-desc-sm" style="color: var(--color-text-primary);">Firma directa. Sin contraseñas tradicionales.</p>
                 </div>
               </div>
               <div class="flex items-start gap-4">
                 <div class="feature-icon mt-1">✓</div>
                 <div>
-                  <h3 class="brand-title-sm text-textSecondary">Tiempo Real</h3>
-                  <p class="brand-desc-sm text-textSecondary">Mensajes instantáneos con GunDB</p>
+                  <h3 class="brand-title-sm" style="color: var(--color-text-primary);">Tiempo Real</h3>
+                  <p class="brand-desc-sm" style="color: var(--color-text-primary);">Conversaciones sincronizadas y verificables.</p>
                 </div>
               </div>
             </div>
             
             <!-- Footer -->
             <div class="text-center lg:text-left">
-              <p class="text-sm text-textSecondary">© 2024 Chasqui - Sistema descentralizado</p>
+              <p class="text-sm" style="color: var(--color-text-primary);">© 2024 Chasqui - Sistema descentralizado</p>
             </div>
           </div>
         </div>
