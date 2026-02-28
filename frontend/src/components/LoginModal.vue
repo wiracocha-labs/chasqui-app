@@ -6,7 +6,23 @@
       <div class="rounded-2xl shadow-lg p-8 border border-accent bg-secondary">
         <!-- Modal header with close button -->
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-textSecondary text-xl font-semibold">Iniciar Sesión</h2>
+          <div class="flex gap-6 items-center">
+            <h2 
+              class="text-textSecondary text-xl font-semibold cursor-pointer hover:text-brand transition-colors"
+              :class="{ 'text-brand': activeTab === 'login' }"
+              @click="activeTab = 'login'"
+            >
+              Iniciar Sesión
+            </h2>
+            <span class="text-textSecondary">|</span>
+            <h2 
+              class="text-textSecondary text-xl font-semibold cursor-pointer hover:text-brand transition-colors"
+              :class="{ 'text-brand': activeTab === 'register' }"
+              @click="activeTab = 'register'"
+            >
+              Inscribirse
+            </h2>
+          </div>
           <button 
             @click="closeModal"
             class="text-textSecondary hover:text-brand transition-colors p-2 rounded-lg hover:bg-brand-10"
@@ -18,16 +34,24 @@
           </button>
         </div>
 
+        <!-- Divider line -->
+        <div class="mb-6">
+          <div class="h-px" style="background-color: var(--color-textSecondary)"></div>
+        </div>
+
         <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
           <!-- Left side - Forms -->
           <div class="w-full lg:w-1/2">
             <div class="text-center mb-8">
               <h2 class="text-textSecondary">Bienvenido</h2>
-              <p class="text-textSecondary">Inicia sesión o conecta tu wallet</p>
+              <p class="text-textSecondary">
+                <span v-if="activeTab === 'login'">Inicia sesión o conecta tu wallet</span>
+                <span v-else>Crea tu cuenta para comenzar</span>
+              </p>
             </div>
             
-            <!-- Email/Password Login Form -->
-            <div class="mb-6">
+            <!-- Login Form -->
+            <div v-if="activeTab === 'login'" class="mb-6">
               <div class="flex items-center justify-center mb-4">
                 <div class="flex-1 h-px" style="background-color: var(--color-textSecondary)"></div>
                 <div class="flex-1 h-px" style="background-color: var(--color-textSecondary)"></div>
@@ -82,6 +106,96 @@
                   :class="{ 'btn-disabled': isConnecting || !email || !password }"
                 >
                   {{ isConnecting ? 'Iniciando sesión...' : 'Iniciar sesión' }}
+                </button>
+              </form>
+            </div>
+
+            <!-- Register Form -->
+            <div v-else class="mb-6">
+              <div class="flex items-center justify-center mb-4">
+                <div class="flex-1 h-px" style="background-color: var(--color-textSecondary)"></div>
+                <div class="flex-1 h-px" style="background-color: var(--color-textSecondary)"></div>
+              </div>
+              
+              <form @submit.prevent="handleEmailRegister" class="space-y-4">
+                <div class="form-group">
+                  <label for="register-name" class="form-label required">
+                    Nombre completo
+                  </label>
+                  <input
+                    id="register-name"
+                    v-model="registerName"
+                    type="text"
+                    required
+                    class="form-input"
+                    placeholder="Tu nombre completo"
+                    :disabled="isConnecting"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="register-email" class="form-label required">
+                    Correo electrónico
+                  </label>
+                  <input
+                    id="register-email"
+                    v-model="email"
+                    type="email"
+                    required
+                    class="form-input"
+                    placeholder="tu@email.com"
+                    :disabled="isConnecting"
+                  />
+                </div>
+                
+                <div class="form-group">
+                  <label for="register-password" class="form-label required">
+                    Contraseña
+                  </label>
+                  <div class="relative">
+                    <input
+                      id="register-password"
+                      v-model="password"
+                      :type="showPassword ? 'text' : 'password'"
+                      required
+                      class="form-input pr-10"
+                      placeholder="••••••••"
+                      :disabled="isConnecting"
+                    />
+                    <button
+                      type="button"
+                      @click="showPassword = !showPassword"
+                      class="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      :disabled="isConnecting"
+                      style="color: var(--color-textSecondary)"
+                    >
+                      <span v-if="showPassword" class="text-sm">👁️</span>
+                      <span v-else class="text-sm">🔒</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="register-confirm-password" class="form-label required">
+                    Confirmar contraseña
+                  </label>
+                  <input
+                    id="register-confirm-password"
+                    v-model="confirmPassword"
+                    :type="showPassword ? 'text' : 'password'"
+                    required
+                    class="form-input"
+                    placeholder="••••••••"
+                    :disabled="isConnecting"
+                  />
+                </div>
+                
+                <button
+                  type="submit"
+                  class="btn-secundary w-full"
+                  :class="{ 'btn-disabled': isConnecting || !registerName || !email || !password || !confirmPassword }"
+                >
+                  {{ isConnecting ? 'Creando cuenta...' : 'Crear cuenta' }}
                 </button>
               </form>
             </div>
@@ -211,6 +325,9 @@ const error = ref('')
 const email = ref('')
 const password = ref('')
 const showPassword = ref(false)
+const activeTab = ref('login')
+const registerName = ref('')
+const confirmPassword = ref('')
 
 onMounted(() => {
   authStore.initializeProvider()
@@ -245,6 +362,47 @@ const handleEmailLogin = async () => {
   } catch (err) {
     console.error('Error en login con email:', err)
     error.value = 'Error al iniciar sesión. Por favor, inténtalo de nuevo.'
+  } finally {
+    isConnecting.value = false
+  }
+}
+
+const handleEmailRegister = async () => {
+  try {
+    isConnecting.value = true
+    error.value = ''
+    
+    // Validate passwords match
+    if (password.value !== confirmPassword.value) {
+      error.value = 'Las contraseñas no coinciden'
+      return
+    }
+    
+    // Here you would implement your registration logic
+    // For now, this is a placeholder that simulates registration
+    console.log('Email register attempt:', { 
+      name: registerName.value, 
+      email: email.value, 
+      password: '***' 
+    })
+    
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    
+    // For demo purposes, accept any registration
+    if (registerName.value && email.value && password.value) {
+      // Store registration info (in a real app, you'd get a token from your backend)
+      localStorage.setItem('userName', registerName.value)
+      localStorage.setItem('userEmail', email.value)
+      localStorage.setItem('loginMethod', 'email')
+      closeModal()
+      router.push('/chat')
+    } else {
+      error.value = 'Por favor, completa todos los campos'
+    }
+  } catch (err) {
+    console.error('Error en registro:', err)
+    error.value = 'Error al crear cuenta. Por favor, inténtalo de nuevo.'
   } finally {
     isConnecting.value = false
   }
