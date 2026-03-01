@@ -91,13 +91,17 @@
                 <div class="url-bar">app.chasqui.io/chat</div>
               </div>
               <div class="preview-body">
-                <img :src="featureImage1" alt="Chasqui Dashboard Preview" class="preview-img" />
-                <div class="preview-overlay">
-                  <div class="overlay-card">
-                    <span class="status-dot"></span>
-                    <p>Escrow verificado: 1,500 eERC20</p>
-                  </div>
-                </div>
+                <video
+                  class="preview-img"
+                  autoplay
+                  muted
+                  loop
+                  playsinline
+                  preload="none"
+                >
+                  <source :src="demoVideoWebm" type="video/webm" />
+                  <source :src="demoVideoMp4" type="video/mp4" />
+                </video>
               </div>
             </div>
           </div>
@@ -282,7 +286,8 @@ import chasquiCharacter from '../assets/images/chasqui_character.png'
 import chasqui4 from '../assets/images/chasqui_4.webp'
 
 // Imágenes de características
-import featureImage1 from '../assets/images/imagen_1_caracteristicas.webp'
+import demoVideoWebm from '../assets/images/demo_video_1.webm'
+import demoVideoMp4 from '../assets/images/demo_video_1.mp4'
 import chasqui2 from '../assets/images/chasqui_2.webp'
 import chasqui3 from '../assets/images/chasqui_3.webp'
 
