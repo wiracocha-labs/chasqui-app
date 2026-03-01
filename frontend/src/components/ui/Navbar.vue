@@ -15,11 +15,49 @@
         <a href="#precios" class="nav-link" :class="{ active: activeSection === 'precios' }" @click="closeMenu">Precios</a>
         <a href="#faq" class="nav-link" :class="{ active: activeSection === 'faq' }" @click="closeMenu">FAQ</a>
         <a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" @click="closeMenu" class="nav-link">Documentación</a>
-        <button class="btn btn--primary mobile-only" @click="closeMenu">Empezar</button>
+        <button
+          v-if="!authStore.address"
+          class="btn btn--primary mobile-only"
+          :disabled="isConnecting"
+          @click="startFromNavbar"
+        >
+          {{ isConnecting ? 'Conectando...' : 'Empezar' }}
+        </button>
+        <button
+          v-else
+          class="btn btn--outline mobile-only"
+          @click="goToTasksAndClose"
+        >
+          {{ shortAddress }}
+        </button>
       </div>
 
       <div class="navbar-actions">
-        <button class="btn btn--primary desktop-only">Empezar</button>
+        <button
+          v-if="!authStore.address"
+          class="btn btn--primary desktop-only"
+          :disabled="isConnecting"
+          @click="startFromNavbar"
+        >
+          {{ isConnecting ? 'Conectando...' : 'Empezar' }}
+        </button>
+        <div v-else class="wallet-menu desktop-only" ref="walletMenuRef">
+          <button
+            class="wallet-chip"
+            @click="toggleWalletMenu"
+            :title="authStore.address"
+          >
+            {{ shortAddress }}
+          </button>
+          <div v-if="isWalletMenuOpen" class="wallet-dropdown">
+            <button class="wallet-dropdown-item" @click="goToTasksFromMenu">
+              Ir a tareas
+            </button>
+            <button class="wallet-dropdown-item wallet-dropdown-item--danger" @click="handleDisconnect">
+              Desconectar
+            </button>
+          </div>
+        </div>
         <button class="mobile-menu-toggle" @click="toggleMenu" aria-label="Toggle Menu">
           <i class="fas" :class="isMenuOpen ? 'fa-times' : 'fa-bars'"></i>
         </button>
@@ -29,12 +67,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '../../stores/auth'
 import logoUrl from '../../assets/images/logo.webp'
 
 const isMenuOpen = ref(false)
 const isScrolled = ref(false)
 const activeSection = ref('inicio')
+const isConnecting = ref(false)
+const authStore = useAuthStore()
+const router = useRouter()
+const isWalletMenuOpen = ref(false)
+const walletMenuRef = ref<HTMLElement | null>(null)
+const shortAddress = computed(() => {
+  const addr = authStore.address
+  if (!addr) return ''
+  return `${addr.slice(0, 6)}...${addr.slice(-4)}`
+})
 
 let observer: IntersectionObserver | null = null
 
@@ -46,12 +96,59 @@ const closeMenu = () => {
   isMenuOpen.value = false
 }
 
+const goToTasks = async () => {
+  isWalletMenuOpen.value = false
+  await router.push('/tasks')
+}
+
+const goToTasksAndClose = async () => {
+  closeMenu()
+  await goToTasks()
+}
+
+const goToTasksFromMenu = async () => {
+  await goToTasks()
+}
+
+const toggleWalletMenu = () => {
+  isWalletMenuOpen.value = !isWalletMenuOpen.value
+}
+
+const handleDisconnect = async () => {
+  authStore.disconnect()
+  isWalletMenuOpen.value = false
+  await router.push('/')
+}
+
+const handleDocumentClick = (event: MouseEvent) => {
+  if (!walletMenuRef.value) return
+  const targetNode = event.target as Node | null
+  if (targetNode && !walletMenuRef.value.contains(targetNode)) {
+    isWalletMenuOpen.value = false
+  }
+}
+
+const startFromNavbar = async () => {
+  if (isConnecting.value) return
+  isConnecting.value = true
+  try {
+    await authStore.connectWallet()
+    closeMenu()
+    await goToTasks()
+  } catch (error) {
+    console.error('[Navbar] Error conectando wallet desde Empezar', error)
+  } finally {
+    isConnecting.value = false
+  }
+}
+
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 20
 }
 
 onMounted(() => {
   window.addEventListener('scroll', handleScroll)
+  document.addEventListener('click', handleDocumentClick)
   
   // Set up IntersectionObserver
   const observerOptions = {
@@ -83,6 +180,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
+  document.removeEventListener('click', handleDocumentClick)
   observer?.disconnect()
 })
 </script>
@@ -206,6 +304,59 @@ onUnmounted(() => {
 
 .mobile-only {
   display: none;
+}
+
+.wallet-chip {
+  border: 1px solid rgba(212, 175, 55, 0.4);
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--color-brand);
+  border-radius: 9999px;
+  padding: 0.6rem 1rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: all 0.25s ease;
+}
+
+.wallet-chip:hover {
+  background: rgba(212, 175, 55, 0.2);
+  border-color: rgba(212, 175, 55, 0.65);
+}
+
+.wallet-menu {
+  position: relative;
+}
+
+.wallet-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.5rem);
+  min-width: 180px;
+  background: rgba(47, 46, 43, 0.98);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 0.75rem;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+  z-index: 1200;
+}
+
+.wallet-dropdown-item {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  padding: 0.7rem 0.9rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.wallet-dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.wallet-dropdown-item--danger {
+  color: #f87171;
 }
 
 @media (max-width: 991px) {

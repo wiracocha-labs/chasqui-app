@@ -5,7 +5,7 @@
         <h2 class="text-2xl font-bold text-textSecondary">
           <i class="fas fa-list text-action mr-3"></i>Mis Tareas
         </h2>
-        <p class="text-textSecondary mt-1">Todas las tareas que has creado</p>
+        <p class="text-textSecondary mt-1">Tareas creadas y asignadas para tu wallet</p>
       </div>
       <button 
         class="btn-primary"
@@ -106,15 +106,51 @@
           <div class="text-xs text-textSecondary font-medium mb-2">DESCRIPCIÓN DE LA TAREA</div>
           <div class="text-sm text-textSecondary leading-relaxed">{{ escrow.taskDescription }}</div>
         </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div class="bg-gray-50 rounded-lg p-4">
+            <div class="text-xs text-textSecondary mb-1 font-medium">TIEMPO MÁXIMO</div>
+            <div class="font-semibold text-sm text-textSecondary">
+              {{ getTaskTimeLabel(escrow.id) }}
+            </div>
+          </div>
+          <div class="bg-gray-50 rounded-lg p-4">
+            <div class="text-xs text-textSecondary mb-1 font-medium">ESTADO DE ENTREGA</div>
+            <div class="font-semibold text-sm text-textSecondary">
+              {{ taskMeta?.[escrow.id]?.finishedRequested ? 'B indicó: Terminé tarea' : 'Sin confirmación de entrega' }}
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-3 mt-4">
+          <button
+            v-if="canRequestFinished(escrow)"
+            type="button"
+            class="btn-secundary"
+            @click="$emit('requestFinished', escrow.id)"
+          >
+            <i class="fas fa-flag-checkered mr-2"></i>Terminé tarea
+          </button>
+          <button
+            v-if="canCompleteAndRelease(escrow)"
+            type="button"
+            class="btn-primary"
+            @click="$emit('completeAndRelease', escrow.id)"
+          >
+            <i class="fas fa-coins mr-2"></i>Completar y liberar pago
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-const props = defineProps<{ tasks: any[], loading: boolean }>()
-const emit = defineEmits(['refresh', 'create'])
+const props = defineProps<{
+  tasks: any[]
+  loading: boolean
+  account?: string | null
+  taskMeta?: Record<number, { timeValue: number; timeUnit: 'hours' | 'days'; finishedRequested: boolean }>
+}>()
+const emit = defineEmits(['refresh', 'create', 'requestFinished', 'completeAndRelease'])
 const formatDate = (timestamp: number) => {
   return new Date(timestamp).toLocaleDateString('es-ES', {
     year: 'numeric',
@@ -123,5 +159,24 @@ const formatDate = (timestamp: number) => {
     hour: '2-digit',
     minute: '2-digit'
   })
+}
+
+const getTaskTimeLabel = (escrowId: number) => {
+  const meta = props.taskMeta?.[escrowId]
+  if (!meta || !meta.timeValue) return 'No definido'
+  return `${meta.timeValue} ${meta.timeUnit === 'days' ? 'día(s)' : 'hora(s)'}`
+}
+
+const canRequestFinished = (escrow: any) => {
+  if (!props.account) return false
+  const sameWallet = props.account.toLowerCase() === String(escrow.beneficiary).toLowerCase()
+  return sameWallet && !escrow.isCompleted && !escrow.isReleased
+}
+
+const canCompleteAndRelease = (escrow: any) => {
+  if (!props.account) return false
+  const sameWallet = props.account.toLowerCase() === String(escrow.depositor).toLowerCase()
+  const finishedRequested = !!props.taskMeta?.[escrow.id]?.finishedRequested
+  return sameWallet && finishedRequested && !escrow.isReleased
 }
 </script>

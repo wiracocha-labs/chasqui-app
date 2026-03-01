@@ -133,7 +133,7 @@ const connectWallet = async (walletType: WalletType) => {
       const isAuthorized = await authStore.checkAuthorization(authStore.address)
       if (isAuthorized) {
         localStorage.setItem('connectedWallet', walletType)
-        router.push('/chat')
+        router.push('/tasks')
       } else {
         error.value = 'Tu dirección no está autorizada para acceder a esta aplicación.'
       }

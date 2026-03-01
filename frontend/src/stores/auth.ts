@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref, computed, readonly } from 'vue'
 import { ethers } from 'ethers'
-import { getContractAddress, AUTHORIZATION_CONTRACT_ADDRESS } from '../config/contracts'
+import { getContractAddress } from '../config/contracts'
 import { AUTHORIZATION_SIMPLE_ABI } from '../config/abi'
 import { log } from '../services/logger'
 import { Web3Error, AuthError, handleError } from '../services/errors'
+import { CURRENT_NETWORK, NETWORKS } from '../config/index'
 
 declare global {
   interface Window {
@@ -18,6 +19,8 @@ export const useAuthStore = defineStore('auth', () => {
   const contract = ref<ethers.Contract | null>(null)
 
   const isAuthenticated = computed(() => !!address.value)
+  const targetNetwork = NETWORKS[CURRENT_NETWORK]
+  const toHexChainId = (chainId: number) => `0x${chainId.toString(16)}`
 
   // Initialize provider and contract
   const initializeProvider = async () => {
@@ -31,21 +34,23 @@ export const useAuthStore = defineStore('auth', () => {
         
         log.info('AuthStore', 'Provider initialized successfully')
         
-        // Check for connected wallet on load
-        await checkConnectedWallet()
+        // Do not auto-connect on refresh: user must click "Empezar"/connect
+        address.value = null
 
         // Listen for account changes (only add listener once)
         if (!window.ethereum._listenersAdded) {
           window.ethereum.on('accountsChanged', (accounts: string[]) => {
             log.debug('AuthStore', 'Account changed', accounts)
+            if (!address.value) {
+              return
+            }
             address.value = accounts[0] || null
           })
           window.ethereum._listenersAdded = true
         }
       } catch (error) {
         log.error('AuthStore', 'Error initializing provider', error)
-        // Even if provider creation fails, we can still check for connected wallets
-        await checkConnectedWallet()
+        address.value = null
       }
     } else {
       log.warn('AuthStore', 'No window.ethereum found')
@@ -83,39 +88,39 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     try {
-      // First, try to switch to Hardhat network
-      log.debug('AuthStore', 'Switching to Hardhat network')
+      // First, switch to configured target network (localhost/fuji)
+      log.debug('AuthStore', `Switching to ${targetNetwork.name} network`)
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0x7a69' }], // 31337 in hex
+          params: [{ chainId: toHexChainId(targetNetwork.chainId) }],
         })
-        log.info('AuthStore', 'Successfully switched to Hardhat network')
+        log.info('AuthStore', `Successfully switched to ${targetNetwork.name}`)
       } catch (switchError: any) {
         // If the network doesn't exist, add it
         if (switchError.code === 4902) {
-          log.debug('AuthStore', 'Adding Hardhat network')
+          log.debug('AuthStore', `Adding ${targetNetwork.name} network`)
           try {
             await window.ethereum.request({
               method: 'wallet_addEthereumChain',
               params: [{
-                chainId: '0x7a69', // 31337 in hex
-                chainName: 'Hardhat Local',
+                chainId: toHexChainId(targetNetwork.chainId),
+                chainName: targetNetwork.name,
                 nativeCurrency: {
-                  name: 'Ethereum',
-                  symbol: 'ETH',
-                  decimals: 18,
+                  name: targetNetwork.currency.name,
+                  symbol: targetNetwork.currency.symbol,
+                  decimals: targetNetwork.currency.decimals,
                 },
-                rpcUrls: ['http://127.0.0.1:8545'],
-                blockExplorerUrls: null,
+                rpcUrls: [targetNetwork.rpcUrl],
+                blockExplorerUrls: targetNetwork.blockExplorer ? [targetNetwork.blockExplorer] : [],
               }],
             })
-            log.info('AuthStore', 'Successfully added and switched to Hardhat network')
+            log.info('AuthStore', `Successfully added and switched to ${targetNetwork.name}`)
           } catch (addError) {
-            throw Web3Error.wrongNetwork('Hardhat Local', 'Unknown')
+            throw Web3Error.wrongNetwork(targetNetwork.name, 'Unknown')
           }
         } else {
-          throw Web3Error.wrongNetwork('Hardhat Local (31337)', 'Unknown')
+          throw Web3Error.wrongNetwork(`${targetNetwork.name} (${targetNetwork.chainId})`, 'Unknown')
         }
       }
 
@@ -205,7 +210,6 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       log.debug('AuthStore', `Checking authorization for: ${userAddress}`)
-      log.debug('AuthStore', `Contract address: ${AUTHORIZATION_CONTRACT_ADDRESS}`)
       
       // Create a fresh provider for this operation
       const freshProvider = new ethers.BrowserProvider(window.ethereum)
@@ -213,26 +217,26 @@ export const useAuthStore = defineStore('auth', () => {
       // Check network info
       try {
         const network = await freshProvider.getNetwork()
-        log.debug('AuthStore', `Connected to network: ${network.name}, Chain ID: ${network.chainId.toString()}`)
-        
-        if (network.chainId !== 31337n) {
-          log.warn('AuthStore', `Not connected to Hardhat local network (31337). Current chain: ${network.chainId.toString()}`)
+        const chainId = Number(network.chainId)
+        const expectedChainId = targetNetwork.chainId
+        log.debug('AuthStore', `Connected to network: ${network.name}, Chain ID: ${chainId}`)
+
+        if (chainId !== expectedChainId) {
+          log.warn('AuthStore', `Not connected to expected network (${expectedChainId}). Current chain: ${chainId}`)
         }
       } catch (networkError) {
         log.warn('AuthStore', 'Could not get network info, proceeding anyway', networkError)
       }
-      
-      // Verify the contract exists at this address
-      const code = await freshProvider.getCode(AUTHORIZATION_CONTRACT_ADDRESS)
-      if (code === '0x') {
-        throw Web3Error.contractNotFound(AUTHORIZATION_CONTRACT_ADDRESS)
-      }
-      
-      log.debug('AuthStore', 'Contract code found, calling isAuthorized...')
+
+      const network = await freshProvider.getNetwork()
+      const chainId = Number(network.chainId)
+      const contractAddress = getContractAddress(chainId, 'authorization')
+      log.debug('AuthStore', `Contract address: ${contractAddress}`)
+      log.debug('AuthStore', 'Calling isAuthorized...')
       
       // Create a readonly contract instance
       const readOnlyContract = new ethers.Contract(
-        AUTHORIZATION_CONTRACT_ADDRESS,
+        contractAddress,
         AUTHORIZATION_SIMPLE_ABI,
         freshProvider
       )
@@ -241,6 +245,19 @@ export const useAuthStore = defineStore('auth', () => {
       log.info('AuthStore', `Authorization result for ${userAddress}: ${isAuthorized}`)
       return isAuthorized
     } catch (error) {
+      const maybeCode = (error as any)?.code
+      const maybeMessage = String((error as any)?.message || '')
+      const isRpcOverload =
+        maybeCode === -32002 ||
+        maybeMessage.includes('RPC endpoint returned too many errors')
+
+      // En localhost permitimos continuar para no bloquear el flujo de login
+      // cuando MetaMask limita temporalmente el RPC local.
+      if (targetNetwork.chainId === 31337 && isRpcOverload) {
+        log.warn('AuthStore', 'RPC local saturado durante checkAuthorization; allowing access in localhost dev mode')
+        return true
+      }
+
       const chasquiError = handleError(error, 'AuthStore')
       log.error('AuthStore', 'Error checking authorization', chasquiError)
       return false

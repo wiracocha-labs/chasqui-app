@@ -22,14 +22,16 @@ const {
   tabs,
   createForm,
   userEscrows,
+  taskMeta,
   connectWallet,
   registerForPrivacy,
   createEscrow,
   markCompleted,
   releaseFunds,
   cancelEscrow,
-  loadUserEscrows,
-  togglePrivacy
+  requestTaskFinished,
+  completeAndRelease,
+  loadUserEscrows
 } = useTaskManager()
 </script>
 
@@ -66,9 +68,19 @@ const {
               </button>
             </div>
             <div class="p-6">
-              <TaskCreateForm v-if="activeTab === 'create'" :form="createForm" :creating="creating" @submit="createEscrow" @togglePrivacy="togglePrivacy" />
+              <TaskCreateForm v-if="activeTab === 'create'" :form="createForm" :creating="creating" @submit="createEscrow" />
               <TaskManageForm v-if="activeTab === 'manage'" :loading="managing" @markCompleted="markCompleted" @releaseFunds="releaseFunds" @cancelEscrow="cancelEscrow" />
-              <TaskList v-if="activeTab === 'list'" :tasks="userEscrows" :loading="loading" @refresh="loadUserEscrows" @create="() => activeTab = 'create'" />
+              <TaskList
+                v-if="activeTab === 'list'"
+                :tasks="userEscrows"
+                :loading="loading"
+                :account="account"
+                :taskMeta="taskMeta"
+                @refresh="loadUserEscrows"
+                @create="() => activeTab = 'create'"
+                @requestFinished="requestTaskFinished"
+                @completeAndRelease="completeAndRelease"
+              />
             </div>
           </div>
           <div v-if="account && !isRegisteredForPrivacy" class="bg-brand rounded-2xl p-6 text-white">

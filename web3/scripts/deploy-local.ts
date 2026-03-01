@@ -29,11 +29,11 @@ async function main(): Promise<void> {
   console.log("🚀 Deployando en red local para testing...\n");
 
   const [deployer, user1, user2] = await ethers.getSigners();
-  
+
   console.log("👤 Deployer:", deployer.address);
   console.log("👤 User1:", user1.address);
   console.log("👤 User2:", user2.address);
-  
+
   const balance = await ethers.provider.getBalance(deployer.address);
   console.log("💰 Balance:", ethers.formatEther(balance), "ETH\n");
 
@@ -56,7 +56,7 @@ async function main(): Promise<void> {
   console.log("\n📦 Deployando AuthorizationWithEERC20Escrow...");
   const MainContractFactory = await ethers.getContractFactory("AuthorizationWithEERC20Escrow");
   const mainContract: Contract = await MainContractFactory.deploy(
-    tokenAddress, 
+    tokenAddress,
     registrarAddress
   );
   await mainContract.waitForDeployment();
@@ -65,17 +65,17 @@ async function main(): Promise<void> {
 
   // 3. Setup inicial para testing
   console.log("\n🔧 Configurando usuarios para testing...");
-  
+
   try {
     // Registrar usuarios en el mock
     await mockToken.mockRegisterUser(user1.address);
     await mockToken.mockRegisterUser(user2.address);
     await mockRegistrar.mockRegisterUser(user1.address, "0x1234567890abcdef");
     await mockRegistrar.mockRegisterUser(user2.address, "0x567890abcdef1234");
-    
+
     // Autorizar user1 como usuario autorizado
     await mainContract.setUserAuthorization(user1.address, true);
-    
+
     console.log("✅ User1 registrado y autorizado");
     console.log("✅ User2 registrado");
   } catch (error) {
@@ -85,7 +85,7 @@ async function main(): Promise<void> {
 
   // 4. Crear algunas tareas de ejemplo
   console.log("\n📋 Creando tareas de ejemplo...");
-  
+
   try {
     // Tarea pública
     const publicTaskTx = await mainContract.connect(user1).createPublicEscrow(
@@ -99,7 +99,7 @@ async function main(): Promise<void> {
     // Tarea "privada" simulada
     const mockEncryptedAmount = "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef";
     const mockProof = "0xabcdef1234567890abcdef1234567890";
-    
+
     const privateTaskTx = await mainContract.connect(user1).createPrivateEscrow(
       user2.address,
       mockEncryptedAmount,
@@ -108,7 +108,6 @@ async function main(): Promise<void> {
     );
     await privateTaskTx.wait();
     console.log("✅ Tarea privada simulada creada (ID: 1)");
-    
   } catch (error) {
     console.log("⚠️ Error creando tareas:", (error as Error).message.split('(')[0]);
     console.log("   (Esto puede ser normal si hay validaciones estrictas)");
@@ -123,13 +122,12 @@ async function main(): Promise<void> {
       { value: ethers.parseEther("0.5") }
     );
     await completedTaskTx.wait();
-    
+
     const taskId = await mainContract.getTotalEscrows() - BigInt(1);
-    
+
     // Marcar como completada
     await mainContract.markTaskCompleted(taskId);
     console.log(`✅ Tarea ${taskId} marcada como completada`);
-    
   } catch (error) {
     console.log("⚠️ Error en tarea completada:", (error as Error).message);
   }
@@ -137,7 +135,7 @@ async function main(): Promise<void> {
   // 6. Información final
   const totalTasks = await mainContract.getTotalEscrows();
   const user1Tasks = await mainContract.getUserEscrows(user1.address);
-  
+
   console.log("\n📊 RESUMEN DEL DEPLOYMENT:");
   console.log("==========================");
   console.log("🎯 Contrato Principal:", contractAddress);
@@ -183,9 +181,9 @@ async function main(): Promise<void> {
   if (!existsSync('deployments')) {
     mkdirSync('deployments');
   }
-  
+
   writeFileSync(
-    'deployments/localhost-deployment.json', 
+    'deployments/localhost-deployment.json',
     JSON.stringify(deployInfo, null, 2)
   );
   console.log("\n💾 Información guardada en: deployments/localhost-deployment.json");

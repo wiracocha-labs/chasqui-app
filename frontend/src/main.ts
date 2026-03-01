@@ -47,9 +47,9 @@ router.beforeEach((to, from, next) => {
     }
   }
   
-  // Si está autenticado y trata de acceder a login, redirigir al chat
+  // Si está autenticado y trata de acceder a login, redirigir a tareas
   if (to.name === 'Login' && authStore.address) {
-    next('/chat')
+    next('/tasks')
     return
   }
   
