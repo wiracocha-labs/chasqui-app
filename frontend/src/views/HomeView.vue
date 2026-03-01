@@ -38,7 +38,7 @@
 
           <!-- 4. Box 1: Small Feature (Growth) -->
           <div id="box1" class="bento-box reveal flex-col-center">
-            <div class="flex items-center gap-2 mb-2">
+            <div class="flex items-center mb-2">
               <span class="text-2xl">🌱</span>
               <h3 class="text-sm font-bold text-textPrimary">Crece por resultados</h3>
             </div>
@@ -276,21 +276,13 @@
 
 <script setup>
 import heroBg from '../assets/images/fondo_wiracocha_redes_copy.webp'
-import heroBox1 from '../assets/images/bg_hero_1.png'
-import heroBox2 from '../assets/images/bg_hero_2.png'
-import heroBox3 from '../assets/images/bg_hero_3.png'
+import heroBox2 from '../assets/images/box2_bg_v.webp'
 import heroCenter from '../assets/images/hero_bg_1.webp'
 import chasquiCharacter from '../assets/images/chasqui_character.png'
 import chasqui4 from '../assets/images/chasqui_4.webp'
 
-// Imágenes de Pricing
-import precioBg1 from '../assets/images/precio_bg_1.webp'
-import pricingBg2 from '../assets/images/pricing_bg_2.webp'
-import precioBg3 from '../assets/images/precio_bg_3.webp'
-
 // Imágenes de características
 import featureImage1 from '../assets/images/imagen_1_caracteristicas.webp'
-import featureImage2 from '../assets/images/imagen_2_caracteristicas.webp'
 import chasqui2 from '../assets/images/chasqui_2.webp'
 import chasqui3 from '../assets/images/chasqui_3.webp'
 

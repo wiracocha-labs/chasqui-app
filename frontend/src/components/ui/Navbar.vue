@@ -15,11 +15,11 @@
         <a href="#precios" class="nav-link" :class="{ active: activeSection === 'precios' }" @click="closeMenu">Precios</a>
         <a href="#faq" class="nav-link" :class="{ active: activeSection === 'faq' }" @click="closeMenu">FAQ</a>
         <a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" @click="closeMenu" class="nav-link">Documentación</a>
-        <button class="btn btn--primary mobile-only" @click="closeMenu">Empezar</button>
+        <button class="btn btn--primary mobile-only" @click="closeMenu">Ingresar</button>
       </div>
 
       <div class="navbar-actions">
-        <button class="btn btn--primary desktop-only">Empezar</button>
+        <button class="btn btn--primary desktop-only">Ingresar</button>
         <button class="mobile-menu-toggle" @click="toggleMenu" aria-label="Toggle Menu">
           <i class="fas" :class="isMenuOpen ? 'fa-times' : 'fa-bars'"></i>
         </button>

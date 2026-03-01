@@ -272,22 +272,19 @@
             
             <!-- Features -->
             <div class="flex flex-col gap-6 mb-8">
-              <div class="flex items-start gap-4">
-                <div class="feature-icon mt-1">✓</div>
+              <div class="flex justify-center gap-4">
                 <div>
                   <h3 class="brand-title-sm" style="color: var(--color-text-primary);">Descentralizado</h3>
                   <p class="brand-desc-sm" style="color: var(--color-text-primary);">Controlas tu identidad y tus pagos.</p>
                 </div>
               </div>
-              <div class="flex items-start gap-4">
-                <div class="feature-icon mt-1">✓</div>
+              <div class="flex justify-center gap-4">
                 <div>
                   <h3 class="brand-title-sm" style="color: var(--color-text-primary);">Seguro</h3>
                   <p class="brand-desc-sm" style="color: var(--color-text-primary);">Firma directa. Sin contraseñas tradicionales.</p>
                 </div>
               </div>
-              <div class="flex items-start gap-4">
-                <div class="feature-icon mt-1">✓</div>
+              <div class="flex justify-center gap-4">
                 <div>
                   <h3 class="brand-title-sm" style="color: var(--color-text-primary);">Tiempo Real</h3>
                   <p class="brand-desc-sm" style="color: var(--color-text-primary);">Conversaciones sincronizadas y verificables.</p>
