@@ -198,7 +198,7 @@ export function useTaskManager() {
       log.warn('TaskManager', 'Wallet not connected before privacy registration')
       return
     }
-    
+
     try {
       log.info('TaskManager', 'Registering for privacy')
       // Simulated registration process
@@ -221,7 +221,7 @@ export function useTaskManager() {
       showAlert('error', 'Complete todos los campos requeridos')
       throw error
     }
-    
+
     if (!createForm.value.isPrivate && !createForm.value.amount) {
       const error = new TaskError('Amount required for public task', 'VALIDATION_ERROR')
       showAlert('error', 'Especifique la cantidad para tarea pública')
@@ -253,7 +253,6 @@ export function useTaskManager() {
       showAlert('error', 'Especifique un tiempo válido (horas o días)')
       throw error
     }
-    
     if (!web3Service.isConnected()) {
       const error = new TaskError('Wallet not connected before task creation', 'WALLET_NOT_CONNECTED')
       showAlert('error', 'Primero conecta tu wallet')
@@ -261,11 +260,10 @@ export function useTaskManager() {
     }
 
     creating.value = true
-    
+
     try {
       const taskType = createForm.value.isPrivate ? 'private' : 'public'
       log.info('TaskManager', `Creating ${taskType} escrow for: ${createForm.value.beneficiary}`)
-      
       let txReceipt: any
       if (createForm.value.isPrivate) {
         txReceipt = await web3Service.createPrivateEscrow(
@@ -304,7 +302,6 @@ export function useTaskManager() {
         }
         saveTaskMeta()
       }
-      
       // Reset form
       createForm.value = {
         beneficiary: '',
@@ -316,7 +313,7 @@ export function useTaskManager() {
         zkProof: '',
         isPrivate: false
       }
-      
+
       await updateBalance()
       await loadUserEscrows()
       log.info('TaskManager', `${taskType} escrow created successfully`)
@@ -339,15 +336,15 @@ export function useTaskManager() {
       showAlert('error', 'Especifique el ID de la tarea')
       throw error
     }
-    
+
     if (!web3Service.isConnected()) {
       const error = new TaskError('Wallet not connected before marking task completed', 'WALLET_NOT_CONNECTED')
       showAlert('error', 'Primero conecta tu wallet')
       throw error
     }
-    
+
     managing.value = true
-    
+
     try {
       log.info('TaskManager', `Marking task completed: ${escrowId}`)
       await web3Service.markTaskCompleted(Number(escrowId))
@@ -370,15 +367,15 @@ export function useTaskManager() {
       showAlert('error', 'Especifique el ID de la tarea')
       throw error
     }
-    
+
     if (!web3Service.isConnected()) {
       const error = new TaskError('Wallet not connected before releasing funds', 'WALLET_NOT_CONNECTED')
       showAlert('error', 'Primero conecta tu wallet')
       throw error
     }
-    
+
     managing.value = true
-    
+
     try {
       const details = await web3Service.getEscrowDetails(Number(escrowId))
       const currentAddress = normalizeAddress(authStore.address)
@@ -436,15 +433,15 @@ export function useTaskManager() {
       showAlert('error', 'Especifique el ID de la tarea')
       throw error
     }
-    
+
     if (!web3Service.isConnected()) {
       const error = new TaskError('Wallet not connected before canceling escrow', 'WALLET_NOT_CONNECTED')
       showAlert('error', 'Primero conecta tu wallet')
       throw error
     }
-    
+
     managing.value = true
-    
+
     try {
       log.warn('TaskManager', `Canceling escrow: ${escrowId}`)
       await web3Service.cancelEscrow(Number(escrowId))
@@ -501,9 +498,9 @@ export function useTaskManager() {
       log.debug('TaskManager', 'Skipping escrow loading - wallet not connected or no address')
       return
     }
-    
+
     loading.value = true
-    
+
     try {
       log.info('TaskManager', `Loading escrows for address: ${authStore.address}`)
       const currentAddress = normalizeAddress(authStore.address)
@@ -605,12 +602,11 @@ export function useTaskManager() {
   onMounted(async () => {
     log.debug('TaskManager', 'Component mounted, initializing')
     loadTaskMeta()
-    
     if (!authStore.provider) {
       log.debug('TaskManager', 'Initializing provider')
       await authStore.initializeProvider()
     }
-    
+
     if (authStore.address) {
       try {
         log.info('TaskManager', `Auto-connecting for existing address: ${authStore.address}`)

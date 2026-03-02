@@ -21,7 +21,7 @@
           :disabled="isConnecting"
           @click="startFromNavbar"
         >
-          {{ isConnecting ? 'Conectando...' : 'Empezar' }}
+          {{ isConnecting ? 'Conectando...' : 'Ingresar' }}
         </button>
         <button
           v-else
@@ -39,7 +39,7 @@
           :disabled="isConnecting"
           @click="startFromNavbar"
         >
-          {{ isConnecting ? 'Conectando...' : 'Empezar' }}
+          {{ isConnecting ? 'Conectando...' : 'Ingresar' }}
         </button>
         <div v-else class="wallet-menu desktop-only" ref="walletMenuRef">
           <button

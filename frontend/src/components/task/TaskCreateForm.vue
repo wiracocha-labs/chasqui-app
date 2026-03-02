@@ -1,5 +1,5 @@
 <template>
-  <div class="w-1/2 mx-auto flex flex-col items-center justify-center border border-brand rounded-lg p-6">
+  <div class="w-1/2 mx-auto flex flex-col items-center justify-center border-4 border-brand rounded-2xl p-6 bg-white shadow-sm">
     <form @submit.prevent="onSubmit" class="w-full">
       <h2 class="title mb-2">Crear nueva tarea</h2>
       <div class="form-group">
@@ -16,6 +16,18 @@
           Precio USD referencial (fallback local).
         </p>
       </div>
+      
+      <div class="grid grid-cols-2 gap-4">
+        <div class="form-group">
+          <label for="startDate" class="form-label required">Fecha Inicio</label>
+          <input id="startDate" v-model="form.startDate" type="date" class="form-input" required />
+        </div>
+        <div class="form-group">
+          <label for="endDate" class="form-label required">Fecha Fin</label>
+          <input id="endDate" v-model="form.endDate" type="date" class="form-input" required />
+        </div>
+      </div>
+
       <div class="form-group">
         <label for="taskDescription" class="form-label required">Descripción</label>
         <textarea id="taskDescription" v-model="form.taskDescription" class="form-textarea" rows="3" placeholder="Describe la tarea a realizar..." required></textarea>
@@ -43,7 +55,7 @@
         <input id="isPrivate" v-model="form.isPrivate" type="checkbox" class="form-checkbox" />
         <label for="isPrivate" class="form-label mb-0 ml-2">Privada (pago encriptado con eERC20)</label>
       </div>
-      <button type="submit" class="btn-secundary w-full" :disabled="creating">
+      <button type="submit" class="btn-secundary w-full mt-4" :disabled="creating">
         {{ creating ? 'Creando...' : 'Crear tarea' }}
       </button>
     </form>

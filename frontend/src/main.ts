@@ -6,7 +6,6 @@ import './assets/styles/main.css'
 import './assets/styles/style.css'
 import './assets/styles/index.css'
 import App from './App.vue'
-import LoginView from './views/LoginView.vue'
 import ChatView from './views/ChatView.vue'
 import TaskManagerView from './views/TaskManagerView.vue'
 import ColorShowcase from './components/common/ColorShowcase.vue'
@@ -14,7 +13,6 @@ import HomeView from './views/HomeView.vue'
 import { useAuthStore } from './stores/auth'
 
 const routes = [
-  { path: '/login', component: LoginView, name: 'Login' },
   { path: '/', component: HomeView, name: 'Home'  },
   { path: '/chat', component: ChatView, name: 'Chat', meta: { requiresAuth: true } },
   { path: '/tasks', component: TaskManagerView, name: 'Tasks', meta: { requiresAuth: true } },
@@ -41,18 +39,12 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth) {
     // Verificar si el usuario está autenticado
     if (!authStore.address) {
-      // Redirigir a login si no está autenticado
-      next('/login')
+      // Redirigir a home si no está autenticado (el modal se mostrará allí)
+      next('/')
       return
     }
   }
-  
-  // Si está autenticado y trata de acceder a login, redirigir a tareas
-  if (to.name === 'Login' && authStore.address) {
-    next('/tasks')
-    return
-  }
-  
+
   next()
 })
 

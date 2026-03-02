@@ -51,3 +51,31 @@ If the task involves **contracts, private payments, or data on-chain**:
 - `deployments/`: Contract addresses and deployment history.
 - `.agent/roadmap-web2.md`: Roadmap for Backend, AI, and UI tasks.
 - `.agent/roadmap-web3.md`: Roadmap for Smart Contracts and Blockchain tasks.
+- `.agent/instructions.md`: This file.
+
+## 🎨 Design System & UI Components
+
+Para mantener la consistencia visual ("Bento Aesthetic"), el agente DEBE usar estas clases y patrones:
+
+### 1. Avatares y Contenedores
+- **Forma:** Usar cajas redondeadas (`rounded-lg` o `rounded-xl`) en lugar de círculos.
+- **Dimensión Estándar:** 48x48px (`w-12 h-12`).
+
+### 2. Componentes de Chat (reutilizables en `chat.css`)
+- **`.status-badge`**: Para estados de conexión o etiquetas pequeñas (ej. "Billetera conectada"). Incluir un `<span class="dot"></span>` si se requiere un indicador visual de pulso.
+- **`.sc-executed-card`**: Para alertas de Smart Contracts o transacciones automáticas. Estructura recomendada:
+    ```html
+    <div class="sc-executed-card">
+        <div class="highlight"></div> <!-- Efecto de brillo -->
+        <div class="icon-box">...</div> <!-- Icono de acción -->
+        <div>
+            <div class="title-box">...</div> <!-- Título -->
+            <div class="content-text">...</div> <!-- Descripción -->
+        </div>
+    </div>
+    ```
+
+### 3. Paleta de Colores
+- **Marca:** `--color-brand` (#D4AF37)
+- **Fondo Primario:** `--color-terciary` (#2E1E1A)
+- **Fondo Chat:** `--color-primary` (#2f2e2b)
