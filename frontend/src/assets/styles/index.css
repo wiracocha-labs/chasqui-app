@@ -17,11 +17,11 @@ html {
 
 /* Estilos para las secciones */
 section {
-  min-height: 100vh;
-  padding: 5rem 2rem;
+  min-height: auto;
+  padding: 6em 4rem;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   /* Evita centrado vertical excesivo en secciones cortas */
   align-items: center;
   text-align: center;
@@ -60,6 +60,8 @@ section li {
   margin: 0 auto;
   padding: 1rem 2rem;
   width: 100%;
+  position: relative;
+  /* Crucial para los personajes flotantes */
 }
 
 /* Grid Bento */
@@ -437,9 +439,31 @@ section li {
 }
 
 .floating-character--pricing {
-  top: 85%;
-  left: 31%;
+  top: 110%;
+  left: 65%;
   transform: translate(-50%, -50%);
+}
+
+.floating-character--slide {
+  top: 90%;
+  right: 1%;
+  z-index: 20;
+}
+
+.floating-character--slide img {
+  width: 280px !important;
+}
+
+.floating-character--jump {
+  top: -295px;
+  /* Ajustado para que flote sobre el borde superior */
+  left: 4%;
+  transform: translateX(-50%);
+  z-index: 30;
+}
+
+.floating-character--jump img {
+  width: 300px !important;
 }
 
 .bento-grid--pricing {
@@ -531,8 +555,8 @@ section li {
 
 #vision .floating-side--left {
   /* Debajo del card de Arquitectura del MVP, lado izquierdo */
-  left: 20%;
-  bottom: -20%;
+  left: 15%;
+  bottom: -25%;
   top: auto;
   width: 280px;
 }
@@ -1349,7 +1373,7 @@ section li {
 .cta-block {
   text-align: center;
   padding: 5rem 2rem;
-  background: linear-gradient(135deg, var(--color-terciary) 0%, var(--color-primary) 100%);
+  background: var(--color-terciary);
   border-radius: 20px;
   border: 2px solid var(--color-action);
 }

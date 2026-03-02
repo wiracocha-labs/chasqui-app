@@ -55,6 +55,10 @@
               </div>
             </div>
           </div>
+          <!-- Personaje deslizando al lado de box2 -->
+          <div class="floating-character floating-character--slide reveal">
+            <img :src="imgDeslisar" alt="Chasqui Slide" />
+          </div>
         </header>
       </div>
     </section>
@@ -251,7 +255,7 @@
         </div>
       </section>
 
-      <!-- 5. FAQ SECTION -->
+      <!-- 3. FAQ SECTION -->
       <section id="faq" class="faq-section reveal">
         <div class="bento-container">
           <h2 class="text-center mb-12">Preguntas Frecuentes</h2>
@@ -274,19 +278,24 @@
         </div>
       </section>
 
-      <!-- 3. BLOQUE FUTURO: CTA -->
+      <!-- 4. BLOQUE FUTURO: CTA -->
       <section class="future-section">
         <div class="bento-container">
           <div class="cta-block reveal">
-            <h2>🌄 Únete al camino</h2>
-            <p>Chasqui es autonomía, comunidad y privacidad.</p>
+            <h2>🌄 Empieza a trabajar por resultados</h2>
+            <p>Autonomía para el equipo. Claridad en los pagos.</p>
             <div class="cta-buttons">
-              <a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" rel="noopener noreferrer" class="btn btn--primary">👉 Visítanos en GitHub</a>
-              <a href="https://tally.so/r/YOUR_ID" target="_blank" rel="noopener noreferrer" class="btn btn--outline">Unirse a la Beta</a>
+              <a href="https://tally.so/r/YOUR_ID" target="_blank" rel="noopener noreferrer" class="btn btn--primary">Unirse a la Beta</a>
+              <a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" rel="noopener noreferrer" class="btn btn--outline">👉 Visítanos en GitHub</a>
+            </div>
+            <!-- Personaje saltando sobre el CTA ahora dentro del bloque -->
+            <div class="floating-character floating-character--jump">
+              <img :src="imgSaltar" alt="Chasqui Jump" />
             </div>
           </div>
         </div>
       </section>
+    <Footer />
   </div>
 </template>
 
@@ -296,6 +305,8 @@ import heroBox2 from '../assets/images/box2_bg_v.webp'
 import heroCenter from '../assets/images/hero_bg_1.webp'
 import chasquiCharacter from '../assets/images/chasqui_character.png'
 import chasqui4 from '../assets/images/chasqui_4.webp'
+import imgDeslisar from '../assets/images/chasqui_deslisar.webp'
+import imgSaltar from '../assets/images/chasqui_saltar.webp'
 
 // Imágenes de características
 import demoVideoWebm from '../assets/images/demo_video_1.webm'
@@ -391,6 +402,7 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import Navbar from '../components/ui/Navbar.vue'
 import LoginModal from '../components/LoginModal.vue'
+import Footer from '../components/ui/Footer.vue'
 
 const route = useRoute();
 const openFaqIndex = ref(null);
