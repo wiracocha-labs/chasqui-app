@@ -93,7 +93,7 @@
             <div class="font-semibold text-sm text-textSecondary">
               {{ escrow.isPrivate 
                 ? escrow.encryptedAmount.slice(0,12) + '...' 
-                : escrow.publicAmount + ' ETH' 
+                : escrow.publicAmount + ' AVAX' 
               }}
             </div>
             <div v-if="escrow.isPrivate" class="flex items-center text-xs text-textSecondary mt-2">
@@ -122,12 +122,14 @@
         </div>
         <div class="flex flex-wrap gap-3 mt-4">
           <button
-            v-if="canRequestFinished(escrow)"
+            v-if="showBeneficiaryDeliveryButton(escrow)"
             type="button"
             class="btn-secundary"
+            :disabled="isDeliveryAlreadyRequested(escrow.id)"
             @click="$emit('requestFinished', escrow.id)"
           >
-            <i class="fas fa-flag-checkered mr-2"></i>Terminé tarea
+            <i class="fas fa-flag-checkered mr-2"></i>
+            {{ isDeliveryAlreadyRequested(escrow.id) ? 'Tarea entregada' : 'Terminé tarea' }}
           </button>
           <button
             v-if="canCompleteAndRelease(escrow)"
@@ -167,7 +169,11 @@ const getTaskTimeLabel = (escrowId: number) => {
   return `${meta.timeValue} ${meta.timeUnit === 'days' ? 'día(s)' : 'hora(s)'}`
 }
 
-const canRequestFinished = (escrow: any) => {
+const isDeliveryAlreadyRequested = (escrowId: number) => {
+  return !!props.taskMeta?.[escrowId]?.finishedRequested
+}
+
+const showBeneficiaryDeliveryButton = (escrow: any) => {
   if (!props.account) return false
   const sameWallet = props.account.toLowerCase() === String(escrow.beneficiary).toLowerCase()
   return sameWallet && !escrow.isCompleted && !escrow.isReleased

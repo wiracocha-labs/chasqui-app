@@ -7,8 +7,14 @@
         <input id="beneficiary" v-model="form.beneficiary" type="text" class="form-input" placeholder="0x..." required />
       </div>
       <div class="form-group">
-        <label for="amount" class="form-label required">Monto (ETH)</label>
-        <input id="amount" v-model="form.amount" type="number" min="0" step="0.01" class="form-input" placeholder="0.1" :required="!form.isPrivate" />
+        <label for="amount" class="form-label required">Monto AVAX (precio USD)</label>
+        <input id="amount" v-model="form.amount" type="number" min="0" step="0.01" class="form-input" placeholder="0.1 AVAX" :required="!form.isPrivate" />
+        <p v-if="!form.isPrivate" class="text-xs text-textSecondary mt-1">
+          {{ usdPriceLoading ? 'Cotizando AVAX/USD...' : `Equivalente: ${amountUsdEquivalent}` }}
+        </p>
+        <p v-if="!form.isPrivate && usdPriceSource === 'fallback'" class="text-[11px] text-textSecondary/80 mt-1">
+          Precio USD referencial (fallback local).
+        </p>
       </div>
       <div class="form-group">
         <label for="taskDescription" class="form-label required">Descripción</label>
@@ -45,6 +51,8 @@
 </template>
 
 <script setup lang="ts">
+import { toRefs } from 'vue'
+
 interface CreateFormModel {
   beneficiary: string
   amount: string
@@ -59,9 +67,12 @@ interface CreateFormModel {
 const props = defineProps<{
   form: CreateFormModel
   creating: boolean
+  amountUsdEquivalent: string
+  usdPriceLoading: boolean
+  usdPriceSource: 'live' | 'fallback' | 'none'
 }>()
 
-const form = props.form
+const { form, amountUsdEquivalent, usdPriceLoading, usdPriceSource } = toRefs(props)
 const emit = defineEmits(['submit'])
 
 const onSubmit = () => {

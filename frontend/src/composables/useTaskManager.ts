@@ -17,6 +17,11 @@ export function useTaskManager() {
   const account = computed(() => authStore.address)
   const networkName = ref(NETWORKS[CURRENT_NETWORK].name)
   const avaxBalance = ref('0.00')
+  const avaxUsdPrice = ref<number | null>(null)
+  const amountUsdEquivalent = ref('N/A')
+  const usdPriceLoading = ref(false)
+  const usdPriceSource = ref<'live' | 'fallback' | 'none'>('none')
+  let priceIntervalId: number | null = null
 
   // UI State
   const connecting = ref(false)
@@ -56,6 +61,8 @@ export function useTaskManager() {
   const taskMeta = ref<Record<number, TaskMeta>>({})
 
   const TASK_META_KEY = 'chasqui_task_meta_v1'
+  const AVAX_PRICE_CACHE_KEY = 'chasqui_avax_usd_price_v1'
+  const FALLBACK_AVAX_USD_PRICE = Number(import.meta.env.VITE_AVAX_USD_FALLBACK || '25')
   const loadTaskMeta = () => {
     try {
       taskMeta.value = JSON.parse(localStorage.getItem(TASK_META_KEY) || '{}')
@@ -70,9 +77,99 @@ export function useTaskManager() {
   // Tabs
   const tabs = [
     { id: 'create', label: 'Crear Tarea', icon: 'fas fa-plus' },
-    { id: 'manage', label: 'Gestionar', icon: 'fas fa-tasks' },
     { id: 'list', label: 'Mis Tareas', icon: 'fas fa-list' }
   ]
+
+  const normalizeAddress = (value?: string | null) => String(value || '').toLowerCase()
+
+  const GAS_RESERVE_AVAX = 0.001
+
+  const parseAmount = (value: string) => {
+    const normalized = String(value || '').trim().replace(',', '.')
+    const parsed = Number(normalized)
+    return Number.isFinite(parsed) ? parsed : NaN
+  }
+
+  const extractErrorMessage = (error: unknown) => {
+    if (error instanceof Error && error.message) {
+      return error.message
+    }
+    if (typeof error === 'object' && error !== null) {
+      const maybeMessage = (error as any)?.message
+      if (typeof maybeMessage === 'string') {
+        return maybeMessage
+      }
+      const nestedMessage = (error as any)?.originalError?.message
+      if (typeof nestedMessage === 'string') {
+        return nestedMessage
+      }
+      const nestedDeepMessage = (error as any)?.originalError?.originalError?.message
+      if (typeof nestedDeepMessage === 'string') {
+        return nestedDeepMessage
+      }
+    }
+    return ''
+  }
+
+  const refreshAvaxUsdPrice = async () => {
+    usdPriceLoading.value = true
+    const endpoints = [
+      'https://api.coingecko.com/api/v3/simple/price?ids=avalanche-2&vs_currencies=usd',
+      'https://min-api.cryptocompare.com/data/price?fsym=AVAX&tsyms=USD',
+      'https://api.coinbase.com/v2/prices/AVAX-USD/spot',
+      'https://api.binance.com/api/v3/ticker/price?symbol=AVAXUSDT',
+      'https://api.coincap.io/v2/assets/avalanche'
+    ]
+
+    for (const endpoint of endpoints) {
+      try {
+        const response = await fetch(endpoint)
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`)
+        }
+        const data = await response.json()
+        const price = Number(
+          data?.['avalanche-2']?.usd ??
+          data?.USD ??
+          data?.data?.amount ??
+          data?.price ??
+          data?.data?.priceUsd
+        )
+        if (Number.isFinite(price) && price > 0) {
+          avaxUsdPrice.value = price
+          usdPriceSource.value = 'live'
+          localStorage.setItem(AVAX_PRICE_CACHE_KEY, String(price))
+          usdPriceLoading.value = false
+          return
+        }
+      } catch (error) {
+        log.warn('TaskManager', `Failed AVAX/USD source: ${endpoint}`, error)
+      }
+    }
+
+    usdPriceLoading.value = false
+    if (Number.isFinite(FALLBACK_AVAX_USD_PRICE) && FALLBACK_AVAX_USD_PRICE > 0) {
+      avaxUsdPrice.value = FALLBACK_AVAX_USD_PRICE
+      usdPriceSource.value = 'fallback'
+      return
+    }
+    avaxUsdPrice.value = null
+    usdPriceSource.value = 'none'
+  }
+
+  const updateAmountUsdEquivalent = () => {
+    const amount = parseAmount(createForm.value.amount)
+    const price = avaxUsdPrice.value
+    if (!Number.isFinite(amount) || amount <= 0 || !price) {
+      amountUsdEquivalent.value = 'N/A'
+      return
+    }
+    const usd = (amount * price).toFixed(2)
+    amountUsdEquivalent.value =
+      usdPriceSource.value === 'fallback'
+        ? `~ $${usd} USD (estimado)`
+        : `~ $${usd} USD`
+  }
 
   // Wallet
   const connectWallet = async () => {
@@ -129,6 +226,26 @@ export function useTaskManager() {
       const error = new TaskError('Amount required for public task', 'VALIDATION_ERROR')
       showAlert('error', 'Especifique la cantidad para tarea pública')
       throw error
+    }
+
+    if (!createForm.value.isPrivate) {
+      await updateBalance()
+      const requestedAmount = parseAmount(createForm.value.amount)
+      const availableBalance = parseAmount(avaxBalance.value)
+      if (!Number.isFinite(requestedAmount) || requestedAmount <= 0) {
+        const error = new TaskError('Invalid public amount for task creation', 'VALIDATION_ERROR')
+        showAlert('error', 'Ingrese un monto AVAX válido')
+        throw error
+      }
+
+      if (!Number.isFinite(availableBalance) || requestedAmount + GAS_RESERVE_AVAX > availableBalance) {
+        const error = new TaskError('Insufficient AVAX balance before creating task', 'INSUFFICIENT_FUNDS')
+        showAlert(
+          'error',
+          `Saldo insuficiente. Necesitas ${requestedAmount.toFixed(4)} AVAX + gas y tienes ${availableBalance.toFixed(4)} AVAX`
+        )
+        throw error
+      }
     }
 
     if (!createForm.value.timeValue || Number(createForm.value.timeValue) <= 0) {
@@ -263,6 +380,32 @@ export function useTaskManager() {
     managing.value = true
     
     try {
+      const details = await web3Service.getEscrowDetails(Number(escrowId))
+      const currentAddress = normalizeAddress(authStore.address)
+      const isParticipant =
+        currentAddress === normalizeAddress(details.depositor) ||
+        currentAddress === normalizeAddress(details.beneficiary)
+      const hasAuthorization = authStore.address
+        ? await web3Service.isAuthorized(authStore.address)
+        : false
+
+      if (!isParticipant && !hasAuthorization) {
+        showAlert('error', 'No autorizado para liberar fondos de esta tarea')
+        return
+      }
+      if (details.isPrivate) {
+        showAlert('error', 'Esta tarea es privada: usa el flujo de liberación privada')
+        return
+      }
+      if (!details.isCompleted) {
+        showAlert('error', 'La tarea aún no está completada en cadena')
+        return
+      }
+      if (details.isReleased) {
+        showAlert('info', 'El pago de esta tarea ya fue liberado')
+        return
+      }
+
       log.info('TaskManager', `Releasing funds for escrow: ${escrowId}`)
       await web3Service.releaseFunds(Number(escrowId))
       await updateBalance()
@@ -271,7 +414,16 @@ export function useTaskManager() {
       showAlert('success', `Pago de la tarea #${escrowId} liberado exitosamente`)
     } catch (error) {
       log.error('TaskManager', `Failed to release funds for escrow ${escrowId}`, error)
-      showAlert('error', 'Error al liberar el pago')
+      const txMessage = extractErrorMessage(error)
+      if (txMessage.includes('Tarea no completada')) {
+        showAlert('error', 'No se puede liberar: la tarea no está completada')
+      } else if (txMessage.includes('Fondos ya liberados')) {
+        showAlert('info', 'Este pago ya fue liberado anteriormente')
+      } else if (txMessage.includes('No autorizado')) {
+        showAlert('error', 'No tienes permisos para liberar este pago')
+      } else {
+        showAlert('error', 'Error al liberar el pago')
+      }
       throw error
     } finally {
       managing.value = false
@@ -354,22 +506,63 @@ export function useTaskManager() {
     
     try {
       log.info('TaskManager', `Loading escrows for address: ${authStore.address}`)
-      const escrowIds = await web3Service.getUserEscrows(authStore.address)
-      log.debug('TaskManager', `Found ${escrowIds.length} escrow IDs`)
-      
-      const escrowsDetails: EscrowDetails[] = []
-      for (const id of escrowIds) {
+      const currentAddress = normalizeAddress(authStore.address)
+      const depositorEscrowIds = await web3Service.getUserEscrows(authStore.address)
+      const totalEscrows = await web3Service.getTotalEscrows()
+      log.debug(
+        'TaskManager',
+        `Found ${depositorEscrowIds.length} depositor escrows. Scanning ${totalEscrows} total for beneficiary matches`
+      )
+
+      const mergedIds = new Set<number>(depositorEscrowIds)
+      const detailsById = new Map<number, EscrowDetails>()
+
+      const tryLoadDetails = async (id: number) => {
         try {
           const details = await web3Service.getEscrowDetails(id)
-          escrowsDetails.push(details)
+          detailsById.set(id, details)
           log.debug('TaskManager', `Loaded details for escrow ${id}`)
         } catch (error) {
           log.warn('TaskManager', `Failed to load details for escrow ${id}`, error)
         }
       }
-      
+
+      // Always load escrows where current wallet is depositor (on-chain indexed)
+      for (const id of depositorEscrowIds) {
+        await tryLoadDetails(id)
+      }
+
+      // Also include escrows where current wallet is beneficiary (not indexed on-chain)
+      for (let id = 0; id < totalEscrows; id++) {
+        if (detailsById.has(id)) {
+          continue
+        }
+
+        let details: EscrowDetails | null = null
+        try {
+          details = await web3Service.getEscrowDetails(id)
+        } catch (error) {
+          log.warn('TaskManager', `Failed to scan escrow ${id} for beneficiary match`, error)
+          continue
+        }
+
+        const isParticipant =
+          normalizeAddress(details.depositor) === currentAddress ||
+          normalizeAddress(details.beneficiary) === currentAddress
+
+        if (isParticipant) {
+          mergedIds.add(id)
+          detailsById.set(id, details)
+        }
+      }
+
+      const escrowsDetails = Array.from(mergedIds)
+        .map((id) => detailsById.get(id))
+        .filter((details): details is EscrowDetails => !!details)
+        .sort((a, b) => b.id - a.id)
+
       userEscrows.value = escrowsDetails
-      log.info('TaskManager', `Successfully loaded ${escrowsDetails.length} escrows`)
+      log.info('TaskManager', `Successfully loaded ${escrowsDetails.length} escrows for wallet`)
     } catch (error) {
       log.error('TaskManager', 'Failed to load user escrows', error)
       showAlert('error', 'Error al cargar las tareas')
@@ -430,6 +623,21 @@ export function useTaskManager() {
         log.warn('TaskManager', 'Auto-connection failed', error)
       }
     }
+
+    const cachedPrice = Number(localStorage.getItem(AVAX_PRICE_CACHE_KEY) || '')
+    if (Number.isFinite(cachedPrice) && cachedPrice > 0) {
+      avaxUsdPrice.value = cachedPrice
+      usdPriceSource.value = 'live'
+      updateAmountUsdEquivalent()
+    }
+
+    await refreshAvaxUsdPrice()
+    updateAmountUsdEquivalent()
+
+    // Refresca la cotización de fondo para mantener el equivalente al día.
+    priceIntervalId = window.setInterval(() => {
+      void refreshAvaxUsdPrice()
+    }, 60_000)
   })
 
   watch(() => authStore.address, async (newAddress) => {
@@ -442,7 +650,21 @@ export function useTaskManager() {
     }
   })
 
+  watch(() => createForm.value.amount, () => {
+    if (createForm.value.amount && !avaxUsdPrice.value && !usdPriceLoading.value) {
+      void refreshAvaxUsdPrice()
+    }
+    updateAmountUsdEquivalent()
+  })
+
+  watch(avaxUsdPrice, () => {
+    updateAmountUsdEquivalent()
+  })
+
   onUnmounted(() => {
+    if (priceIntervalId !== null) {
+      window.clearInterval(priceIntervalId)
+    }
     log.debug('TaskManager', 'Component unmounting, cleaning up listeners')
     web3Service.removeAllListeners()
   })
@@ -462,6 +684,10 @@ export function useTaskManager() {
     tabs,
     createForm,
     manageForm,
+    amountUsdEquivalent,
+    usdPriceLoading,
+    usdPriceSource,
+    refreshAvaxUsdPrice,
     userEscrows,
     taskMeta,
     connectWallet,

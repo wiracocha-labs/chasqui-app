@@ -4,7 +4,6 @@ import AppSidebar from '../components/ui/AppSidebar.vue'
 import AlertMessage from '../components/ui/AlertMessage.vue'
 import WalletConnectCard from '../components/ui/WalletConnectCard.vue'
 import TaskCreateForm from '../components/task/TaskCreateForm.vue'
-import TaskManageForm from '../components/task/TaskManageForm.vue'
 import TaskList from '../components/task/TaskList.vue'
 import { useTaskManager } from '../composables/useTaskManager'
 
@@ -15,24 +14,32 @@ const {
   connecting,
   loading,
   creating,
-  managing,
   activeTab,
   isRegisteredForPrivacy,
   alert,
   tabs,
   createForm,
+  amountUsdEquivalent,
+  usdPriceLoading,
+  usdPriceSource,
   userEscrows,
   taskMeta,
   connectWallet,
   registerForPrivacy,
   createEscrow,
-  markCompleted,
-  releaseFunds,
-  cancelEscrow,
   requestTaskFinished,
   completeAndRelease,
   loadUserEscrows
 } = useTaskManager()
+
+const handleCreateEscrow = async () => {
+  try {
+    await createEscrow()
+  } catch {
+    // Los mensajes de error UX ya se manejan en el composable
+  }
+}
+
 </script>
 
 <!-- Task Manager adaptado al nuevo layout -->
@@ -49,7 +56,7 @@ const {
           </div>
           <div class="flex items-center space-x-4">
             <div class="bg-accent text-primary px-3 py-1 rounded-full text-sm font-medium">{{ networkName }}</div>
-            <div class="bg-brand text-primary px-3 py-1 rounded-full text-sm font-medium">{{ avaxBalance }} ETH</div>
+            <div class="bg-brand text-primary px-3 py-1 rounded-full text-sm font-medium">{{ avaxBalance }} AVAX</div>
           </div>
         </div>
         <AlertMessage v-if="alert.message" :type="alert.type" :message="alert.message" class="mb-4" />
@@ -68,8 +75,15 @@ const {
               </button>
             </div>
             <div class="p-6">
-              <TaskCreateForm v-if="activeTab === 'create'" :form="createForm" :creating="creating" @submit="createEscrow" />
-              <TaskManageForm v-if="activeTab === 'manage'" :loading="managing" @markCompleted="markCompleted" @releaseFunds="releaseFunds" @cancelEscrow="cancelEscrow" />
+              <TaskCreateForm
+                v-if="activeTab === 'create'"
+                :form="createForm"
+                :creating="creating"
+                :amount-usd-equivalent="amountUsdEquivalent"
+                :usd-price-loading="usdPriceLoading"
+                :usd-price-source="usdPriceSource"
+                @submit="handleCreateEscrow"
+              />
               <TaskList
                 v-if="activeTab === 'list'"
                 :tasks="userEscrows"
