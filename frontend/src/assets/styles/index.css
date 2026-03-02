@@ -18,10 +18,11 @@ html {
 /* Estilos para las secciones */
 section {
   min-height: 100vh;
-  padding: 16px 2rem;
+  padding: 5rem 2rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  /* Evita centrado vertical excesivo en secciones cortas */
   align-items: center;
   text-align: center;
 }
@@ -400,16 +401,33 @@ section li {
 }
 
 .hero-section .floating-character--hero img {
-  width: 400px;
+  width: 250px;
   /* Controla el tamaño del personaje en el Hero */
   height: auto;
   max-width: none !important;
 }
 
+/* Tamaño reducido dentro de #caracteristicas */
+#caracteristicas .floating-character--hero img {
+  width: 320px;
+  height: auto;
+  max-width: none !important;
+}
+
+/* Posición del contenedor dentro de #caracteristicas */
+#caracteristicas .floating-character--hero {
+  top: 95%;
+  left: 60%;
+  bottom: auto;
+  right: auto;
+  transform: none;
+}
+
+/* Posición por defecto (fuera de #caracteristicas, si se usa en otro contexto) */
 .floating-character--hero {
-  top: 60%;
-  left: 78%;
-  transform: translate(-50%, -50%);
+  bottom: -2%;
+  right: 2%;
+  transform: translateX(0);
 }
 
 .floating-character--pricing img {
@@ -435,7 +453,7 @@ section li {
 }
 
 .floating-character--hero.reveal {
-  transform: translate(-50%, calc(-50% + 30px));
+  transform: translateY(30px);
 }
 
 .floating-character--pricing.reveal {
@@ -447,7 +465,7 @@ section li {
 }
 
 .floating-character--hero.reveal.active {
-  transform: translate(-50%, -50%);
+  transform: translateY(0);
 }
 
 .floating-character--pricing.reveal.active {
@@ -490,6 +508,7 @@ section li {
   height: auto;
 }
 
+/* Posiciones por defecto (pueden quedar vacías o usarse en otros contextos) */
 .floating-side--left {
   left: -2%;
   bottom: -350px;
@@ -498,6 +517,24 @@ section li {
 .floating-side--right {
   right: -2%;
   bottom: -40px;
+}
+
+/* Personajes dentro de #vision: posiciones específicas */
+#vision .floating-side--right {
+  /* Entre las dos columnas del vision-bento, mitad de la primera fila */
+  right: auto;
+  left: 50%;
+  top: 40%;
+  transform: translateX(-50%);
+  width: 280px;
+}
+
+#vision .floating-side--left {
+  /* Debajo del card de Arquitectura del MVP, lado izquierdo */
+  left: 20%;
+  bottom: -20%;
+  top: auto;
+  width: 280px;
 }
 
 .floating-side {
@@ -944,13 +981,117 @@ section li {
 
 /* Identity Section (Split Text Design) */
 .identity-section--secondary {
-  background: rgba(0, 0, 0, 0.1);
+  background: transparent;
+}
+
+/* Bento grid principal de la sección #vision */
+.vision-bento {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.vision-identity {
+  grid-column: 1;
+  grid-row: 1;
+  text-align: left;
+}
+
+.vision-sidebar {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Mentalidad card dentro del sidebar: padding más compacto */
+.mentalidad-card {
+  padding: 2rem !important;
+  flex: 1;
+}
+
+/* Arquitectura del MVP: fila completa */
+.vision-full-card {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+/* Contenido interno de Arquitectura en dos columnas */
+.arquitectura-inner {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 3rem;
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .vision-bento {
+    grid-template-columns: 1fr;
+  }
+
+  .vision-identity,
+  .vision-sidebar,
+  .vision-full-card {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .arquitectura-inner {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+.vision-sub-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: var(--color-text-primary);
+  text-align: left;
+}
+
+/* Divider con label entre subsecciones */
+.vision-divider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 2rem;
+  max-width: 1200px;
+}
+
+.vision-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--color-brand), transparent);
+  transform: translateY(-50%);
+}
+
+.vision-divider__label {
+  position: relative;
+  background: var(--color-brand);
+  color: #000;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.35rem 1.25rem;
+  border-radius: 9999px;
+  z-index: 1;
 }
 
 .split-layout {
   display: flex;
   gap: 4rem;
-  align-items: flex-start;
+  align-items: stretch;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -1043,6 +1184,11 @@ section li {
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 2rem;
   width: 100%;
+}
+
+/* Dentro de #vision: columnas asimétricas (Mentalidad más compacta) */
+#vision .tech-grid {
+  grid-template-columns: 1fr 1.6fr;
 }
 
 .tech-card {

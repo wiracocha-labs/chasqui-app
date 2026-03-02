@@ -57,15 +57,11 @@
           </div>
         </header>
       </div>
-      <!-- Personaje flotante del Hero -->
-      <!-- <div class="floating-character floating-character--hero reveal">
-        <img :src="chasquiCharacter" alt="Chasqui Hero" />
-      </div> -->
     </section>
 
     <div class="content-background-wrapper">
       <!-- 1. BLOQUE CARACTERÍSTICAS + EXPERIENCIA (Diseño Integrado) -->
-      <section id="caracteristicas" class="identity-section">
+      <section id="caracteristicas" class="identity-section" style="position: relative;">
         <div class="bento-container">
           <div class="section-header reveal mb-12 text-center">
             <h2 class="text-4xl font-bold mb-4">⚡ El flujo completo de ejecución</h2>
@@ -105,21 +101,33 @@
               </div>
             </div>
           </div>
+          <!-- Personaje flotante al final de la sección -->
+          <div class="floating-character floating-character--hero reveal">
+            <img :src="chasquiCharacter" alt="Chasqui Hero" />
+          </div>
         </div>
       </section>
 
-      <!-- 2. BLOQUE IDENTIDAD + VISUALES (Restaurando Diseño Original) -->
-      <section id="vision" class="identity-section identity-section--secondary">
-        <div class="bento-container reveal">
-          <!-- 2.1 Texto de Identidad (Split Layout) -->
-          <div class="split-layout mb-12">
-            <div class="identity-content">
-              <h2>🚀 La Evolución de la Colaboración</h2>
+      <!-- 2. BLOQUE IDENTIDAD + VALORES (Sección Unificada) -->
+      <section id="vision" class="identity-section identity-section--secondary" style="position: relative;">
+        <div class="bento-container">
+
+          <!-- Encabezado de sección -->
+          <div class="section-header reveal text-center mb-12">
+            <h2 class="text-4xl font-bold mb-4">🚀 Nuestra Visión</h2>
+            <p class="text-textSecondary text-xl">Autonomía, pagos y ejecución, en un solo sistema.</p>
+          </div>
+
+          <!-- Bento grid: Texto | (Ideal para + Mentalidad) / Arquitectura full -->
+          <div class="vision-bento reveal">
+
+            <!-- Col izquierda: Texto de Identidad -->
+            <div class="vision-identity">
+              <h3 class="vision-sub-title">La Evolución de la Colaboración</h3>
               <p class="lead">Chasqui nace para quienes creen que el trabajo se mide por <strong>resultados, no por horas</strong>.</p>
               <p>Optimizamos para la autonomía del equipo y la tranquilidad de quien contrata.</p>
               <p>Reducimos la fricción administrativa.</p>
               <p>Integramos la gestión de pagos dentro del flujo natural del trabajo.</p>
-              
               <div class="philosophy-box">
                 <blockquote>"Menos administración. Más ejecución."</blockquote>
                 <p>La conversación no se queda en el chat.</p>
@@ -127,61 +135,65 @@
               </div>
             </div>
 
-            <div class="identity-target">
-              <h3>🎯 Ideal para:</h3>
-              <ul class="check-list">
-                <li><span>✅ <strong>Startups en etapa temprana</strong></span></li>
-                <li><span>✅ <strong>Equipos remotos que trabajan por objetivos</strong></span></li>
-                <li><span>✅ <strong>Proyectos Open Source con colaboradores distribuidos</strong></span></li>
-              </ul>
+            <!-- Col derecha: Ideal para (arriba) + Mentalidad (abajo) -->
+            <div class="vision-sidebar">
+              <div class="identity-target">
+                <h3>🎯 Ideal para:</h3>
+                <ul class="check-list">
+                  <li><span>✅ <strong>Startups en etapa temprana</strong></span></li>
+                  <li><span>✅ <strong>Equipos remotos que trabajan por objetivos</strong></span></li>
+                  <li><span>✅ <strong>Proyectos Open Source con colaboradores distribuidos</strong></span></li>
+                </ul>
+              </div>
+
+              <div class="tech-card mentalidad-card">
+                <h3>🌱 Mentalidad Chasqui</h3>
+                <ul class="tech-list">
+                  <li><strong>Resultados sobre horas</strong><br>El trabajo se mide por lo que se entrega.</li>
+                  <li><strong>Autonomía real</strong><br>Los equipos trabajan con claridad y responsabilidad.</li>
+                  <li><strong>Pagos sin fricción</strong><br>La administración financiera es parte del sistema, no una carga adicional.</li>
+                  <li><strong>Transparencia radical</strong><br>Procesos visibles y pagos verificables.</li>
+                </ul>
+              </div>
             </div>
+
+            <!-- Fila completa: Arquitectura del MVP -->
+            <div class="tech-card security-card vision-full-card">
+              <h3>🔍 Arquitectura del MVP</h3>
+              <div class="arquitectura-inner">
+                <div class="arquitectura-left">
+                  <p>Chasqui separa tres capas fundamentales:</p>
+                  <ul class="tech-list tech-list--grid">
+                    <li><strong>Conversación</strong></li>
+                    <li><strong>Compromiso</strong></li>
+                    <li><strong>Liquidación</strong></li>
+                  </ul>
+                  <p>Diseñado para ser ligero, seguro y escalable.</p>
+                </div>
+                <div class="arquitectura-right">
+                  <h4>Stack Tecnológico</h4>
+                  <ul class="tech-list tech-list--grid">
+                    <li><span class="tech-badge">Actix-web</span> — Comunicación eficiente</li>
+                    <li><span class="tech-badge">VueJS / Vite</span> — Interfaz reactiva</li>
+                    <li><span class="tech-badge">Avalanche</span> — Identidad y trazabilidad de pagos</li>
+                    <li><span class="tech-badge">OpenAI</span> — Resúmenes inteligentes</li>
+                    <li><span class="tech-badge">Fly.io / Railway</span> — Infraestructura desplegable y liviana</li>
+                  </ul>
+                  <div class="tech-cta">
+                    <a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" rel="noopener noreferrer" class="btn btn--outline">Ver arquitectura en GitHub →</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          <!-- Personajes flotantes laterales (Acompañando el texto sin cajas de imágenes) -->
+          <!-- Personajes flotantes laterales -->
           <div class="floating-side floating-side--left">
             <img :src="chasqui2" alt="Chasqui 2" />
           </div>
           <div class="floating-side floating-side--right">
             <img :src="chasqui3" alt="Chasqui 3" />
-          </div>
-        </div>
-      </section>
-
-      <!-- 2. BLOQUE VALORES Y EDUCACIÓN -->
-      <section class="tech-section">
-        <div class="bento-container">
-          <div class="tech-grid">
-            <div class="tech-card reveal">
-              <h3>🌱 Mentalidad Chasqui</h3>
-              <ul class="tech-list">
-                <li><strong>Resultados sobre horas</strong><br>El trabajo se mide por lo que se entrega.</li>
-                <li><strong>Autonomía real</strong><br>Los equipos trabajan con claridad y responsabilidad.</li>
-                <li><strong>Pagos sin fricción</strong><br>La administración financiera es parte del sistema, no una carga adicional.</li>
-                <li><strong>Transparencia radical</strong><br>Procesos visibles y pagos verificables.</li>
-              </ul>
-            </div>
-            
-            <div class="tech-card security-card reveal">
-              <h3>🔍 Arquitectura del MVP</h3>
-              <p>Chasqui separa tres capas fundamentales:</p>
-              <ul class="tech-list tech-list--grid">
-                <li><strong>Conversación</strong></li>
-                <li><strong>Compromiso</strong></li>
-                <li><strong>Liquidación</strong></li>
-              </ul>
-              <p>Diseñado para ser ligero, seguro y escalable.</p>
-              <h4>Stack Tecnológico</h4>
-              <ul class="tech-list tech-list--grid">
-                <li><span class="tech-badge">Actix-web</span> — Comunicación eficiente</li>
-                <li><span class="tech-badge">VueJS / Vite</span> — Interfaz reactiva</li>
-                <li><span class="tech-badge">Avalanche</span> — Identidad y trazabilidad de pagos</li>
-                <li><span class="tech-badge">OpenAI</span> — Resúmenes inteligentes</li>
-                <li><span class="tech-badge">Fly.io / Railway</span> — Infraestructura desplegable y liviana</li>
-              </ul>
-              <div class="tech-cta">
-                <a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" rel="noopener noreferrer" class="btn btn--outline">Ver arquitectura en GitHub →</a>
-              </div>
-            </div>
           </div>
         </div>
       </section>
