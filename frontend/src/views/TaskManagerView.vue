@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
 import AppHeader from '../components/ui/AppHeader.vue'
 import AppSidebar from '../components/ui/AppSidebar.vue'
 import AlertMessage from '../components/ui/AlertMessage.vue'
@@ -6,6 +8,10 @@ import WalletConnectCard from '../components/ui/WalletConnectCard.vue'
 import TaskCreateForm from '../components/task/TaskCreateForm.vue'
 import TaskList from '../components/task/TaskList.vue'
 import { useTaskManager } from '../composables/useTaskManager'
+import { useAuthStore } from '../stores/auth'
+
+const router = useRouter()
+const authStore = useAuthStore()
 
 const {
   account,
@@ -32,6 +38,17 @@ const {
   loadUserEscrows
 } = useTaskManager()
 
+const shortAddress = computed(() => {
+  const addr = account.value
+  if (!addr) return ''
+  return `${addr.slice(0, 6)}...${addr.slice(-4)}`
+})
+
+const handleDisconnect = async () => {
+  authStore.disconnect()
+  await router.push('/tasks')
+}
+
 const handleCreateEscrow = async () => {
   try {
     await createEscrow()
@@ -49,13 +66,27 @@ const handleCreateEscrow = async () => {
     <div class="flex-1 flex flex-col ml-20">
       <AppHeader />
       <div class="container mx-auto py-6 flex-1">
-        <div class="flex items-center justify-between mb-6">
+        <div v-if="account" class="flex items-center justify-between mb-6">
           <div>
             <h1 class="text-2xl font-bold text-secondary">Gestión de Tareas</h1>
           </div>
-          <div class="flex items-center space-x-4">
-            <div class="bg-accent text-primary px-3 py-1 rounded-full text-sm font-medium">{{ networkName }}</div>
-            <div class="bg-brand text-primary px-3 py-1 rounded-full text-sm font-medium">{{ avaxBalance }} AVAX</div>
+          <div class="flex items-center flex-wrap gap-3">
+            <div class="bg-accent text-primary px-3 py-1.5 rounded-full text-sm font-medium">{{ networkName }}</div>
+            <div class="bg-brand text-primary px-3 py-1.5 rounded-full text-sm font-medium">{{ avaxBalance }} AVAX</div>
+            <div
+              class="px-3 py-1.5 rounded-full text-sm font-medium font-mono border border-brand/40"
+              style="background: rgba(212, 175, 55, 0.15); color: var(--color-brand);"
+              :title="account"
+            >
+              {{ shortAddress }}
+            </div>
+            <button
+              type="button"
+              class="text-sm text-textSecondary hover:text-brand transition-colors"
+              @click="handleDisconnect"
+            >
+              Desconectar
+            </button>
           </div>
         </div>
         <AlertMessage v-if="alert.message" :type="alert.type" :message="alert.message" class="mb-4" />

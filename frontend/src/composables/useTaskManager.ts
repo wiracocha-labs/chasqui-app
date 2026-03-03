@@ -1,4 +1,4 @@
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { web3Service, type EscrowDetails } from '../services/web3'
 import { log } from '../services/logger'
@@ -15,7 +15,7 @@ export function useTaskManager() {
   // Auth
   const authStore = useAuthStore()
   const account = computed(() => authStore.address)
-  const networkName = ref(NETWORKS[CURRENT_NETWORK].name)
+  const networkName = ref<string>(NETWORKS[CURRENT_NETWORK].name)
   const avaxBalance = ref('0.00')
   const avaxUsdPrice = ref<number | null>(null)
   const amountUsdEquivalent = ref('N/A')
@@ -41,16 +41,73 @@ export function useTaskManager() {
   }
 
   // Forms
+  const todayIso = () => new Date().toISOString().slice(0, 10)
+  const addDays = (dateStr: string, days: number) => {
+    const d = new Date(dateStr + 'T12:00:00')
+    d.setDate(d.getDate() + days)
+    return d.toISOString().slice(0, 10)
+  }
+  const addHours = (dateStr: string, hours: number) => {
+    const d = new Date(dateStr + 'T12:00:00')
+    d.setHours(d.getHours() + hours)
+    const y = d.getFullYear()
+    const m = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${y}-${m}-${day}`
+  }
+
   const createForm = ref({
     beneficiary: '',
     amount: '',
     encryptedAmount: '',
     taskDescription: '',
+    startDate: todayIso(),
+    endDate: addDays(todayIso(), 1),
     timeValue: 1,
     timeUnit: 'days' as 'hours' | 'days',
     zkProof: '',
     isPrivate: false
   })
+
+  let skipDatesSync = false
+  let skipTimeSync = false
+  watch(
+    () => [createForm.value.startDate, createForm.value.endDate],
+    ([start, end]) => {
+      if (skipDatesSync || !start || !end) return
+      const startD = new Date(String(start) + 'T12:00:00')
+      const endD = new Date(String(end) + 'T12:00:00')
+      const diffMs = endD.getTime() - startD.getTime()
+      const diffHours = Math.round(diffMs / (1000 * 60 * 60))
+      const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24))
+      if (diffHours < 0 || diffDays < 0) return
+      skipTimeSync = true
+      if (diffDays >= 1) {
+        createForm.value.timeValue = Math.max(1, diffDays)
+        createForm.value.timeUnit = 'days'
+      } else {
+        createForm.value.timeValue = Math.max(1, diffHours)
+        createForm.value.timeUnit = 'hours'
+      }
+      void nextTick(() => { skipTimeSync = false })
+    },
+    { deep: true }
+  )
+  watch(
+    () => [createForm.value.timeValue, createForm.value.timeUnit],
+    ([val, unit]) => {
+      if (skipTimeSync) return
+      const v = Number(val)
+      const u = String(unit)
+      if (!Number.isFinite(v) || v < 1) return
+      const today = todayIso()
+      skipDatesSync = true
+      createForm.value.startDate = today
+      createForm.value.endDate = u === 'days' ? addDays(today, v) : addHours(today, v).slice(0, 10)
+      void nextTick(() => { skipDatesSync = false })
+    },
+    { deep: true }
+  )
   const manageForm = ref({
     escrowId: '',
     zkProof: ''
@@ -222,6 +279,14 @@ export function useTaskManager() {
       throw error
     }
 
+    const beneficiaryNorm = normalizeAddress(createForm.value.beneficiary)
+    const depositorNorm = normalizeAddress(authStore.address)
+    if (beneficiaryNorm && depositorNorm && beneficiaryNorm === depositorNorm) {
+      const error = new TaskError('Beneficiary cannot be the same as connected wallet', 'VALIDATION_ERROR')
+      showAlert('error', 'No puedes ser tu propio beneficiario. Indica la dirección del ejecutor de la tarea.')
+      throw error
+    }
+
     if (!createForm.value.isPrivate && !createForm.value.amount) {
       const error = new TaskError('Amount required for public task', 'VALIDATION_ERROR')
       showAlert('error', 'Especifique la cantidad para tarea pública')
@@ -308,6 +373,8 @@ export function useTaskManager() {
         amount: '',
         encryptedAmount: '',
         taskDescription: '',
+        startDate: todayIso(),
+        endDate: addDays(todayIso(), 1),
         timeValue: 1,
         timeUnit: 'days',
         zkProof: '',
@@ -321,7 +388,12 @@ export function useTaskManager() {
       activeTab.value = 'list'
     } catch (error) {
       log.error('TaskManager', 'Failed to create escrow', error)
-      showAlert('error', 'Error al crear la tarea')
+      const msg = extractErrorMessage(error)
+      if (msg.includes('No puedes ser tu propio beneficiario') || msg.includes('tu propio beneficiario')) {
+        showAlert('error', 'No puedes ser tu propio beneficiario. Indica la dirección del ejecutor de la tarea.')
+      } else {
+        showAlert('error', 'Error al crear la tarea')
+      }
       return
     } finally {
       creating.value = false

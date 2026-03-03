@@ -70,6 +70,8 @@ interface CreateFormModel {
   amount: string
   encryptedAmount: string
   taskDescription: string
+  startDate: string
+  endDate: string
   timeValue: number
   timeUnit: 'hours' | 'days'
   zkProof: string
