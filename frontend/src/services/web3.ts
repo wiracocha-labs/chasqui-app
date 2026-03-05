@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { AUTHORIZATION_CONTRACT_ADDRESS, CONTRACT_ADDRESSES } from '../config/contracts'
+import { getContractAddress } from '../config/contracts'
 import { AUTHORIZATION_SIMPLE_ABI } from '../config/abi'
 import { log } from './logger'
 import { Web3Error, handleError } from './errors'
@@ -17,14 +17,19 @@ export interface EscrowDetails {
   timestamp: number
 }
 
+export interface TimeConfig {
+  value: number
+  unit: 'hours' | 'days'
+}
+
 export class Web3Service {
   private provider: ethers.BrowserProvider | null = null
   private signer: ethers.JsonRpcSigner | null = null
   private contract: ethers.Contract | null = null
-  private readonly contractAddress: string
+  private contractAddress: string = ''
 
   constructor() {
-    this.contractAddress = AUTHORIZATION_CONTRACT_ADDRESS
+    // se resuelve dinámicamente según chainId al conectar wallet
   }
 
   // Inicializar conexión con MetaMask
@@ -45,15 +50,32 @@ export class Web3Service {
       
       // Obtener información de la red
       const network = await this.provider.getNetwork()
-      const balance = await this.provider.getBalance(address)
       
-      // Inicializar contrato
+      // Inicializar contrato según la red activa en MetaMask
+      const chainId = Number(network.chainId)
+      this.contractAddress = getContractAddress(chainId, 'authorization')
       this.contract = new ethers.Contract(this.contractAddress, AUTHORIZATION_SIMPLE_ABI, this.signer)
       
+      // Algunos RPC públicos (Fuji) pueden rechazar temporalmente eth_getBalance.
+      // No bloqueamos la conexión de wallet por ese motivo.
+      let formattedBalance = '0.00'
+      try {
+        const balance = await this.provider.getBalance(address)
+        formattedBalance = ethers.formatEther(balance)
+      } catch (balanceError) {
+        log.warn('Web3Service', 'Balance fetch failed during connect, continuing with 0.00', balanceError)
+      }
+
+      const networkLabel =
+        Number(network.chainId) === 43113 ? 'fuji' :
+        Number(network.chainId) === 43114 ? 'avalanche' :
+        Number(network.chainId) === 31337 ? 'localhost' :
+        (network.name === 'unknown' ? `chain-${network.chainId.toString()}` : network.name)
+
       const result = {
         address,
-        network: network.name === 'unknown' ? 'localhost' : network.name,
-        balance: ethers.formatEther(balance)
+        network: networkLabel,
+        balance: formattedBalance
       }
       
       log.info('Web3Service', `Connected successfully to ${result.network} with address ${result.address}`)
@@ -80,14 +102,20 @@ export class Web3Service {
     }
   }
 
-  // Verificar si está en la red correcta (localhost:31337)
+  // Verificar si está en una red configurada para la app
   async checkNetwork(): Promise<boolean> {
     if (!this.provider) return false
     try {
       const network = await this.provider.getNetwork()
-      const isCorrectNetwork = network.chainId === 31337n
-      log.debug('Web3Service', `Network check: ${network.chainId} === 31337? ${isCorrectNetwork}`)
-      return isCorrectNetwork
+      const chainId = Number(network.chainId)
+      try {
+        getContractAddress(chainId, 'authorization')
+        log.debug('Web3Service', `Network check: chain ${chainId} configured? true`)
+        return true
+      } catch {
+        log.debug('Web3Service', `Network check: chain ${chainId} configured? false`)
+        return false
+      }
     } catch (error) {
       log.error('Web3Service', 'Error checking network', error)
       return false
@@ -188,18 +216,54 @@ export class Web3Service {
 
   // FUNCIONES DE ESCRITURA
 
-  async createPublicEscrow(beneficiary: string, taskDescription: string, amount: string) {
+  private buildDeadline(timeConfig?: TimeConfig): bigint | null {
+    if (!timeConfig || !Number.isFinite(timeConfig.value) || timeConfig.value <= 0) {
+      return null
+    }
+    const now = Math.floor(Date.now() / 1000)
+    const seconds = timeConfig.unit === 'days'
+      ? Math.floor(timeConfig.value * 24 * 60 * 60)
+      : Math.floor(timeConfig.value * 60 * 60)
+    return BigInt(now + seconds)
+  }
+
+  async createPublicEscrow(
+    beneficiary: string,
+    taskDescription: string,
+    amount: string | number,
+    timeConfig?: TimeConfig
+  ) {
     if (!this.contract) {
       throw Web3Error.contractNotFound(this.contractAddress)
     }
     
     try {
       log.info('Web3Service', `Creating public escrow: ${taskDescription} for ${amount} AVAX`)
-      const tx = await this.contract.createPublicEscrow(
-        beneficiary,
-        taskDescription,
-        { value: ethers.parseEther(amount) }
-      )
+      const normalizedAmount =
+        typeof amount === 'number'
+          ? amount.toString()
+          : String(amount).trim().replace(',', '.')
+
+      const fn = this.contract.interface.getFunction('createPublicEscrow')
+      let tx
+      if (fn && fn.inputs.length === 3 && fn.inputs[0].type === 'uint256') {
+        const deadline = this.buildDeadline(timeConfig)
+        if (deadline === null) {
+          throw new Error('Tiempo inválido para createPublicEscrow con deadline')
+        }
+        tx = await this.contract.createPublicEscrow(
+          deadline,
+          beneficiary,
+          taskDescription,
+          { value: ethers.parseEther(normalizedAmount) }
+        )
+      } else {
+        tx = await this.contract.createPublicEscrow(
+          beneficiary,
+          taskDescription,
+          { value: ethers.parseEther(normalizedAmount) }
+        )
+      }
       
       log.debug('Web3Service', `Public escrow transaction: ${tx.hash}`)
       const receipt = await tx.wait()
@@ -214,7 +278,8 @@ export class Web3Service {
     beneficiary: string, 
     encryptedAmount: string, 
     zkProof: string, 
-    taskDescription: string
+    taskDescription: string,
+    timeConfig?: TimeConfig
   ) {
     if (!this.contract) {
       throw Web3Error.contractNotFound(this.contractAddress)
@@ -222,12 +287,28 @@ export class Web3Service {
     
     try {
       log.info('Web3Service', `Creating private escrow: ${taskDescription}`)
-      const tx = await this.contract.createPrivateEscrow(
-        beneficiary,
-        encryptedAmount,
-        zkProof,
-        taskDescription
-      )
+      const fn = this.contract.interface.getFunction('createPrivateEscrow')
+      let tx
+      if (fn && fn.inputs.length === 5 && fn.inputs[0].type === 'uint256') {
+        const deadline = this.buildDeadline(timeConfig)
+        if (deadline === null) {
+          throw new Error('Tiempo inválido para createPrivateEscrow con deadline')
+        }
+        tx = await this.contract.createPrivateEscrow(
+          deadline,
+          beneficiary,
+          encryptedAmount,
+          zkProof,
+          taskDescription
+        )
+      } else {
+        tx = await this.contract.createPrivateEscrow(
+          beneficiary,
+          encryptedAmount,
+          zkProof,
+          taskDescription
+        )
+      }
       
       log.debug('Web3Service', `Private escrow transaction: ${tx.hash}`)
       const receipt = await tx.wait()

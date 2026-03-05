@@ -1,0 +1,19 @@
+{
+  "network": "fuji",
+  "chainId": "43113",
+  "contracts": {
+    "main": "0xD6a54132db9c9a8e16B7d373F19d1bb1F46f40d2",
+    "mockToken": "0xcFAc52a2acd4663C09a15f8375b9e5E053E6c059",
+    "mockRegistrar": "0x3BfB821bdA7526361a155A09eDd225873eC64619"
+  },
+  "users": {
+    "deployer": "0x60BE7646A7B9FdfC476C8e7dBDc14a3fDaCfa516",
+    "user1": "0x782D42f1e0f61D3FA6bfE9A712e9Ec50630bD63f",
+    "user2": "0x929046D3e8B9eB1d20A195ba693C756e2057EF43"
+  },
+  "testData": {
+    "totalTasks": "1",
+    "mockEncryptedAmount": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
+  },
+  "deployedAt": "2026-02-22T21:34:22.402Z"
+}

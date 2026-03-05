@@ -15,7 +15,7 @@ import { useAuthStore } from './stores/auth'
 const routes = [
   { path: '/', component: HomeView, name: 'Home'  },
   { path: '/chat', component: ChatView, name: 'Chat', meta: { requiresAuth: true } },
-  { path: '/tasks', component: TaskManagerView, name: 'Tasks', meta: { requiresAuth: true } },
+  { path: '/tasks', component: TaskManagerView, name: 'Tasks' },
   { path: '/colors', component: ColorShowcase, name: 'Colors' }, // Ruta de desarrollo
 ]
 
@@ -44,7 +44,7 @@ router.beforeEach((to, from, next) => {
       return
     }
   }
-  
+
   next()
 })
 
