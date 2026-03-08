@@ -5,10 +5,20 @@ import { log } from '../services/logger'
 import { TaskError } from '../services/errors'
 import { CURRENT_NETWORK, NETWORKS } from '../config/index'
 
+const MAX_DEADLINE_UPDATES_PER_TASK = 2
+
 interface TaskMeta {
   timeValue: number
   timeUnit: 'hours' | 'days'
   finishedRequested: boolean
+  /** Veces que el creador actualizó la fecha (máx 2 por tarea) */
+  deadlineUpdates?: number
+  /** Confirmación del depositante para liberar el pago */
+  depositorReleaseConfirmed?: boolean
+  /** Confirmación del beneficiario para liberar el pago */
+  beneficiaryReleaseConfirmed?: boolean
+  /** Fecha fin mostrada tras actualización (solo visual) */
+  customEndDate?: string
 }
 
 export function useTaskManager() {
@@ -131,9 +141,10 @@ export function useTaskManager() {
     localStorage.setItem(TASK_META_KEY, JSON.stringify(taskMeta.value))
   }
 
-  // Tabs
+  // Tabs: Crear | Gestionar | Mis Tareas
   const tabs = [
     { id: 'create', label: 'Crear Tarea', icon: 'fas fa-plus' },
+    { id: 'manage', label: 'Gestionar', icon: 'fas fa-cog' },
     { id: 'list', label: 'Mis Tareas', icon: 'fas fa-list' }
   ]
 
@@ -530,6 +541,102 @@ export function useTaskManager() {
     }
   }
 
+  /** Actualizar fecha de la tarea (solo creador/depositante, máx 2 veces por escrow) */
+  const updateTaskDate = async (escrowId: number) => {
+    if (!authStore.address) return
+    const details = await web3Service.getEscrowDetails(escrowId)
+    const isDepositor = normalizeAddress(authStore.address) === normalizeAddress(details.depositor)
+    if (!isDepositor) {
+      showAlert('error', 'Solo el creador de la tarea puede actualizar la fecha')
+      return
+    }
+    const meta = taskMeta.value[escrowId] || { timeValue: 0, timeUnit: 'days' as const, finishedRequested: false }
+    const count = meta.deadlineUpdates ?? 0
+    if (count >= MAX_DEADLINE_UPDATES_PER_TASK) {
+      showAlert('error', `Solo se puede actualizar la fecha hasta ${MAX_DEADLINE_UPDATES_PER_TASK} veces por tarea`)
+      return
+    }
+    taskMeta.value[escrowId] = { ...meta, deadlineUpdates: count + 1 }
+    saveTaskMeta()
+    showAlert('success', `Fecha actualizada (${count + 1}/${MAX_DEADLINE_UPDATES_PER_TASK}). Queda ${MAX_DEADLINE_UPDATES_PER_TASK - count - 1} actualización(es) para esta tarea.`)
+  }
+
+  /** Confirmaciones para liberar: ambos (A y B) deben confirmar */
+  const getReleaseConfirmations = (escrowId: number) => {
+    const meta = taskMeta.value[escrowId]
+    return {
+      depositorConfirmed: !!meta?.depositorReleaseConfirmed,
+      beneficiaryConfirmed: !!meta?.beneficiaryReleaseConfirmed
+    }
+  }
+
+  const setMyReleaseConfirmation = (escrowId: number) => {
+    const meta = taskMeta.value[escrowId] || { timeValue: 0, timeUnit: 'days' as const, finishedRequested: false }
+    const currentAddress = normalizeAddress(authStore.address)
+    const details = userEscrows.value.find(e => e.id === escrowId)
+    if (!details) return
+    const isDepositor = currentAddress === normalizeAddress(details.depositor)
+    const isBeneficiary = currentAddress === normalizeAddress(details.beneficiary)
+    if (isDepositor) {
+      taskMeta.value[escrowId] = { ...meta, depositorReleaseConfirmed: true }
+    } else if (isBeneficiary) {
+      taskMeta.value[escrowId] = { ...meta, beneficiaryReleaseConfirmed: true }
+    }
+    saveTaskMeta()
+  }
+
+  const canExecuteRelease = (escrowId: number) => {
+    const { depositorConfirmed, beneficiaryConfirmed } = getReleaseConfirmations(escrowId)
+    return depositorConfirmed && beneficiaryConfirmed
+  }
+
+  /** Obtener detalles de un escrow por ID (para Gestionar cuando no está en la lista cargada) */
+  const getEscrowDetailsForManage = async (escrowId: number): Promise<EscrowDetails | null> => {
+    const inList = userEscrows.value.find((e) => e.id === escrowId)
+    if (inList) return inList
+    try {
+      return await web3Service.getEscrowDetails(escrowId)
+    } catch {
+      return null
+    }
+  }
+
+  /** Confirmar liberación (si falta tu confirmación) o ejecutar liberación (si ambos ya confirmaron) */
+  const confirmReleaseOrExecute = async (payload: { escrowId: string }) => {
+    const escrowId = Number(payload.escrowId)
+    if (!payload.escrowId) {
+      showAlert('error', 'Especifique el ID de la tarea')
+      return
+    }
+    let details: EscrowDetails | null = userEscrows.value.find(e => e.id === escrowId) ?? null
+    if (!details) {
+      details = await getEscrowDetailsForManage(escrowId)
+    }
+    if (!details) {
+      showAlert('error', 'No se encontró la tarea con ese ID')
+      return
+    }
+    const currentAddress = normalizeAddress(authStore.address)
+    const isDepositor = currentAddress === normalizeAddress(details.depositor)
+    const isBeneficiary = currentAddress === normalizeAddress(details.beneficiary)
+    if (!isDepositor && !isBeneficiary) {
+      showAlert('error', 'Solo depositante o beneficiario pueden liberar el pago')
+      return
+    }
+    if (canExecuteRelease(escrowId)) {
+      await releaseFunds(payload)
+      return
+    }
+    const meta = taskMeta.value[escrowId] || { timeValue: 0, timeUnit: 'days' as const, finishedRequested: false }
+    const alreadyConfirmed = (isDepositor && meta.depositorReleaseConfirmed) || (isBeneficiary && meta.beneficiaryReleaseConfirmed)
+    if (alreadyConfirmed) {
+      showAlert('info', 'Ya confirmaste. La otra parte debe confirmar también "Liberar el Pago" para ejecutar la liberación.')
+      return
+    }
+    setMyReleaseConfirmation(escrowId)
+    showAlert('success', 'Has confirmado liberar el pago. Cuando la otra parte también confirme, se podrá ejecutar la liberación.')
+  }
+
   const requestTaskFinished = async (escrowId: number) => {
     const current = taskMeta.value[escrowId] || { timeValue: 0, timeUnit: 'days' as const, finishedRequested: false }
     taskMeta.value[escrowId] = {
@@ -764,6 +871,11 @@ export function useTaskManager() {
     markCompleted,
     releaseFunds,
     cancelEscrow,
+    updateTaskDate,
+    getReleaseConfirmations,
+    canExecuteRelease,
+    getEscrowDetailsForManage,
+    confirmReleaseOrExecute,
     requestTaskFinished,
     completeAndRelease,
     loadUserEscrows,
