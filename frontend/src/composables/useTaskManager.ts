@@ -411,7 +411,7 @@ export function useTaskManager() {
 
           await apiPost('/conversations', {
             participant_ids: [authStore.address, createForm.value.beneficiary],
-            conversation_type: 'direct',
+            conversation_type: 'group',
             name: conversationName
           }, authStore.token)
           log.info('TaskManager', `Chat created for Task ${createdEscrowId}`)

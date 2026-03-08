@@ -29,71 +29,79 @@
       </div>
       <!-- MOCK: Conversations List (Startup Mock) -->
       <div class="mb-6 bg-brand-10 text-white rounded-xl">
-  <div class="flex justify-between items-center px-3 pb-2 text-white">
+        <div class="flex justify-between items-center px-3 pb-2 text-white">
           <div class="font-semibold text-[14px] text-white">Conversaciones</div>
-          <div class="flex-shrink-0 sidebar-svg-wrapper flex items-center justify-center">
-            <svg class="w-4 h-4 opacity-50 fill-primary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <div 
+            class="flex-shrink-0 sidebar-svg-wrapper flex items-center justify-center cursor-pointer transition-colors group"
+            @click="showCreateModal = true"
+            title="Crear conversación"
+          >
+            <svg class="w-4 h-4 fill-secondary group-hover:fill-brand transition-colors" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
               <path d="M11 9h4v2h-4v4H9v-4H5V9h4V5h2v4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" />
             </svg>
           </div>
         </div>
-  <div class="px-3 py-1.5 rounded-lg cursor-pointer text-[14px] bg-accent text-white shadow-sm font-bold flex items-center gap-2">
-            <span class="opacity-50">#</span> bug contrato inteligente
+          <div 
+            v-for="group in userGroups" 
+            :key="getConversationId(group)"
+            @click="selectConversation(group)"
+            :class="[
+              'px-3 py-1.5 rounded-lg cursor-pointer text-[14px] flex items-center gap-2',
+              (currentConversation && getConversationId(currentConversation) === getConversationId(group)) 
+                ? 'bg-accent text-white shadow-sm font-bold' 
+                : 'text-white/70 hover:bg-brand-10'
+            ]"
+          >
+            <span :class="[(currentConversation && getConversationId(currentConversation) === getConversationId(group)) ? 'opacity-50' : 'opacity-30']">#</span> 
+            {{ group.name || 'Grupo sin nombre' }}
           </div>
-          <div class="px-3 py-1.5 rounded-lg cursor-pointer text-[14px] text-white/70 hover:bg-brand-10 flex items-center gap-2">
-            <span class="opacity-30">#</span> general
-          </div>
-          <div class="px-3 py-1.5 rounded-lg cursor-pointer text-[14px] text-white/70 hover:bg-brand-10 flex items-center gap-2">
-            <span class="opacity-30">#</span> marketing-y-ventas
-          </div>
-          <div class="px-3 py-1.5 rounded-lg cursor-pointer text-[14px] text-white/70 hover:bg-brand-10 flex items-center gap-2">
-            <span class="opacity-30">#</span> backend-api
-          </div>
-          <div class="px-3 py-1.5 rounded-lg cursor-pointer text-[14px] text-white/70 hover:bg-brand-10 flex items-center gap-2">
-            <span class="opacity-30">#</span> infraestructura-cli
-          </div>
-          <div class="px-3 py-1.5 rounded-lg cursor-pointer text-[14px] text-white/70 hover:bg-brand-10 flex items-center gap-2">
-            <span class="opacity-30">#</span> off-topic
-          </div>
-          <div class="px-3 py-1.5 rounded-lg cursor-pointer text-[14px] text-white/70 hover:bg-brand-10 flex items-center gap-2">
-            <span class="opacity-30">#</span> despliegue mainnet
-          </div>
-          <div class="px-3 py-1.5 rounded-lg cursor-pointer text-[14px] text-white/70 hover:bg-brand-10 flex items-center gap-2">
-            <span class="opacity-30">#</span> frontend refactor
-          </div>
-          <div class="px-3 py-1.5 rounded-lg cursor-pointer text-[14px] text-white/70 hover:bg-brand-10 flex items-center gap-2">
-            <span class="opacity-30">#</span> diseño ux v2
+          
+          <div v-if="userGroups.length === 0 && !isLoading" class="px-3 py-2 text-xs text-white/40 italic">
+            No tienes grupos aún
           </div>
       </div>
       <!-- Direct Messages -->
   <div class="mb-6 bg-brand-10 text-white rounded-xl">
-  <div class="flex justify-between items-center px-3 pb-2 text-white">
+        <div class="flex justify-between items-center px-3 pb-2 text-white">
           <div class="font-semibold text-[14px] text-white">Mensajes directos</div>
-          <div class="flex-shrink-0 sidebar-svg-wrapper flex items-center justify-center">
-            <svg class="w-4 h-4 opacity-50 fill-primary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <div 
+            class="flex-shrink-0 sidebar-svg-wrapper flex items-center justify-center cursor-pointer transition-colors group"
+            @click="openModal('direct')"
+            title="Nuevo mensaje directo"
+          >
+            <svg class="w-4 h-4 fill-secondary group-hover:fill-brand transition-colors" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
               <path d="M11 9h4v2h-4v4H9v-4H5V9h4V5h2v4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" />
             </svg>
           </div>
         </div>
-        <div class="flex items-center mb-2 px-3 cursor-pointer text-[14px]">
-          <span class="rounded-full block w-2 h-2 mr-2 flex-shrink-0 bg-brand"></span>
-          <span class="font-semibold text-white">Emilio Gutiérrez</span>
+        <div 
+          v-for="direct in userDirects" 
+          :key="getConversationId(direct)"
+          @click="selectConversation(direct)"
+          :class="[
+            'flex items-center mb-2 px-3 cursor-pointer text-[14px]',
+            (currentConversation && getConversationId(currentConversation) === getConversationId(direct)) 
+              ? 'font-bold' 
+              : 'opacity-80'
+          ]"
+        >
+          <span :class="[
+            'rounded-full block w-2 h-2 mr-2 flex-shrink-0',
+            (currentConversation && getConversationId(currentConversation) === getConversationId(direct)) ? 'bg-brand' : 'border border-brand'
+          ]"></span>
+          <span class="text-white">{{ getDirectConversationName(direct) }}</span>
         </div>
-        <div class="flex items-center mb-2 px-3 cursor-pointer text-[14px]">
-          <span class="rounded-full block w-2 h-2 mr-2 flex-shrink-0 bg-brand"></span>
-          <span class="font-semibold text-white">David Hemphill</span>
-        </div>
-        <div class="flex items-center px-3 mb-4 opacity-80 cursor-pointer text-[14px]">
-          <span class="border border-brand rounded-full block w-2 h-2 mr-2 flex-shrink-0"></span>
-          <span class="font-semibold text-white">Steve Schoger</span>
+        
+        <div v-if="userDirects.length === 0 && !isLoading" class="px-3 py-2 text-xs text-white/40 italic">
+          No tienes mensajes directos aún
         </div>
       </div>
       <!-- Apps -->
       <div class="text-white rounded-xl">
         <div class="flex justify-between items-center px-3 pb-2 text-white bg-brand-10 rounded-xl">
           <div class="font-semibold text-[14px] text-white">Apps</div>
-          <div class="flex-shrink-0 sidebar-svg-wrapper flex items-center justify-center text-white">
-            <svg class="w-4 h-4 opacity-50 fill-primary" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+          <div class="flex-shrink-0 sidebar-svg-wrapper flex items-center justify-center cursor-pointer transition-colors group">
+            <svg class="w-4 h-4 fill-secondary group-hover:fill-brand transition-colors" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
               <path d="M11 9h4v2h-4v4H9v-4H5V9h4V5h2v4zm-1 11a10 10 0 1 1 0-20 10 10 0 0 1 0 20zm0-2a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" />
             </svg>
           </div>
@@ -110,12 +118,18 @@
   <!-- Top Bar -->
   <div class="flex items-center flex-shrink-0 px-4 py-3 border-b border-brand-20 bg-brand-10">
         <div style="display: flex; flex-direction: column;">
-          <h3 class="mb-1 font-extrabold text-[18px] text-color-brand"># bug contrato inteligente</h3>
-          <!-- <div class="text-xs">
-            <span :class="isConnected ? 'text-green-500' : 'text-red-500'">
-              {{ isConnected ? 'Conectado' : 'Desconectado' }}
+          <h3 class="mb-1 font-extrabold text-[18px] text-color-brand">
+            <span v-if="currentConversation">
+              {{ currentConversation.conversation_type === 'group' ? '#' : '@' }} 
+              {{ currentConversation.conversation_type === 'group' ? (currentConversation.name || 'Grupo') : getDirectConversationName(currentConversation) }}
             </span>
-          </div> -->
+            <span v-else>Selecciona un chat</span>
+          </h3>
+          <div class="text-xs" v-if="currentConversation">
+            <span :class="isConnected ? 'text-green-500' : 'text-red-500'">
+              {{ isConnected ? 'API Conectada' : 'API Desconectada' }}
+            </span>
+          </div>
         </div>
         <div class="flex ml-auto relative">
           <input 
@@ -162,155 +176,36 @@
             <p class="text-xs opacity-75 text-color-textSecondary">No hay mensajes aún. ¡Sé el primero en escribir!</p>
           </div> -->
           
-           <!-- MOCK: Conversations & Smart Contract Card for Video Carousel -->
-          <!-- Messages list (Mocked for Video Carousel) -->
+          <!-- Messages list (Dynamic) -->
           <div class="space-y-6">
-            <!-- MONDAY HISTORY -->
-            <div class="day-separator">
-              <div class="line"></div>
-              <div class="day-text">Lunes, 23 de febrero</div>
-              <div class="line"></div>
+            
+            <div v-if="!currentConversation" class="h-full flex flex-col items-center justify-center mt-20 opacity-50">
+              <div class="text-4xl mb-4">💬</div>
+              <h3 class="text-xl font-bold text-white">Chasqui Messenger</h3>
+              <p class="text-white/70">Selecciona un chat en la barra lateral para comenzar</p>
             </div>
 
-            <!-- GitHub Bot: PR Opened -->
-            <div class="ml-16 py-1">
-              <div class="github-bot-card pr-opened">
-                <div class="bot-icon">
-                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.43.372.823 1.102.823 2.222 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-                </div>
-                <div class="bot-details">
-                  <div class="bot-header">
-                    <span class="bot-name">github</span>
-                    <span class="px-1 bg-gray-700/50 rounded text-[10px] leading-none py-0.5">APP</span>
-                    <span>•</span>
-                    <span>10:05 AM</span>
-                  </div>
-                  <div class="bot-action">
-                    Pull request opened: <span class="repo-link">wiracocha-labs/chasqui-app#42</span>
-                    <div class="mt-1 font-bold text-white text-[15px]">feat: update smart contract for treasury management</div>
-                  </div>
-                </div>
-              </div>
+            <div v-else-if="messages.length === 0" class="text-center py-8 opacity-50">
+              <div class="text-2xl mb-2">👋</div>
+              <h3 class="text-base font-semibold mb-1 text-color-brand">No hay mensajes aún</h3>
+              <p class="text-xs text-color-textSecondary">¡Sé el primero en escribir!</p>
             </div>
 
-            <!-- Message: Emilio Gutiérrez 1 -->
-            <div class="flex items-start gap-4">
+            <div v-else v-for="(message, index) in messages" :key="index" class="flex items-start gap-4">
               <div class="w-12 h-12 rounded-xl bg-slate-700 flex-shrink-0 border-2 border-brand-20 overflow-hidden flex items-center justify-center">
-                <img src="../assets/images/chasqui_avatar1.webp" alt="Emilio Gutiérrez" class="w-full h-full object-cover">
+                 <div class="text-xl">👤</div>
               </div>
               <div class="flex-1">
                 <div class="flex items-baseline gap-2 mb-1">
-                  <span class="font-bold text-white text-[15px]">Emilio Gutiérrez</span>
-                  <span class="text-[12px] opacity-40">10:12</span>
+                  <span class="font-bold text-white text-[15px]">{{ message.sender }}</span>
+                  <span class="text-[12px] opacity-40">{{ formatTime(message.timestamp) }}</span>
                 </div>
                 <div class="text-[15px] leading-relaxed text-gray-200">
-                  Revisando el PR ahora. Los cambios en la lógica de validación se ven sólidos. 🛡️
+                  {{ message.text }}
                 </div>
               </div>
             </div>
 
-            <!-- GitHub Bot: PR Merged -->
-            <div class="ml-16 py-1">
-              <div class="github-bot-card pr-merged">
-                <div class="bot-icon">
-                  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.43.372.823 1.102.823 2.222 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-                </div>
-                <div class="bot-details">
-                  <div class="bot-header">
-                    <span class="bot-name">github</span>
-                    <span class="px-1 bg-gray-700/50 rounded text-[10px] leading-none py-0.5">APP</span>
-                    <span>•</span>
-                    <span>11:45 AM</span>
-                  </div>
-                  <div class="bot-action">
-                    Pull request merged: <span class="repo-link">wiracocha-labs/chasqui-app#42</span>
-                    <div class="mt-1 text-white/70">Merged into <span class="repo-link">main</span></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- THURSDAY HISTORY -->
-            <div class="day-separator">
-              <div class="line"></div>
-              <div class="day-text">Hoy</div>
-              <div class="line"></div>
-            </div>
-
-            <!-- Message 1: Matias Pérez -->
-            <div class="flex items-start gap-4">
-              <div class="w-12 h-12 rounded-xl bg-slate-700 flex-shrink-0 border-2 border-brand-20 overflow-hidden flex items-center justify-center">
-                <img src="../assets/images/chasqui_avatar2.webp" alt="Matias Pérez" class="w-full h-full object-cover">
-              </div>
-              <div class="flex-1">
-                <div class="flex items-baseline gap-2 mb-1">
-                  <span class="font-bold text-white text-[15px]">Matias Pérez</span>
-                  <span class="text-[12px] opacity-40">10:21</span>
-                </div>
-                <div class="text-[15px] leading-relaxed text-gray-200">
-                  Acabo de terminar las <span class="font-bold">pruebas finales</span> del contrato inteligente. Todo está funcionando perfectamente. Lo he revisado varias veces y todo se ve <span class="inline-block bg-green-500/20 px-1 rounded">✅</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Message 2: Emilio Gutiérrez -->
-            <div class="flex items-start gap-4">
-              <div class="w-12 h-12 rounded-xl bg-slate-700 flex-shrink-0 border-2 border-brand-20 overflow-hidden flex items-center justify-center">
-                <img src="../assets/images/chasqui_avatar1.webp" alt="Emilio Gutiérrez" class="w-full h-full object-cover">
-              </div>
-              <div class="flex-1">
-                <div class="flex items-baseline gap-2 mb-1">
-                  <span class="font-bold text-white text-[15px]">Emilio Gutiérrez</span>
-                  <span class="text-[12px] opacity-40">10:23</span>
-                </div>
-                <div class="text-[15px] leading-relaxed text-gray-200">
-                  Perfecto Matias! Excelente trabajo. Ya podemos liberar <span class="font-bold">el pago final</span>. 🛠️✨ Revisé el contrato y se ve perfecto. Ya podemos hacer el despliegue final. 🔗⛓️
-                </div>
-              </div>
-            </div>
-
-            <!-- Message 3: Smart Contract executed card -->
-            <div class="ml-16 py-2">
-              <div class="sc-executed-card">
-                <div class="highlight"></div>
-                
-                <div class="icon-box">
-                  <!-- Shield icon placeholder -->
-                  <svg class="w-8 h-8 text-brand" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
-                  </svg>
-                </div>
-                
-                <div>
-                  <div class="title-box">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                      <path d="M7 11V7a5 5 0 0110 0v4"></path>
-                    </svg>
-                    <span>Smart Contract ejecutado</span>
-                  </div>
-                  <div class="content-text">
-                    <span class="font-bold">Pago liberado automáticamente:</span> <span class="text-brand font-black">400 USDC</span> depositados correctamente en la billetera <span class="font-mono opacity-80">0xabe...cd3f</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Message 4: Matias Pérez response -->
-            <div class="flex items-start gap-4">
-              <div class="w-12 h-12 rounded-xl bg-slate-700 flex-shrink-0 border-2 border-brand-20 overflow-hidden flex items-center justify-center">
-                <img src="../assets/images/chasqui_avatar2.webp" alt="Matias Pérez" class="w-full h-full object-cover">
-              </div>
-              <div class="flex-1">
-                <div class="flex items-baseline gap-2 mb-1">
-                  <span class="font-bold text-white text-[15px]">Matias Pérez</span>
-                  <span class="text-[12px] opacity-40">10:25</span>
-                </div>
-                <div class="text-[15px] leading-relaxed text-gray-200">
-                  ¡Pago recibido en mi billetera! Gracias Emilio, ¡todo perfecto! 🤙✨
-                </div>
-              </div>
-            </div>
           </div>
         </div>
         
@@ -339,25 +234,82 @@
           </div> -->
         </div>
       </div>
+    <!-- Create Conversation Modal -->
+    <div v-if="showCreateModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div class="bg-terciary w-[400px] rounded-2xl border border-brand-20 p-6 shadow-2xl">
+        <h2 class="text-xl font-bold text-white mb-4">
+          {{ modalType === 'group' ? 'Nueva Conversación' : 'Nuevo Mensaje Directo' }}
+        </h2>
+        
+        <div class="space-y-4">
+          <div v-if="modalType === 'group'">
+            <label class="block text-xs font-semibold text-color-textSecondary mb-1 uppercase">Nombre del grupo</label>
+            <input 
+              v-model="newGroupName" 
+              type="text" 
+              placeholder="Ej: Tarea #14" 
+              class="w-full bg-secondary border border-brand-20 rounded-lg px-4 py-2 text-white outline-none focus:border-brand transition-colors"
+            >
+          </div>
+          
+          <div>
+            <label class="block text-xs font-semibold text-color-textSecondary mb-1 uppercase">
+              {{ modalType === 'group' ? 'Participantes (Billeteras)' : 'Billetera del destinatario' }}
+            </label>
+            <textarea 
+              v-model="newGroupParticipants" 
+              :placeholder="modalType === 'group' ? '0x..., 0x...' : '0x...'" 
+              :rows="modalType === 'group' ? 3 : 1"
+              class="w-full bg-secondary border border-brand-20 rounded-lg px-4 py-2 text-white outline-none focus:border-brand transition-colors resize-none"
+            ></textarea>
+            <p v-if="modalType === 'group'" class="text-[10px] text-color-textSecondary mt-1 italic">Separa las direcciones por comas.</p>
+          </div>
+        </div>
+        
+        <div class="flex gap-3 mt-6">
+          <button 
+            @click="showCreateModal = false"
+            class="flex-1 px-4 py-2 rounded-lg border border-brand-20 text-white hover:bg-brand-10 transition-colors"
+          >
+            Cancelar
+          </button>
+          <button 
+            @click="createConversation"
+            :disabled="modalType === 'group' ? !newGroupName : !newGroupParticipants"
+            class="flex-1 px-4 py-2 rounded-lg bg-brand text-white font-bold hover:bg-brand-60 transition-colors disabled:opacity-50"
+          >
+            {{ modalType === 'group' ? 'Crear' : 'Empezar' }}
+          </button>
+        </div>
+      </div>
+    </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import AppSidebar from '../components/ui/AppSidebar.vue'
-import { ref, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import { apiGet } from '../services/api'
+import { log } from '../services/logger'
 
 // Types
+type SurrealId = string | { tb: string, id: { String: string } }
+
+type Conversation = {
+  id?: SurrealId
+  participants: SurrealId[]
+  conversation_type: 'direct' | 'group'
+  name?: string
+  created_at: string
+  updated_at: string
+}
+
 type Message = {
   text: string
   sender: string
   timestamp: number
-}
-
-type OnlineUser = {
-  id: string
-  name: string
 }
 
 // Auth store
@@ -370,17 +322,29 @@ const isConnected = ref(false)
 const isLoading = ref(true)
 const error = ref<string | null>(null)
 const messagesContainer = ref<HTMLDivElement>()
-const onlineUsers = ref<OnlineUser[]>([
-  { id: '1', name: 'Alice' },
-  { id: '2', name: 'Bob' },
-])
 
-// GunDB instance
-let gun: any = null
-let messagesRef: any = null
-let username = ''
+const userGroups = ref<Conversation[]>([])
+const userDirects = ref<Conversation[]>([])
+const currentConversation = ref<Conversation | null>(null)
+
+// NEW: Create Conversation Modal
+const showCreateModal = ref(false)
+const modalType = ref<'group' | 'direct'>('group')
+const newGroupName = ref('')
+const newGroupParticipants = ref('') // Wallet addresses comma separated
+
+const openModal = (type: 'group' | 'direct') => {
+  modalType.value = type
+  showCreateModal.value = true
+}
 
 // Utility functions
+const getStrId = (id: SurrealId | undefined): string => {
+  if (!id) return ''
+  if (typeof id === 'string') return id
+  return `${id.tb}:${id.id.String}`
+}
+
 const formatAddress = (address: string | null) => {
   if (!address) return 'Usuario Anónimo'
   return `${address.slice(0, 6)}...${address.slice(-4)}`
@@ -393,6 +357,27 @@ const formatTime = (timestamp: number) => {
   })
 }
 
+const getConversationId = (conv: Conversation): string => {
+  return getStrId(conv.id)
+}
+
+const getDirectConversationName = (conv: Conversation): string => {
+  if (conv.name) return conv.name
+  // Find the other participant
+  const otherParticipant = conv.participants.find(p => {
+    const pId = getStrId(p)
+    // Check both 'user:address' and 'address'
+    const addressOnly = pId.includes(':') ? pId.split(':')[1] : pId
+    return addressOnly.toLowerCase() !== authStore.address?.toLowerCase()
+  })
+  
+  if (otherParticipant) {
+    const pId = getStrId(otherParticipant)
+    return formatAddress(pId.includes(':') ? pId.split(':')[1] : pId)
+  }
+  return 'Direct Chat'
+}
+
 const scrollToBottom = async () => {
   await nextTick()
   if (messagesContainer.value) {
@@ -400,145 +385,148 @@ const scrollToBottom = async () => {
   }
 }
 
-// Initialize GunDB
-const initializeGun = () => {
-  if (typeof window !== 'undefined' && (window as any).Gun) {
-    gun = (window as any).Gun({
-      localStorage: false,
-      radisk: true,
-      uuid: () => {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2)
-      }
-    })
-
-    messagesRef = gun.get('chasqui-chat-messages')
-    isConnected.value = true
-    
-    // Setup username
-    username = formatAddress(authStore.address) || 'user-' + Math.random().toString(36).substr(2, 8)
-    
-    console.log('GunDB initialized successfully')
-    return true
-  } else {
-    error.value = 'GunDB no está disponible en window. Verifica la carga del script en index.html.'
-    isConnected.value = false
-    return false
-  }
-}
-
-// Load existing messages
-const loadMessages = async () => {
-  if (!gun || !messagesRef) {
-    if (!initializeGun()) {
-      isLoading.value = false
-      return
-    }
+// Load existing conversations
+const loadConversations = async () => {
+  if (!authStore.isAuthenticated) {
+    error.value = 'No has iniciado sesión.'
+    isLoading.value = false
+    return
   }
 
   try {
     error.value = null
     isLoading.value = true
     
-    // Listen for new messages
-    messagesRef.map().on((data: any, id: string) => {
-      if (data && data.text && data.sender && data.timestamp) {
-        // Check if message already exists
-        const existingIndex = messages.value.findIndex(msg => 
-          msg.text === data.text && 
-          msg.sender === data.sender && 
-          Math.abs(msg.timestamp - data.timestamp) < 1000
-        )
-        
-        if (existingIndex === -1) {
-          messages.value.push({
-            text: data.text,
-            sender: data.sender,
-            timestamp: data.timestamp
-          })
-          
-          // Sort messages by timestamp
-          messages.value.sort((a, b) => a.timestamp - b.timestamp)
-          
-          // Auto-scroll to bottom for new messages
-          setTimeout(scrollToBottom, 100)
-        }
-      }
-    })
-
+    log.info('ChatView', 'Fetching conversations from API...')
+    const convs = await apiGet<Conversation[]>('/conversations', authStore.token)
+    log.info('ChatView', `Received ${convs.length} conversations`, convs)
+    
+    // Split into Groups and Directs
+    userGroups.value = convs.filter(c => c.conversation_type === 'group')
+    userDirects.value = convs.filter(c => c.conversation_type === 'direct')
+    
     isConnected.value = true
   } catch (err) {
-    console.error('Error loading messages:', err)
-    error.value = 'No se pudieron cargar los mensajes'
+    log.error('ChatView', 'Error loading conversations:', err)
+    error.value = 'No se pudieron cargar las conversaciones'
     isConnected.value = false
   } finally {
     isLoading.value = false
   }
 }
 
-// Send message
-const sendMessage = async () => {
-  if (!inputMessage.value.trim() || !isConnected.value || !messagesRef) {
-    return
-  }
+// NEW: Create a conversation (group or direct)
+const createConversation = async () => {
+  // For group, name is required. For direct, participants is required.
+  if (modalType.value === 'group' && !newGroupName.value.trim()) return
+  if (!newGroupParticipants.value.trim()) return
 
   try {
-    const messageData = {
-      id: 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
-      text: inputMessage.value.trim(),
-      sender: username,
-      timestamp: Date.now()
+    const parts = newGroupParticipants.value
+      .split(',')
+      .map(p => p.trim())
+      .filter(p => p !== '')
+    
+    // Ensure current user is in participants if needed
+    if (!parts.includes(authStore.address || '')) {
+      if (authStore.address) parts.push(authStore.address)
     }
 
-    // Add to GunDB
-    messagesRef.get(messageData.id).put(messageData, (ack: any) => {
-      if (ack.err) {
-        console.error('Error sending message:', ack.err)
-        error.value = 'Error al enviar el mensaje'
-      } else {
-        console.log('Message sent successfully')
-      }
-    })
+    const payload: any = {
+      participant_ids: parts,
+      conversation_type: modalType.value
+    }
 
-    // Mostrar el mensaje inmediatamente en la lista
-    messages.value.push({
-      text: messageData.text,
-      sender: messageData.sender,
-      timestamp: messageData.timestamp
-    })
-    messages.value.sort((a, b) => a.timestamp - b.timestamp)
+    if (modalType.value === 'group') {
+      payload.name = newGroupName.value.trim()
+    }
 
-    // Clear input
-    inputMessage.value = ''
+    const newConv = await import('../services/api').then(m => 
+      m.apiPost<Conversation>('/conversations', payload, authStore.token)
+    )
 
-    // Scroll to bottom
-    setTimeout(scrollToBottom, 100)
-
+    log.info('ChatView', 'Conversation created successfully', newConv)
+    
+    showCreateModal.value = false
+    newGroupName.value = ''
+    newGroupParticipants.value = ''
+    
+    await loadConversations()
   } catch (err) {
-    console.error('Error sending message:', err)
-    error.value = 'Error al enviar el mensaje'
+    log.error('ChatView', 'Error creating conversation', err)
+    alert('Error al crear la conversación')
   }
 }
 
-// Clean up old messages (run periodically)
-const cleanupOldMessages = () => {
-  if (!messagesRef) return
+// Send message
+const sendMessage = async () => {
+  if (!inputMessage.value.trim() || !isConnected.value || !currentConversation.value) {
+    return
+  }
   
-  const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000)
-  
-  messagesRef.map().once((data: any, id: string) => {
-    if (data && data.timestamp && data.timestamp < oneDayAgo) {
-      gun.get('chasqui-chat-messages').get(id).put(null)
+  const text = inputMessage.value.trim()
+  inputMessage.value = ''
+
+  try {
+    const urlId = getStrId(currentConversation.value.id)
+    if (!urlId) return
+
+    // Add to UI immediately
+    messages.value.push({
+      text,
+      sender: formatAddress(authStore.address),
+      timestamp: Date.now()
+    })
+    setTimeout(scrollToBottom, 50)
+
+    // Send to backend via REST API
+    const payload = {
+      content: text,
+      message_type: 'text'
     }
-  })
+    
+    // apiPost internally uses apiFetch with JSON.stringify
+    import('../services/api').then(({ apiPost }) => {
+      apiPost(`/conversations/${urlId}/messages`, payload, authStore.token).catch(err => {
+        log.error('ChatView', 'Error sending message via API', err)
+      })
+    })
+
+  } catch (err) {
+    log.error('ChatView', 'Error sending message', err)
+  }
+}
+
+// Select a conversation
+const selectConversation = async (conv: Conversation) => {
+  currentConversation.value = conv
+  messages.value = [] // Clear messages for now
+  
+  if (!authStore.isAuthenticated) return
+  
+  try {
+    const urlId = getConversationId(conv)
+    if (!urlId) return
+
+    const msgs = await apiGet<any[]>(`/conversations/${urlId}/messages`, authStore.token)
+    
+    // Map backend messages to UI structure
+    messages.value = msgs.map(m => ({
+      text: m.content || '',
+      sender: formatAddress(getStrId(m.sender_id)),
+      timestamp: new Date(m.created_at || Date.now()).getTime()
+    })).sort((a, b) => a.timestamp - b.timestamp)
+    
+    setTimeout(scrollToBottom, 50)
+  } catch (err) {
+    log.error('ChatView', 'Error fetching messages', err)
+  }
 }
 
 // Lifecycle
 onMounted(async () => {
   try {
-    await loadMessages()
-    
-    // Setup periodic cleanup
-    setInterval(cleanupOldMessages, 60 * 60 * 1000) // Every hour
+    await loadConversations()
     
     // Focus on input when component mounts
     nextTick(() => {
@@ -549,16 +537,9 @@ onMounted(async () => {
     })
     
   } catch (err) {
-    console.error('Error setting up chat:', err)
+    log.error('ChatView', 'Error setting up chat:', err)
     error.value = 'Error al inicializar el chat'
     isLoading.value = false
-  }
-})
-
-onUnmounted(() => {
-  // Cleanup if needed
-  if (gun) {
-    gun.off()
   }
 })
 </script>
