@@ -13,9 +13,9 @@ export const ENV = {
 // Debug configuration - Single source of truth
 export const DEBUG = {
   // Single debug flag from multiple sources
-  enabled: import.meta.env.VITE_DEBUG === 'true' || 
-           localStorage.getItem('chasqui_debug') === 'true' ||
-           new URLSearchParams(window.location.search).get('debug') === 'true'
+  enabled: import.meta.env.VITE_DEBUG === 'true' ||
+    localStorage.getItem('chasqui_debug') === 'true' ||
+    new URLSearchParams(window.location.search).get('debug') === 'true'
 } as const
 
 // Network configuration
@@ -56,24 +56,49 @@ export const NETWORKS = {
 } as const
 
 // Current network (can be overridden by environment variable)
-export const CURRENT_NETWORK = (import.meta.env.VITE_NETWORK as keyof typeof NETWORKS) 
+export const CURRENT_NETWORK = (import.meta.env.VITE_NETWORK as keyof typeof NETWORKS)
+
+if (!CURRENT_NETWORK || !NETWORKS[CURRENT_NETWORK]) {
+  console.error(
+    `🚨 ERROR CRÍTICO DE CONFIGURACIÓN 🚨\n` +
+    `Falta la variable de entorno VITE_NETWORK o es inválida (valor actual: "${CURRENT_NETWORK}").\n` +
+    `Por favor, crea un archivo .env si no existe y asegúrate de definir VITE_NETWORK con uno de estos valores: ${Object.keys(NETWORKS).join(', ')}.`
+  )
+}
+
+// Debug: Log environment variables
+console.log('🔧 Debug - Environment Variables:')
+console.log('VITE_NETWORK:', import.meta.env.VITE_NETWORK)
+console.log('CURRENT_NETWORK:', CURRENT_NETWORK)
+console.log('VITE_FUJI_AUTH_CONTRACT:', import.meta.env.VITE_FUJI_AUTH_CONTRACT)
+console.log('VITE_FUJI_EERC20_CONTRACT:', import.meta.env.VITE_FUJI_EERC20_CONTRACT)
+console.log('VITE_FUJI_REGISTRAR_CONTRACT:', import.meta.env.VITE_FUJI_REGISTRAR_CONTRACT)
 
 // Contract addresses configuration
 export const CONTRACT_CONFIG = {
-  //[NETWORKS.localhost.chainId]: {
-    //authorization: import.meta.env.VITE_LOCALHOST_AUTH_CONTRACT || '0x5FbDB2315678afecb367f032d93F642f64180aa3',
-    //eerc20: import.meta.env.VITE_LOCALHOST_EERC20_CONTRACT || '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
-    //registrar: import.meta.env.VITE_LOCALHOST_REGISTRAR_CONTRACT || '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0'
-  //},
   [NETWORKS.fuji.chainId]: {
-    authorization: import.meta.env.VITE_FUJI_AUTH_CONTRACT ,
-    eerc20: import.meta.env.VITE_FUJI_EERC20_CONTRACT ,
-    registrar: import.meta.env.VITE_FUJI_REGISTRAR_CONTRACT 
+    authorization: import.meta.env.VITE_FUJI_AUTH_CONTRACT,
+    eerc20: import.meta.env.VITE_FUJI_EERC20_CONTRACT,
+    registrar: import.meta.env.VITE_FUJI_REGISTRAR_CONTRACT
   },
   [NETWORKS.avalanche.chainId]: {
-    authorization: import.meta.env.VITE_AVALANCHE_AUTH_CONTRACT ,
-    eerc20: import.meta.env.VITE_AVALANCHE_EERC20_CONTRACT ,
-    registrar: import.meta.env.VITE_AVALANCHE_REGISTRAR_CONTRACT 
+    authorization: import.meta.env.VITE_AVALANCHE_AUTH_CONTRACT,
+    eerc20: import.meta.env.VITE_AVALANCHE_EERC20_CONTRACT,
+    registrar: import.meta.env.VITE_AVALANCHE_REGISTRAR_CONTRACT
+  }
+} as const
+
+// Backend API (Chasqui Server)
+export const API_CONFIG = {
+  baseUrl: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api',
+  timeout: 10000,
+  /** WebSocket URL for chat. Pass the JWT token. */
+  wsChatUrl: (token: string) => {
+    const base = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api'
+    const wsBase = base.startsWith('http')
+      ? base.replace(/^http/, 'ws')
+      : `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}${base}`
+    return `${wsBase}/ws/chat?token=${encodeURIComponent(token)}`
   }
 } as const
 
@@ -82,7 +107,7 @@ export const APP_CONFIG = {
   name: 'Chasqui',
   version: '1.0.0',
   description: 'Decentralized task management with private payments',
-  
+
   // UI configuration
   ui: {
     showNetworkIndicator: true,
@@ -90,7 +115,7 @@ export const APP_CONFIG = {
     enableAnimations: true,
     theme: 'dark' // 'light' | 'dark' | 'auto'
   },
-  
+
   // Feature flags
   features: {
     privateEscrow: true,
@@ -99,7 +124,7 @@ export const APP_CONFIG = {
     analytics: ENV.isProd,
     errorReporting: ENV.isProd
   },
-  
+
   // Timeouts and intervals (in milliseconds)
   timeouts: {
     walletConnection: 30000,
@@ -116,16 +141,16 @@ export function getCurrentNetworkConfig() {
 export function getContractAddress(contractName: keyof typeof CONTRACT_CONFIG[43113], chainId?: number) {
   const targetChainId = chainId || getCurrentNetworkConfig().chainId
   const contractConfig = CONTRACT_CONFIG[targetChainId as keyof typeof CONTRACT_CONFIG]
-  
+
   if (!contractConfig) {
     throw new Error(`No contract configuration found for chain ID ${targetChainId}`)
   }
-  
+
   const address = contractConfig[contractName]
   if (!address) {
     throw new Error(`No ${contractName} contract address configured for chain ID ${targetChainId}`)
   }
-  
+
   return address
 }
 
@@ -156,6 +181,7 @@ if (typeof window !== 'undefined' && ENV.isDev) {
     NETWORKS,
     CURRENT_NETWORK,
     CONTRACT_CONFIG,
+    API_CONFIG,
     APP_CONFIG,
     getCurrentNetworkConfig,
     getContractAddress,

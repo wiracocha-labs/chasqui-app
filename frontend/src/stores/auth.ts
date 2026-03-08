@@ -6,6 +6,7 @@ import { AUTHORIZATION_SIMPLE_ABI } from '../config/abi'
 import { log } from '../services/logger'
 import { Web3Error, AuthError, handleError } from '../services/errors'
 import { CURRENT_NETWORK, NETWORKS } from '../config/index'
+import { apiPost, ApiError } from '../services/api'
 
 declare global {
   interface Window {
@@ -18,7 +19,11 @@ export const useAuthStore = defineStore('auth', () => {
   const provider = ref<ethers.BrowserProvider | null>(null)
   const contract = ref<ethers.Contract | null>(null)
 
-  const isAuthenticated = computed(() => !!address.value)
+  // JWT para auth tradicional (email/username + password)
+  const token = ref<string | null>(null)
+  const loginMethod = ref<'wallet' | 'email' | null>(null)
+
+  const isAuthenticated = computed(() => !!address.value || !!token.value)
   const targetNetwork = NETWORKS[CURRENT_NETWORK]
   const toHexChainId = (chainId: number) => `0x${chainId.toString(16)}`
 
@@ -31,9 +36,9 @@ export const useAuthStore = defineStore('auth', () => {
         log.debug('AuthStore', 'Creating BrowserProvider for basic operations')
         const web3Provider = new ethers.BrowserProvider(window.ethereum)
         provider.value = web3Provider
-        
+
         log.info('AuthStore', 'Provider initialized successfully')
-        
+
         // Do not auto-connect on refresh: user must click "Empezar"/connect
         address.value = null
 
@@ -63,12 +68,12 @@ export const useAuthStore = defineStore('auth', () => {
       log.warn('AuthStore', 'No window.ethereum available')
       return
     }
-    
+
     try {
       log.debug('AuthStore', 'Requesting eth_accounts')
       const accounts = await window.ethereum.request({ method: 'eth_accounts' })
       log.debug('AuthStore', 'Accounts found', accounts)
-      
+
       if (accounts.length > 0) {
         address.value = accounts[0]
         log.info('AuthStore', `Connected wallet found: ${address.value}`)
@@ -82,13 +87,35 @@ export const useAuthStore = defineStore('auth', () => {
 
   const connectWallet = async () => {
     log.info('AuthStore', 'Starting wallet connection')
-    
+
+    if (!targetNetwork) {
+      const errorMsg = `Error de configuración: VITE_NETWORK no está definida o es inválida (valor actual: "${CURRENT_NETWORK}"). Por favor, revisa tu archivo .env.`
+      const error = new Error(errorMsg)
+      log.error('AuthStore', errorMsg, error)
+      throw error
+    }
+
     if (!window.ethereum) {
       throw AuthError.metaMaskNotFound()
     }
 
     try {
-      // First, switch to configured target network (localhost/fuji)
+      // 1. First request account access (authorization)
+      // We must do this before trying to change the network, otherwise MetaMask throws 4100 (Unauthorized)
+      log.debug('AuthStore', 'Requesting account access')
+      const accounts = await window.ethereum.request({
+        method: 'eth_requestAccounts'
+      })
+
+      if (!accounts || accounts.length === 0) {
+        throw Web3Error.connectionFailed()
+      }
+
+      // Save address so we have it internally
+      address.value = accounts[0]
+      log.info('AuthStore', `Wallet connected successfully: ${address.value}`)
+
+      // 2. Now switch to configured target network (localhost/fuji)
       log.debug('AuthStore', `Switching to ${targetNetwork.name} network`)
       try {
         await window.ethereum.request({
@@ -97,6 +124,7 @@ export const useAuthStore = defineStore('auth', () => {
         })
         log.info('AuthStore', `Successfully switched to ${targetNetwork.name}`)
       } catch (switchError: any) {
+        log.error('AuthStore', 'wallet_switchEthereumChain failed:', switchError)
         // If the network doesn't exist, add it
         if (switchError.code === 4902) {
           log.debug('AuthStore', `Adding ${targetNetwork.name} network`)
@@ -117,31 +145,20 @@ export const useAuthStore = defineStore('auth', () => {
             })
             log.info('AuthStore', `Successfully added and switched to ${targetNetwork.name}`)
           } catch (addError) {
+            log.error('AuthStore', 'wallet_addEthereumChain failed:', addError)
             throw Web3Error.wrongNetwork(targetNetwork.name, 'Unknown')
           }
         } else {
+          // Si el usuario cancela (4001) u otro error
           throw Web3Error.wrongNetwork(`${targetNetwork.name} (${targetNetwork.chainId})`, 'Unknown')
         }
       }
 
-      // Now connect the wallet
-      log.debug('AuthStore', 'Requesting account access')
-      const accounts = await window.ethereum.request({ 
-        method: 'eth_requestAccounts' 
-      })
-      
-      if (!accounts || accounts.length === 0) {
-        throw Web3Error.connectionFailed()
-      }
-      
-      address.value = accounts[0]
-      log.info('AuthStore', `Wallet connected successfully: ${address.value}`)
-      
       // Update provider and contract for future transactions
       log.debug('AuthStore', 'Updating provider')
       const web3Provider = new ethers.BrowserProvider(window.ethereum)
       provider.value = web3Provider
-      
+
       // Test the provider immediately
       try {
         const network = await web3Provider.getNetwork()
@@ -149,7 +166,7 @@ export const useAuthStore = defineStore('auth', () => {
       } catch (providerError) {
         log.error('AuthStore', 'Provider test failed', providerError)
       }
-      
+
     } catch (error) {
       const chasquiError = handleError(error, 'AuthStore')
       log.error('AuthStore', 'Error connecting wallet', chasquiError)
@@ -159,6 +176,65 @@ export const useAuthStore = defineStore('auth', () => {
 
   const disconnect = () => {
     address.value = null
+    if (loginMethod.value === 'wallet') {
+      loginMethod.value = null
+    }
+  }
+
+  const setToken = (newToken: string) => {
+    token.value = newToken
+    loginMethod.value = 'email'
+  }
+
+  const clearToken = () => {
+    token.value = null
+    if (loginMethod.value === 'email') {
+      loginMethod.value = null
+    }
+  }
+
+  const logout = () => {
+    clearToken()
+  }
+
+  type RegisterPayload = {
+    username: string
+    email: string
+    password: string
+  }
+
+  type LoginPayload =
+    | { email: string; password: string }
+    | { username: string; password: string }
+
+  const registerWithEmail = async (payload: RegisterPayload) => {
+    // El backend valida que username sea solo letras.
+    // Acá hacemos una validación ligera para feedback inmediato.
+    if (!/^[A-Za-z]+$/.test(payload.username)) {
+      throw new Error('El username debe contener solo letras (A-Z).')
+    }
+    await apiPost('/register', payload)
+  }
+
+  const loginWithCredentials = async (payload: LoginPayload) => {
+    const res = await apiPost<{ token: string }>('/login', payload)
+    if (!res?.token) {
+      throw new Error('Login exitoso, pero no se recibió token del servidor.')
+    }
+    setToken(res.token)
+    return res.token
+  }
+
+  const loginWithEmail = async (email: string, password: string) => {
+    try {
+      return await loginWithCredentials({ email, password })
+    } catch (error) {
+      // Normaliza el error para UI (sin filtrar detalles internos)
+      if (error instanceof ApiError) {
+        throw new Error(error.message || 'Error de autenticación')
+      }
+      throw error
+    }
   }
 
   const getBalance = async (): Promise<string> => {
@@ -176,23 +252,23 @@ export const useAuthStore = defineStore('auth', () => {
       const balance = await freshProvider.getBalance(address.value)
       const formattedBalance = ethers.formatEther(balance)
       const finalBalance = parseFloat(formattedBalance).toFixed(4)
-      
+
       log.debug('AuthStore', `Balance updated: ${finalBalance} ETH`)
       return finalBalance
     } catch (error) {
       log.warn('AuthStore', 'Error with BrowserProvider, trying direct RPC', error)
-      
+
       // Try using the web3 provider directly via window.ethereum
       try {
         const balanceHex = await window.ethereum.request({
           method: 'eth_getBalance',
           params: [address.value, 'latest']
         })
-        
+
         const balanceWei = BigInt(balanceHex)
         const formattedBalance = ethers.formatEther(balanceWei)
         const finalBalance = parseFloat(formattedBalance).toFixed(4)
-        
+
         log.debug('AuthStore', `Balance via direct RPC: ${finalBalance} ETH`)
         return finalBalance
       } catch (rpcError) {
@@ -210,18 +286,18 @@ export const useAuthStore = defineStore('auth', () => {
 
     try {
       log.debug('AuthStore', `Checking authorization for: ${userAddress}`)
-      
+
       // Create a fresh provider for this operation
       const freshProvider = new ethers.BrowserProvider(window.ethereum)
-      
+
       // Check network info
       try {
         const network = await freshProvider.getNetwork()
         const chainId = Number(network.chainId)
-        const expectedChainId = targetNetwork.chainId
+        const expectedChainId = targetNetwork?.chainId || 0
         log.debug('AuthStore', `Connected to network: ${network.name}, Chain ID: ${chainId}`)
 
-        if (chainId !== expectedChainId) {
+        if (expectedChainId && chainId !== expectedChainId) {
           log.warn('AuthStore', `Not connected to expected network (${expectedChainId}). Current chain: ${chainId}`)
         }
       } catch (networkError) {
@@ -233,14 +309,14 @@ export const useAuthStore = defineStore('auth', () => {
       const contractAddress = getContractAddress(chainId, 'authorization')
       log.debug('AuthStore', `Contract address: ${contractAddress}`)
       log.debug('AuthStore', 'Calling isAuthorized...')
-      
+
       // Create a readonly contract instance
       const readOnlyContract = new ethers.Contract(
         contractAddress,
         AUTHORIZATION_SIMPLE_ABI,
         freshProvider
       )
-      
+
       const isAuthorized = await readOnlyContract.isAuthorized(userAddress)
       log.info('AuthStore', `Authorization result for ${userAddress}: ${isAuthorized}`)
       return isAuthorized
@@ -253,7 +329,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       // En localhost permitimos continuar para no bloquear el flujo de login
       // cuando MetaMask limita temporalmente el RPC local.
-      if (targetNetwork.chainId === 31337 && isRpcOverload) {
+      if (targetNetwork?.chainId === 31337 && isRpcOverload) {
         log.warn('AuthStore', 'RPC local saturado durante checkAuthorization; allowing access in localhost dev mode')
         return true
       }
@@ -267,14 +343,23 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     address,
     provider,
+    token,
+    loginMethod,
     isAuthenticated,
     initializeProvider,
     connectWallet,
     disconnect,
+    logout,
+    registerWithEmail,
+    loginWithCredentials,
+    loginWithEmail,
     checkAuthorization,
     getBalance,
   }
-}, 
-{
-  persist: true
-})
+},
+  {
+    persist: {
+      // Evita intentar serializar ethers providers/contracts en localStorage.
+      pick: ['address', 'token', 'loginMethod']
+    }
+  })
