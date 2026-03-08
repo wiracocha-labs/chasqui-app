@@ -4,6 +4,7 @@ import { web3Service, type EscrowDetails } from '../services/web3'
 import { log } from '../services/logger'
 import { TaskError } from '../services/errors'
 import { CURRENT_NETWORK, NETWORKS } from '../config/index'
+import { apiPost } from '../services/api'
 
 const MAX_DEADLINE_UPDATES_PER_TASK = 2
 
@@ -377,6 +378,46 @@ export function useTaskManager() {
           finishedRequested: false
         }
         saveTaskMeta()
+
+        // Sincronizar con el backend - MVP
+        try {
+          // TODO (Backend pendiente): Cuando el backend esté listo para recibir todos los datos, descomentar:
+          /*
+          await apiPost('/tasks', {
+            escrow_id: createdEscrowId,
+            depositor: authStore.address,
+            beneficiary: createForm.value.beneficiary,
+            description: createForm.value.taskDescription,
+            amount: createForm.value.isPrivate ? 0 : Number(createForm.value.amount),
+            time_value: createdTimeValue,
+            time_unit: createdTimeUnit,
+            is_private: createForm.value.isPrivate,
+            status: 'Pending'
+          })
+          */
+
+          await apiPost('/tasks', {
+            task_name: createForm.value.taskDescription || `Task #${createdEscrowId}`
+          })
+          log.info('TaskManager', `Task ${createdEscrowId} synced to backend (MVP mode)`)
+        } catch (backendError) {
+          log.error('TaskManager', 'Failed to sync task with backend', backendError)
+          // Opcional: Mostrar una advertencia si la sincronización falla
+        }
+
+        // Crear Chat (Conversation) para la Tarea
+        try {
+          const conversationName = createForm.value.taskDescription || `Chat for Task #${createdEscrowId}`
+
+          await apiPost('/conversations', {
+            participant_ids: [authStore.address, createForm.value.beneficiary],
+            conversation_type: 'direct',
+            name: conversationName
+          }, authStore.token)
+          log.info('TaskManager', `Chat created for Task ${createdEscrowId}`)
+        } catch (chatError) {
+          log.error('TaskManager', 'Failed to create chat for task', chatError)
+        }
       }
       // Reset form
       createForm.value = {
