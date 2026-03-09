@@ -2,14 +2,16 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+const MAX_DEADLINE_UPDATES = 2
+
 const props = defineProps<{
   tasks: any[]
   loading: boolean
   account?: string | null
-  taskMeta?: Record<number, { timeValue: number; timeUnit: 'hours' | 'days'; finishedRequested: boolean }>
+  taskMeta?: Record<number, { timeValue: number; timeUnit: 'hours' | 'days'; finishedRequested: boolean; deadlineUpdates?: number }>
 }>()
 
-const emit = defineEmits(['refresh', 'create', 'requestFinished', 'completeAndRelease'])
+const emit = defineEmits(['refresh', 'create', 'requestFinished', 'completeAndRelease', 'updateDate', 'cancelEscrow'])
 
 const router = useRouter()
 const expandedIndex = ref<number | null>(0)
@@ -56,6 +58,21 @@ const getEscrowStatusClasses = (escrow: any) => {
   if (status === 'Pagada') return 'bg-emerald-50 text-emerald-600 border-emerald-200'
   if (status === 'Completada') return 'bg-blue-50 text-blue-600 border-blue-200'
   return 'bg-amber-50 text-amber-600 border-amber-200'
+}
+
+const canUpdateDate = (escrow: any) => {
+  if (escrow.isReleased || escrow.isCompleted) return false
+  const count = props.taskMeta?.[escrow.id]?.deadlineUpdates ?? 0
+  return count < MAX_DEADLINE_UPDATES
+}
+
+const deadlineUpdatesRemaining = (escrowId: number) => {
+  const count = props.taskMeta?.[escrowId]?.deadlineUpdates ?? 0
+  return MAX_DEADLINE_UPDATES - count
+}
+
+const canCancel = (escrow: any) => {
+  return !escrow.isReleased && !escrow.isCompleted
 }
 </script>
 
@@ -167,7 +184,7 @@ const getEscrowStatusClasses = (escrow: any) => {
               type="button"
               class="btn-secundary"
               :disabled="isDeliveryAlreadyRequested(escrow.id)"
-              @click="emit('requestFinished', escrow.id)"
+              @click.stop="emit('requestFinished', escrow.id)"
             >
               <i class="fas fa-flag-checkered mr-2"></i>
               {{ isDeliveryAlreadyRequested(escrow.id) ? 'Tarea entregada' : 'Terminé tarea' }}
@@ -176,9 +193,26 @@ const getEscrowStatusClasses = (escrow: any) => {
               v-if="canCompleteAndRelease(escrow)"
               type="button"
               class="btn-primary"
-              @click="emit('completeAndRelease', escrow.id)"
+              @click.stop="emit('completeAndRelease', escrow.id)"
             >
               <i class="fas fa-coins mr-2"></i>Completar y liberar pago
+            </button>
+            <button
+              v-if="canUpdateDate(escrow)"
+              type="button"
+              class="btn-secundary"
+              :title="`Quedan ${deadlineUpdatesRemaining(escrow.id)} actualización(es)`"
+              @click.stop="emit('updateDate', escrow.id)"
+            >
+              <i class="fas fa-calendar-alt mr-2"></i>Actualizar Fecha
+            </button>
+            <button
+              v-if="canCancel(escrow)"
+              type="button"
+              class="btn-secundary !border-red-400 !text-red-600 hover:!bg-red-50"
+              @click.stop="emit('cancelEscrow', escrow.id)"
+            >
+              <i class="fas fa-times-circle mr-2"></i>Cancelar Tarea
             </button>
           </div>
         </div>

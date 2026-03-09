@@ -141,10 +141,9 @@ export function useTaskManager() {
     localStorage.setItem(TASK_META_KEY, JSON.stringify(taskMeta.value))
   }
 
-  // Tabs: Crear | Gestionar | Mis Tareas
+  // Tabs
   const tabs = [
     { id: 'create', label: 'Crear Tarea', icon: 'fas fa-plus' },
-    { id: 'manage', label: 'Gestionar', icon: 'fas fa-cog' },
     { id: 'list', label: 'Mis Tareas', icon: 'fas fa-list' }
   ]
 
