@@ -70,9 +70,8 @@
                     type="email"
                     required
                     class="form-input"
-                    placeholder="tu@email.com"
                     :disabled="isConnecting"
-                    style="background-color: var(--color-secondary); color: var(--color-text-primary);"
+                    placeholder="tu@email.com"
                   />
                 </div>
                 
@@ -134,7 +133,6 @@
                     class="form-input"
                     placeholder="Tu nombre completo"
                     :disabled="isConnecting"
-                    style="background-color: var(--color-secondary); color: var(--color-text-primary);"
                   />
                 </div>
 
@@ -150,7 +148,6 @@
                     class="form-input"
                     placeholder="tu@email.com"
                     :disabled="isConnecting"
-                    style="background-color: var(--color-secondary); color: var(--color-text-primary);"
                   />
                 </div>
                 
@@ -167,7 +164,6 @@
                       class="form-input pr-10"
                       placeholder="•••••••"
                       :disabled="isConnecting"
-                      style="background-color: var(--color-secondary); color: var(--color-text-primary);"
                     />
                     <button
                       type="button"
@@ -346,27 +342,18 @@ const handleEmailLogin = async () => {
   try {
     isConnecting.value = true
     error.value = ''
-    
-    // Here you would implement your email/password authentication logic
-    // For now, this is a placeholder that simulates authentication
-    console.log('Email login attempt:', { email: email.value, password: '***' })
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    // For demo purposes, accept any email/password
-    if (email.value && password.value) {
-      // Store login info (in a real app, you'd get a token from your backend)
-      localStorage.setItem('userEmail', email.value)
-      localStorage.setItem('loginMethod', 'email')
-      closeModal()
-      router.push('/chat')
-    } else {
+
+    if (!email.value || !password.value) {
       error.value = 'Por favor, completa todos los campos'
+      return
     }
+
+    await authStore.loginWithEmail(email.value, password.value)
+    closeModal()
+    router.push('/chat')
   } catch (err) {
     console.error('Error en login con email:', err)
-    error.value = 'Error al iniciar sesión. Por favor, inténtalo de nuevo.'
+    error.value = err instanceof Error ? err.message : 'Error al iniciar sesión. Por favor, inténtalo de nuevo.'
   } finally {
     isConnecting.value = false
   }
@@ -382,32 +369,25 @@ const handleEmailRegister = async () => {
       error.value = 'Las contraseñas no coinciden'
       return
     }
-    
-    // Here you would implement your registration logic
-    // For now, this is a placeholder that simulates registration
-    console.log('Email register attempt:', { 
-      name: registerName.value, 
-      email: email.value, 
-      password: '***' 
-    })
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    // For demo purposes, accept any registration
-    if (registerName.value && email.value && password.value) {
-      // Store registration info (in a real app, you'd get a token from your backend)
-      localStorage.setItem('userName', registerName.value)
-      localStorage.setItem('userEmail', email.value)
-      localStorage.setItem('loginMethod', 'email')
-      closeModal()
-      router.push('/chat')
-    } else {
+
+    if (!registerName.value || !email.value || !password.value) {
       error.value = 'Por favor, completa todos los campos'
+      return
     }
+
+    await authStore.registerWithEmail({
+      username: registerName.value.trim(),
+      email: email.value.trim(),
+      password: password.value
+    })
+
+    // Login automático post-registro (el backend solo especifica token en /login)
+    await authStore.loginWithEmail(email.value.trim(), password.value)
+    closeModal()
+    router.push('/chat')
   } catch (err) {
     console.error('Error en registro:', err)
-    error.value = 'Error al crear cuenta. Por favor, inténtalo de nuevo.'
+    error.value = err instanceof Error ? err.message : 'Error al crear cuenta. Por favor, inténtalo de nuevo.'
   } finally {
     isConnecting.value = false
   }

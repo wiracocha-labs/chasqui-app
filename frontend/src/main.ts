@@ -13,8 +13,8 @@ import HomeView from './views/HomeView.vue'
 import { useAuthStore } from './stores/auth'
 
 const routes = [
-  { path: '/', component: HomeView, name: 'Home'  },
-  { path: '/chat', component: ChatView, name: 'Chat', meta: { requiresAuth: true } },
+  { path: '/', component: HomeView, name: 'Home' },
+  { path: '/chat/:id?', component: ChatView, name: 'Chat', meta: { requiresAuth: true } },
   { path: '/tasks', component: TaskManagerView, name: 'Tasks' },
   { path: '/colors', component: ColorShowcase, name: 'Colors' }, // Ruta de desarrollo
 ]
@@ -34,11 +34,11 @@ app.use(router)
 // Auth guard
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
-  
+
   // Si la ruta requiere autenticación
   if (to.meta.requiresAuth) {
     // Verificar si el usuario está autenticado
-    if (!authStore.address) {
+    if (!authStore.isAuthenticated) {
       // Redirigir a home si no está autenticado (el modal se mostrará allí)
       next('/')
       return
@@ -53,3 +53,14 @@ app.mount('#app')
 // Initialize auth store after app mount
 const authStore = useAuthStore()
 authStore.initializeProvider()
+
+// Paso 1: prueba de conexión al backend (solo dev)
+if (import.meta.env.DEV) {
+  import('./services/api').then(({ testBackendConnection }) => {
+    testBackendConnection().then((result) => {
+      if (result.ok) console.log('🔌 Paso 1 OK: frontend habla con el backend')
+      else console.warn('🔌 Paso 1: backend no alcanzable:', result.error)
+    })
+      ; (window as any).chasquiApiTest = testBackendConnection
+  })
+}

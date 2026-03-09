@@ -26,11 +26,11 @@ This document is intended for AI agents and developers working on the frontend. 
 ### Client -> Server Events (JSON)
 - **Join Room:**
   ```json
-  {"type": "join", "conversation_id": "conv:<uuid>"}
+  {"type": "join", "conversation_id": "conversation:<uuid>"}
   ```
 - **Send Message:**
   ```json
-  {"type": "message", "conversation_id": "conv:<uuid>", "content": "Hello world!"}
+  {"type": "message", "conversation_id": "conversation:<uuid>", "content": "Hello world!"}
   ```
 
 ### Server -> Client Events (JSON)
@@ -58,3 +58,29 @@ cargo run -- --list-ws
 - `GET /conversations`: List user's conversations.
 - `POST /conversations`: Create a new direct or group chat.
 - `GET /conversations/{id}/messages`: Retrieve chat history.
+- `POST /conversations/{id}/add-guest`: Add guest to conversation by email (MVP - no auth required).
+
+## 🎯 Guest Access (MVP Feature)
+For demo purposes, you can add external users to conversations without authentication:
+
+### Add Guest by Email
+```bash
+POST /api/conversations/conversation:uuid/add-guest
+{
+  "email": "guest@example.com"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Guest added successfully",
+  "user_email": "guest@example.com",
+  "conversation_id": "conversation:uuid"
+}
+```
+
+**Notes:**
+- No authentication required (MVP demo)
+- User must already exist in the system
+- Returns error if user not found or already a participant

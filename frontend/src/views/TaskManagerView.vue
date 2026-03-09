@@ -131,17 +131,6 @@ const handleCreateEscrow = async () => {
               />
             </div>
           </div>
-          <!-- <div v-if="account && !isRegisteredForPrivacy" class="bg-brand rounded-2xl p-6 text-white">
-            <div class="flex items-center justify-between">
-              <div>
-                <h3 class="text-lg font-semibold mb-1"><i class="fas fa-shield-alt mr-2"></i>Transacciones Privadas eERC20</h3>
-                <p class="text-textSecondary text-sm">Regístrate para crear tareas con pagos encriptados usando eERC20 de Avalanche</p>
-              </div>
-              <button @click="registerForPrivacy" class="px-6 py-3 bg-white text-brand rounded-xl font-medium hover:bg-secondary transition-all duration-300">
-                <i class="fas fa-user-plus mr-2"></i>Registrar para eERC20
-              </button>
-            </div>
-          </div> -->
         </div>
       </div>
     </div>

@@ -41,21 +41,21 @@ export class Web3Service {
     try {
       log.debug('Web3Service', 'Starting connection to MetaMask')
       this.provider = new ethers.BrowserProvider(window.ethereum)
-      
+
       // Solicitar acceso a las cuentas
       await this.provider.send("eth_requestAccounts", [])
-      
+
       this.signer = await this.provider.getSigner()
       const address = await this.signer.getAddress()
-      
+
       // Obtener información de la red
       const network = await this.provider.getNetwork()
-      
+
       // Inicializar contrato según la red activa en MetaMask
       const chainId = Number(network.chainId)
       this.contractAddress = getContractAddress(chainId, 'authorization')
       this.contract = new ethers.Contract(this.contractAddress, AUTHORIZATION_SIMPLE_ABI, this.signer)
-      
+
       // Algunos RPC públicos (Fuji) pueden rechazar temporalmente eth_getBalance.
       // No bloqueamos la conexión de wallet por ese motivo.
       let formattedBalance = '0.00'
@@ -68,16 +68,16 @@ export class Web3Service {
 
       const networkLabel =
         Number(network.chainId) === 43113 ? 'fuji' :
-        Number(network.chainId) === 43114 ? 'avalanche' :
-        Number(network.chainId) === 31337 ? 'localhost' :
-        (network.name === 'unknown' ? `chain-${network.chainId.toString()}` : network.name)
+          Number(network.chainId) === 43114 ? 'avalanche' :
+            Number(network.chainId) === 31337 ? 'localhost' :
+              (network.name === 'unknown' ? `chain-${network.chainId.toString()}` : network.name)
 
       const result = {
         address,
         network: networkLabel,
         balance: formattedBalance
       }
-      
+
       log.info('Web3Service', `Connected successfully to ${result.network} with address ${result.address}`)
       return result
     } catch (error) {
@@ -128,7 +128,7 @@ export class Web3Service {
     if (!this.contract) {
       throw Web3Error.contractNotFound(this.contractAddress)
     }
-    
+
     try {
       const total = await this.contract.getTotalEscrows()
       const result = Number(total)
@@ -143,11 +143,11 @@ export class Web3Service {
     if (!this.contract) {
       throw Web3Error.contractNotFound(this.contractAddress)
     }
-    
+
     try {
       log.debug('Web3Service', `Getting escrow details for ID: ${escrowId}`)
       const details = await this.contract.getEscrowDetails(escrowId)
-      
+
       const result = {
         id: escrowId,
         depositor: details[0],
@@ -160,7 +160,7 @@ export class Web3Service {
         isPrivate: details[7],
         timestamp: Number(details[8])
       }
-      
+
       log.debug('Web3Service', `Escrow details retrieved for ID ${escrowId}`)
       return result
     } catch (error) {
@@ -172,7 +172,7 @@ export class Web3Service {
     if (!this.contract) {
       throw Web3Error.contractNotFound(this.contractAddress)
     }
-    
+
     try {
       log.debug('Web3Service', `Getting escrows for address: ${address}`)
       const escrowIds = await this.contract.getUserEscrows(address)
@@ -188,7 +188,7 @@ export class Web3Service {
     if (!this.contract) {
       throw Web3Error.contractNotFound(this.contractAddress)
     }
-    
+
     try {
       log.debug('Web3Service', `Checking authorization for: ${address}`)
       const result = await this.contract.isAuthorized(address)
@@ -203,7 +203,7 @@ export class Web3Service {
     if (!this.contract) {
       throw Web3Error.contractNotFound(this.contractAddress)
     }
-    
+
     try {
       log.debug('Web3Service', `Checking privacy registration for: ${address}`)
       const result = await this.contract.isRegisteredForPrivacy(address)
@@ -236,7 +236,7 @@ export class Web3Service {
     if (!this.contract) {
       throw Web3Error.contractNotFound(this.contractAddress)
     }
-    
+
     try {
       log.info('Web3Service', `Creating public escrow: ${taskDescription} for ${amount} AVAX`)
       const normalizedAmount =
@@ -264,7 +264,7 @@ export class Web3Service {
           { value: ethers.parseEther(normalizedAmount) }
         )
       }
-      
+
       log.debug('Web3Service', `Public escrow transaction: ${tx.hash}`)
       const receipt = await tx.wait()
       log.info('Web3Service', `Public escrow created in block: ${receipt.blockNumber}`)
@@ -275,16 +275,16 @@ export class Web3Service {
   }
 
   async createPrivateEscrow(
-    beneficiary: string, 
-    encryptedAmount: string, 
-    zkProof: string, 
+    beneficiary: string,
+    encryptedAmount: string,
+    zkProof: string,
     taskDescription: string,
     timeConfig?: TimeConfig
   ) {
     if (!this.contract) {
       throw Web3Error.contractNotFound(this.contractAddress)
     }
-    
+
     try {
       log.info('Web3Service', `Creating private escrow: ${taskDescription}`)
       const fn = this.contract.interface.getFunction('createPrivateEscrow')
@@ -309,7 +309,7 @@ export class Web3Service {
           taskDescription
         )
       }
-      
+
       log.debug('Web3Service', `Private escrow transaction: ${tx.hash}`)
       const receipt = await tx.wait()
       log.info('Web3Service', `Private escrow created in block: ${receipt.blockNumber}`)
@@ -323,7 +323,7 @@ export class Web3Service {
     if (!this.contract) {
       throw Web3Error.contractNotFound(this.contractAddress)
     }
-    
+
     try {
       log.info('Web3Service', `Marking task completed for escrow: ${escrowId}`)
       const tx = await this.contract.markTaskCompleted(escrowId)
@@ -340,7 +340,7 @@ export class Web3Service {
     if (!this.contract) {
       throw Web3Error.contractNotFound(this.contractAddress)
     }
-    
+
     try {
       log.info('Web3Service', `Releasing funds for escrow: ${escrowId}`)
       const tx = await this.contract.releaseFunds(escrowId)
@@ -357,7 +357,7 @@ export class Web3Service {
     if (!this.contract) {
       throw Web3Error.contractNotFound(this.contractAddress)
     }
-    
+
     try {
       log.warn('Web3Service', `Canceling escrow: ${escrowId}`)
       const tx = await this.contract.cancelEscrow(escrowId)
@@ -376,7 +376,7 @@ export class Web3Service {
     if (!this.provider) {
       throw Web3Error.walletNotConnected()
     }
-    
+
     try {
       log.debug('Web3Service', `Waiting for transaction: ${txHash}`)
       const receipt = await this.provider.waitForTransaction(txHash)
@@ -392,7 +392,7 @@ export class Web3Service {
     if (!this.contract) {
       throw Web3Error.contractNotFound(this.contractAddress)
     }
-    
+
     log.debug('Web3Service', 'Setting up EEscrowCreated event listener')
     this.contract.on('EEscrowCreated', (escrowId, depositor, beneficiary) => {
       log.info('Web3Service', `Escrow created: ID ${Number(escrowId)}, Depositor: ${depositor}`)
@@ -404,7 +404,7 @@ export class Web3Service {
     if (!this.contract) {
       throw Web3Error.contractNotFound(this.contractAddress)
     }
-    
+
     log.debug('Web3Service', 'Setting up TaskCompletedWithZK event listener')
     this.contract.on('TaskCompletedWithZK', (escrowId, taskHash, verifier) => {
       log.info('Web3Service', `Task completed: Escrow ${Number(escrowId)}, Verifier: ${verifier}`)
