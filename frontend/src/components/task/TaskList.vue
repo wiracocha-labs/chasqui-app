@@ -178,11 +178,20 @@ const canCancel = (escrow: any) => {
             </div>
           </div>
 
-          <div class="flex flex-wrap gap-3 mt-4">
+          <div class="flex flex-wrap items-center justify-between gap-3 mt-4">
+            <button
+              v-if="canUpdateDate(escrow)"
+              type="button"
+              class="btn-secundary !w-auto !px-5 !py-2.5 !text-sm sm:!text-base !rounded-full"
+              :title="`Quedan ${deadlineUpdatesRemaining(escrow.id)} actualización(es)`"
+              @click.stop="emit('updateDate', escrow.id)"
+            >
+              <i class="fas fa-calendar-alt mr-2"></i>Actualizar Fecha
+            </button>
             <button
               v-if="showBeneficiaryDeliveryButton(escrow)"
               type="button"
-              class="btn-secundary"
+              class="btn-secundary !w-auto !px-5 !py-2.5 !text-sm sm:!text-base !rounded-full"
               :disabled="isDeliveryAlreadyRequested(escrow.id)"
               @click.stop="emit('requestFinished', escrow.id)"
             >
@@ -190,29 +199,22 @@ const canCancel = (escrow: any) => {
               {{ isDeliveryAlreadyRequested(escrow.id) ? 'Tarea entregada' : 'Terminé tarea' }}
             </button>
             <button
-              v-if="canCompleteAndRelease(escrow)"
-              type="button"
-              class="btn-primary"
-              @click.stop="emit('completeAndRelease', escrow.id)"
-            >
-              <i class="fas fa-coins mr-2"></i>Completar y liberar pago
-            </button>
-            <button
-              v-if="canUpdateDate(escrow)"
-              type="button"
-              class="btn-secundary"
-              :title="`Quedan ${deadlineUpdatesRemaining(escrow.id)} actualización(es)`"
-              @click.stop="emit('updateDate', escrow.id)"
-            >
-              <i class="fas fa-calendar-alt mr-2"></i>Actualizar Fecha
-            </button>
-            <button
               v-if="canCancel(escrow)"
               type="button"
-              class="btn-secundary !border-red-400 !text-red-600 hover:!bg-red-50"
+              class="btn-secundary !w-auto !px-5 !py-2.5 !text-sm sm:!text-base !rounded-full"
               @click.stop="emit('cancelEscrow', escrow.id)"
             >
               <i class="fas fa-times-circle mr-2"></i>Cancelar Tarea
+            </button>
+          </div>
+          <div class="flex justify-center mt-3">
+            <button
+              v-if="canCompleteAndRelease(escrow)"
+              type="button"
+              class="btn-primary !w-auto !px-5 !py-2.5 !text-sm sm:!text-base !rounded-full"
+              @click.stop="emit('completeAndRelease', escrow.id)"
+            >
+              <i class="fas fa-coins mr-2"></i>Completar y liberar pago
             </button>
           </div>
         </div>
