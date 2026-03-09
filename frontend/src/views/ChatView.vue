@@ -112,7 +112,7 @@
     
     <!-- Chat Content Area -->
     <div class="flex-1 flex flex-col h-screen overflow-hidden bg-bg-primary">
-      <div v-if="currentConversation" class="border-b border-white border-opacity-10 p-4 flex justify-between items-center bg-white bg-opacity-5">
+      <div v-if="currentConversation" class="border-b border-bg-primary border-opacity-10 p-4 flex justify-between items-center">
         <div>
           <h2 class="text-xl font-bold flex items-center gap-2">
             {{ currentConversation.conversation_type === 'group' ? '#' : '' }}
@@ -130,18 +130,13 @@
         <div class="flex items-center gap-3">
           <button 
             @click="showInviteModal = true"
-            class="px-3 py-1.5 rounded-lg bg-secondary bg-opacity-20 text-brand hover:bg-opacity-30 transition-all text-sm font-medium flex items-center gap-2"
+            class="btn-tertiary"
           >
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>
             </svg>
             Invitar
           </button>
-          <div class="p-2 hover:bg-white hover:bg-opacity-5 rounded-full cursor-pointer transition-colors">
-            <svg class="w-5 h-5 opacity-60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-            </svg>
-          </div>
         </div>
       </div>
         
