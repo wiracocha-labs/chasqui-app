@@ -235,6 +235,17 @@ export const useAuthStore = defineStore('auth', () => {
     return res.token
   }
 
+  const loginWithWallet = async (wallet: string) => {
+    log.info('AuthStore', `Logging in with wallet: ${wallet}`)
+    const res = await apiPost<{ token: string }>('/login', { wallet })
+    if (!res?.token) {
+      throw new Error('Login con wallet exitoso, pero no se recibió token del servidor.')
+    }
+    setToken(res.token)
+    loginMethod.value = 'wallet'
+    return res.token
+  }
+
   const loginWithEmail = async (email: string, password: string) => {
     try {
       return await loginWithCredentials({ email, password })
@@ -363,6 +374,7 @@ export const useAuthStore = defineStore('auth', () => {
     registerWithEmail,
     registerWithWallet,
     loginWithCredentials,
+    loginWithWallet,
     loginWithEmail,
     checkAuthorization,
     getBalance,

@@ -304,6 +304,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { log } from '../services/logger'
+import { apiPost } from '../services/api'
 
 // Props
 interface Props {
@@ -402,13 +403,29 @@ const connectWallet = async (walletType: WalletType) => {
     if (authStore.address) {
       log.info('LoginModal', `Wallet connected: ${authStore.address}`)
 
-      // Registrar en el backend (crea cuenta si no existe)
+      // Clear any potentially stale token before authenticating
+      authStore.logout()
+
+      // Try to login with wallet first (should work for existing users)
       try {
-        await authStore.registerWithWallet(authStore.address)
-      } catch (regErr: any) {
-        // 409 = ya existe → no es un error real, continuamos
-        if ((regErr?.status ?? 0) !== 409) {
-          log.error('LoginModal', 'Registration error', regErr)
+        await authStore.loginWithWallet(authStore.address)
+        log.info('LoginModal', 'Wallet login succeeded, token obtained')
+      } catch (loginErr: any) {
+        const status = loginErr?.status ?? 0
+        if (status === 401 || status === 404) {
+          // User doesn't exist → register first, then login
+          log.info('LoginModal', 'User not found, attempting registration...')
+          try {
+            await authStore.registerWithWallet(authStore.address)
+            log.info('LoginModal', 'Registration succeeded, now logging in...')
+            await authStore.loginWithWallet(authStore.address)
+          } catch (regErr) {
+            log.error('LoginModal', 'Registration failed', regErr)
+            throw regErr
+          }
+        } else {
+          log.error('LoginModal', 'Wallet login failed', loginErr)
+          throw loginErr
         }
       }
 
@@ -422,7 +439,7 @@ const connectWallet = async (walletType: WalletType) => {
         closeModal()
         router.push('/chat')
       } else {
-        error.value = 'No se pudo autenticar con el backend. Asegúrate que el servidor esté corriendo en localhost:8080.'
+        error.value = 'No se pudo obtener un token del backend. Asegúrate que el servidor esté corriendo en localhost:8080.'
       }
     }
   } catch (err) {

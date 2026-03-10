@@ -250,6 +250,20 @@ export function useTaskManager() {
       const connection = await web3Service.connect()
       networkName.value = connection.network
       avaxBalance.value = await authStore.getBalance()
+
+      // Also register/login in backend to get JWT for chat creation
+      if (authStore.address && !authStore.token) {
+        try {
+          await authStore.registerWithWallet(authStore.address)
+          log.info('TaskManager', 'Backend registration/login successful')
+        } catch (regErr: any) {
+          // 409 = ya existe, no es error
+          if ((regErr?.status ?? 0) !== 409) {
+            log.warn('TaskManager', 'Backend registration skipped', regErr)
+          }
+        }
+      }
+
       await loadUserEscrows()
       log.info('TaskManager', 'Wallet connected successfully')
       showAlert('success', 'Wallet conectada')
@@ -399,7 +413,7 @@ export function useTaskManager() {
 
           await apiPost('/tasks', {
             task_name: createForm.value.taskDescription || `Task #${createdEscrowId}`
-          })
+          }, authStore.token)
           log.info('TaskManager', `Task ${createdEscrowId} synced to backend (MVP mode)`)
         } catch (backendError) {
           log.error('TaskManager', 'Failed to sync task with backend', backendError)

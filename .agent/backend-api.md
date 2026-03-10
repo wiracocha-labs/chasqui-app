@@ -10,13 +10,53 @@ This document is intended for AI agents and developers working on the frontend. 
 ## 🔐 Authentication Flow
 
 1. **Register:** `POST /register`
-   - **Wallet Flow (Recommended for Demo):** `{"wallet": "0x..."}`
-   - **Traditional Flow:** `{"username": "...", "email": "...", "password": "..."}`
-   - **Note:** If `wallet` is provided, other fields are optional. Username will be auto-generated.
+   - **Payload (Traditional):** `{"username": "...", "email": "...", "password": "..."}`
+   - **Payload (Wallet):** `{"wallet": "0x1234...abcd"}`
+   - **Validation:** Username must be letters only. Email must be valid. Wallet must be non-empty.
+   - **Returns:** `{"create": "success", "message": "User created successfully"}`
+
 2. **Login:** `POST /login`
-   - **Payload:** `{"email": "...", "password": "..."}` OR `{"username": "...", "password": "..."}`
+   - **Payload (Traditional):** 
+     ```json
+     {"email": "...", "password": "..."} 
+     // OR
+     {"username": "...", "password": "..."}
+     ```
+   - **Payload (Wallet):** `{"wallet": "0x1234...abcd"}`
    - **Returns:** `{"token": "<JWT>"}`
+
 3. **Usage:** Include the token in the `Authorization` header: `Bearer <JWT>`.
+
+## 🎯 Wallet Authentication (Web3)
+For Web3 integration, users can authenticate using their wallet address:
+
+### Wallet Registration
+```bash
+POST /api/register
+{
+  "wallet": "0x1234567890abcdef1234567890abcdef12345678"
+}
+```
+
+### Wallet Login (No Password Required)
+```bash
+POST /api/login
+{
+  "wallet": "0x1234567890abcdef1234567890abcdef12345678"
+}
+```
+
+**Response:**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
+```
+
+**Notes:**
+- Wallet users don't need passwords
+- System generates automatic username: `wallet_0x1234_uuid`
+- JWT token works the same as traditional authentication
 
 ## 💬 Real-Time Chat (WebSockets)
 
