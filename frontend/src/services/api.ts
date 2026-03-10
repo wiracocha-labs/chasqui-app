@@ -68,7 +68,14 @@ export async function apiFetch<T = unknown>(
     try {
       data = (text ? JSON.parse(text) : null) as T
     } catch {
+      // If parsing fails we keep the raw text, but detect obvious HTML error pages
       data = text as unknown as T
+    }
+    // If server responded with an OK status but returned HTML (e.g. an error page
+    // from a tunneling service like ngrok), treat it as an error to avoid callers
+    // assuming it's JSON (which causes `convs.filter is not a function`).
+    if (res.ok && typeof data === 'string' && data.trim().startsWith('<')) {
+      throw new ApiError('Non-JSON response from API (HTML received)', res.status, data)
     }
 
     if (!res.ok) {

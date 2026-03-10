@@ -67,11 +67,11 @@ POST /api/login
 ### Client -> Server Events (JSON)
 - **Join Room:**
   ```json
-  {"type": "join", "conversation_id": "conv:<uuid>"}
+  {"type": "join", "conversation_id": "conversation:<uuid>"}
   ```
 - **Send Message:**
   ```json
-  {"type": "message", "conversation_id": "conv:<uuid>", "content": "Hello world!"}
+  {"type": "message", "conversation_id": "conversation:<uuid>", "content": "Hello world!"}
   ```
 
 ### Server -> Client Events (JSON)
@@ -98,8 +98,8 @@ cargo run -- --list-ws
 - `PATCH /tasks/{uuid}`: Update completion status.
 - `GET /conversations`: List user's conversations.
 - `POST /conversations`: Create a new chat.
-  - **Shorthand (Direct):** `{"target_wallet": "0x...", "conversation_type": "Direct"}` (Auto-includes you).
-  - **Manual (Group/Direct):** `{"participant_ids": ["uuid", "wallet"], "conversation_type": "Direct|Group"}`.
+  - **Shorthand (Direct):** `{"target_wallet": "0x...", "conversation_type": "direct"}` (Auto-includes you).
+  - **Manual (Group/Direct):** `{"participant_ids": ["uuid", "wallet"], "conversation_type": "direct|group"}`.
 - `GET /conversations/{id}/messages`: Retrieve chat history.
 - `POST /conversations/{id}/participants`: Add participant by wallet or ID.
   - **Payload:** `{"identifier": "0x... atau tb:id"}`

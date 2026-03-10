@@ -115,7 +115,7 @@
       <div v-if="currentConversation" class="border-b border-bg-primary border-opacity-10 p-4 flex justify-between items-center">
         <div>
           <h2 class="text-xl font-bold flex items-center gap-2">
-            {{ currentConversation.conversation_type === 'Group' ? '#' : '' }}
+            {{ currentConversation.conversation_type === 'group' ? '#' : '' }}
             {{ currentConversation.name || getDirectConversationName(currentConversation) }}
           </h2>
           <div class="flex gap-3 text-xs mt-1">
@@ -333,7 +333,7 @@ type SurrealId = string | { tb: string, id: { String: string } }
 type Conversation = {
   id?: SurrealId
   participants: SurrealId[]
-  conversation_type: 'Direct' | 'Group'
+  conversation_type: 'direct' | 'group'
   name?: string
   created_at: string
   updated_at: string
@@ -491,11 +491,21 @@ const loadConversations = async () => {
     
     log.info('ChatView', 'Fetching conversations from API...')
     const convs = await apiGet<Conversation[]>('/conversations', authStore.token)
-    log.info('ChatView', `Received ${convs.length} conversations`, convs)
-    
+    log.info('ChatView', `Received conversations payload`, convs)
+
+    // Defensive: ensure we received an array. Some reverse proxies/tunnels may
+    // return an HTML page (ngrok interstitial) which parses as a string -> crash
+    // when calling .filter. Validate and surface a clear error instead.
+    if (!Array.isArray(convs)) {
+      log.error('ChatView', 'Invalid conversations response (expected array):', convs)
+      throw new Error('Invalid conversations response from API')
+    }
+
+    log.info('ChatView', `Received ${convs.length} conversations`)
+
     // Split into Groups and Directs
-    userGroups.value = convs.filter(c => c.conversation_type === 'Group')
-    userDirects.value = convs.filter(c => c.conversation_type === 'Direct')
+    userGroups.value = convs.filter(c => c.conversation_type === 'group')
+    userDirects.value = convs.filter(c => c.conversation_type === 'direct')
     
     isConnected.value = true
 
@@ -580,7 +590,7 @@ const createConversation = async () => {
       // Use shorthand for direct chat
       payload = {
         target_wallet: parts[0],
-        conversation_type: 'Direct'
+        conversation_type: 'direct'
       }
     } else {
       // Manual (Group/Direct with multiple or specific IDs)
@@ -591,7 +601,7 @@ const createConversation = async () => {
 
       payload = {
         participant_ids: parts,
-        conversation_type: modalType.value === 'direct' ? 'Direct' : 'Group'
+        conversation_type: modalType.value === 'direct' ? 'direct' : 'group'
       }
 
       if (modalType.value === 'group') {
@@ -781,7 +791,7 @@ onMounted(async () => {
         try {
           const newConv = await apiPost<Conversation>('/conversations', {
             target_wallet: wallet,
-            conversation_type: 'Direct'
+            conversation_type: 'direct'
           }, authStore.token)
           log.info('ChatView', 'Direct chat created successfully', newConv)
           await loadConversations()
