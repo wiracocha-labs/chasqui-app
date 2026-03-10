@@ -3,7 +3,7 @@ import { useAuthStore } from '../stores/auth'
 import { web3Service, type EscrowDetails } from '../services/web3'
 import { log } from '../services/logger'
 import { TaskError } from '../services/errors'
-import { CURRENT_NETWORK, NETWORKS } from '../config/index'
+import { CURRENT_NETWORK, NETWORKS, DEBUG } from '../config/index'
 import { apiPost } from '../services/api'
 
 const MAX_DEADLINE_UPDATES_PER_TASK = 2
@@ -692,6 +692,9 @@ export function useTaskManager() {
       finishedRequested: true
     }
     saveTaskMeta()
+    if (DEBUG.enabled) {
+      log.debug('TaskManager', `requestTaskFinished(#${escrowId}): "Terminé tarea" guardado SOLO en este navegador (localStorage). El creador (A) en OTRO dispositivo no verá "Completar y liberar pago" porque finishedRequested no se sincroniza entre usuarios. Para que A vea el botón hace falta: mismo navegador, o backend/on-chain que guarde esta señal.`)
+    }
     showAlert('success', `Solicitud enviada: tarea #${escrowId} marcada como terminada`)
   }
 
@@ -787,6 +790,14 @@ export function useTaskManager() {
 
       userEscrows.value = escrowsDetails
       log.info('TaskManager', `Successfully loaded ${escrowsDetails.length} escrows for wallet`)
+      if (DEBUG.enabled && escrowsDetails.length > 0) {
+        escrowsDetails.forEach((e) => {
+          const isDep = normalizeAddress(e.depositor) === currentAddress
+          const isBen = normalizeAddress(e.beneficiary) === currentAddress
+          const meta = taskMeta.value[e.id]
+          log.debug('TaskManager', `Escrow #${e.id} | Tu rol: ${isDep ? 'CREADOR (A)' : isBen ? 'EJECUTOR (B)' : '?'} | finishedRequested (local): ${!!meta?.finishedRequested} | isCompleted: ${e.isCompleted} | isReleased: ${e.isReleased}`)
+        })
+      }
     } catch (error) {
       log.error('TaskManager', 'Failed to load user escrows', error)
       showAlert('error', 'Error al cargar las tareas')

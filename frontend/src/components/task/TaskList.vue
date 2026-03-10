@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import { log } from '@/services/logger'
+import { DEBUG } from '@/config'
 
 const MAX_DEADLINE_UPDATES = 2
 
@@ -54,6 +56,29 @@ const canCompleteAndRelease = (escrow: any) => {
   const finishedRequested = !!props.taskMeta?.[escrow.id]?.finishedRequested
   return sameWallet && finishedRequested && !escrow.isReleased
 }
+
+// Logs de depuración: por qué se muestra u oculta "Completar y liberar pago" (solo si DEBUG activo)
+function logTaskDebug() {
+  if (!DEBUG.enabled || !props.tasks?.length) return
+  const account = (props.account || '').toLowerCase()
+  log.debug('TaskList', '--- Inicio logs de tareas (Completar y liberar pago) ---')
+  props.tasks.forEach((escrow: any) => {
+    const depositor = String(escrow.depositor || '').toLowerCase()
+    const beneficiary = String(escrow.beneficiary || '').toLowerCase()
+    const isDepositor = account === depositor
+    const isBeneficiary = account === beneficiary
+    const finishedRequested = !!props.taskMeta?.[escrow.id]?.finishedRequested
+    const show = canCompleteAndRelease(escrow)
+    const reasons: string[] = []
+    if (!props.account) reasons.push('no hay wallet conectada')
+    else if (!isDepositor) reasons.push(`no eres el depositante (creador); tu wallet no coincide con depositor del escrow #${escrow.id}`)
+    else if (!finishedRequested) reasons.push("finishedRequested es false en ESTE navegador (solo se pone true cuando el beneficiario pulsa 'Terminé tarea' EN ESTE DISPOSITIVO; en otro dispositivo no se sincroniza)")
+    else if (escrow.isReleased) reasons.push('el pago ya fue liberado')
+    log.debug('TaskList', `Tarea #${escrow.id} | Rol: ${isDepositor ? 'CREADOR (A)' : isBeneficiary ? 'EJECUTOR (B)' : 'otro'} | finishedRequested (local): ${finishedRequested} | isReleased: ${!!escrow.isReleased} | ¿Botón "Completar y liberar pago"? ${show ? 'SÍ' : 'NO'}${reasons.length ? ` | Motivo: ${reasons.join('; ')}` : ''}`)
+  })
+  log.debug('TaskList', '--- Fin logs de tareas ---')
+}
+watch([() => props.tasks, () => props.account, () => props.taskMeta], logTaskDebug, { deep: true, immediate: true })
 
 const getEscrowStatusLabel = (escrow: any) => {
   if (escrow.isReleased) return 'Pagada'
