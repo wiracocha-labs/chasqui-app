@@ -400,26 +400,29 @@ const connectWallet = async (walletType: WalletType) => {
     error.value = ''
     await authStore.connectWallet()
     if (authStore.address) {
-      log.info('LoginModal', `Checking authorization for ${authStore.address}`)
-      let isAuthorized = await authStore.checkAuthorization(authStore.address)
-      
-      if (!isAuthorized) {
-        log.info('LoginModal', 'User not authorized, attempting wallet registration...')
-        try {
-          await authStore.registerWithWallet(authStore.address)
-          // After registration, check again or just allow if it succeeded
-          isAuthorized = await authStore.checkAuthorization(authStore.address)
-        } catch (regErr) {
-          log.error('LoginModal', 'Registration failed', regErr)
+      log.info('LoginModal', `Wallet connected: ${authStore.address}`)
+
+      // Registrar en el backend (crea cuenta si no existe)
+      try {
+        await authStore.registerWithWallet(authStore.address)
+      } catch (regErr: any) {
+        // 409 = ya existe → no es un error real, continuamos
+        if ((regErr?.status ?? 0) !== 409) {
+          log.error('LoginModal', 'Registration error', regErr)
         }
       }
 
-      if (isAuthorized) {
+      // Verificar contrato en paralelo (solo warning, no blocker)
+      authStore.checkAuthorization(authStore.address).then(ok => {
+        if (!ok) log.warn('LoginModal', 'Wallet not in contract whitelist (non-blocking)')
+      }).catch(() => {})
+
+      if (authStore.token) {
         localStorage.setItem('connectedWallet', walletType)
         closeModal()
         router.push('/chat')
       } else {
-        error.value = 'Tu dirección no pudo ser registrada o autorizada. Por favor, contacta a soporte.'
+        error.value = 'No se pudo autenticar con el backend. Asegúrate que el servidor esté corriendo en localhost:8080.'
       }
     }
   } catch (err) {

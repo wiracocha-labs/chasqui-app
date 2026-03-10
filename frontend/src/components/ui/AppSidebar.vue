@@ -63,6 +63,6 @@ const handleDisconnect = () => {
   localStorage.removeItem('connectedWallet')
   
   // Redirigir al login
-  router.push('/login')
+  router.push('/')
 }
 </script>
