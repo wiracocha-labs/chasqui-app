@@ -216,6 +216,16 @@ export const useAuthStore = defineStore('auth', () => {
     await apiPost('/register', payload)
   }
 
+  const registerWithWallet = async (wallet: string) => {
+    log.info('AuthStore', `Registering with wallet: ${wallet}`)
+    const res = await apiPost<{ token?: string }>('/register', { wallet })
+    // Some backend flows might return the token immediately on register
+    if (res?.token) {
+      setToken(res.token)
+    }
+    return res
+  }
+
   const loginWithCredentials = async (payload: LoginPayload) => {
     const res = await apiPost<{ token: string }>('/login', payload)
     if (!res?.token) {
@@ -351,6 +361,7 @@ export const useAuthStore = defineStore('auth', () => {
     disconnect,
     logout,
     registerWithEmail,
+    registerWithWallet,
     loginWithCredentials,
     loginWithEmail,
     checkAuthorization,

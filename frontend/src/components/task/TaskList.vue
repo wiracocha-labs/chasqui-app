@@ -8,7 +8,7 @@ const props = defineProps<{
   tasks: any[]
   loading: boolean
   account?: string | null
-  taskMeta?: Record<number, { timeValue: number; timeUnit: 'hours' | 'days'; finishedRequested: boolean; deadlineUpdates?: number }>
+  taskMeta?: Record<number, { timeValue: number; timeUnit: 'hours' | 'days'; finishedRequested: boolean; deadlineUpdates?: number; conversationId?: string }>
 }>()
 
 const emit = defineEmits(['refresh', 'create', 'requestFinished', 'completeAndRelease', 'updateDate', 'cancelEscrow'])
@@ -20,8 +20,16 @@ const toggleTask = (index: number) => {
   expandedIndex.value = expandedIndex.value === index ? null : index
 }
 
-const goToChat = async () => {
-  await router.push('/chat')
+const goToChat = async (escrow: any) => {
+  const meta = props.taskMeta?.[escrow.id]
+  
+  if (meta?.conversationId) {
+    await router.push(`/chat/${meta.conversationId}`)
+  } else if (escrow.beneficiary) {
+    await router.push({ path: '/chat', query: { target_wallet: escrow.beneficiary } })
+  } else {
+    await router.push('/chat')
+  }
 }
 
 const getTaskTimeLabel = (escrowId: number) => {
@@ -118,7 +126,7 @@ const canCancel = (escrow: any) => {
           <div class="flex items-center gap-2">
             <button
               class="btn-secundary !py-1 !px-4 !text-[10px] !w-auto !rounded-full !min-h-0 uppercase tracking-wider"
-              @click.stop="goToChat"
+              @click.stop="goToChat(escrow)"
             ><span>Chat</span></button>
 
             <span

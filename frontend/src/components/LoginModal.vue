@@ -303,6 +303,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { log } from '../services/logger'
 
 // Props
 interface Props {
@@ -399,13 +400,26 @@ const connectWallet = async (walletType: WalletType) => {
     error.value = ''
     await authStore.connectWallet()
     if (authStore.address) {
-      const isAuthorized = await authStore.checkAuthorization(authStore.address)
+      log.info('LoginModal', `Checking authorization for ${authStore.address}`)
+      let isAuthorized = await authStore.checkAuthorization(authStore.address)
+      
+      if (!isAuthorized) {
+        log.info('LoginModal', 'User not authorized, attempting wallet registration...')
+        try {
+          await authStore.registerWithWallet(authStore.address)
+          // After registration, check again or just allow if it succeeded
+          isAuthorized = await authStore.checkAuthorization(authStore.address)
+        } catch (regErr) {
+          log.error('LoginModal', 'Registration failed', regErr)
+        }
+      }
+
       if (isAuthorized) {
         localStorage.setItem('connectedWallet', walletType)
         closeModal()
         router.push('/chat')
       } else {
-        error.value = 'Tu dirección no está autorizada para acceder a esta aplicación.'
+        error.value = 'Tu dirección no pudo ser registrada o autorizada. Por favor, contacta a soporte.'
       }
     }
   } catch (err) {

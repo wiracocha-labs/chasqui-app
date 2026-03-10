@@ -20,6 +20,8 @@ interface TaskMeta {
   beneficiaryReleaseConfirmed?: boolean
   /** Fecha fin mostrada tras actualización (solo visual) */
   customEndDate?: string
+  /** ID de la conversación asociada en el backend */
+  conversationId?: string
 }
 
 export function useTaskManager() {
@@ -408,12 +410,18 @@ export function useTaskManager() {
         try {
           const conversationName = createForm.value.taskDescription || `Chat for Task #${createdEscrowId}`
 
-          await apiPost('/conversations', {
+          const chatRes = await apiPost<any>('/conversations', {
             participant_ids: [authStore.address, createForm.value.beneficiary],
-            conversation_type: 'group',
+            conversation_type: 'Group',
             name: conversationName
           }, authStore.token)
-          log.info('TaskManager', `Chat created for Task ${createdEscrowId}`)
+
+          if (chatRes && chatRes.id) {
+            const fullId = typeof chatRes.id === 'string' ? chatRes.id : chatRes.id.tb + ':' + chatRes.id.id.String
+            taskMeta.value[createdEscrowId].conversationId = fullId
+            saveTaskMeta()
+            log.info('TaskManager', `Chat ${fullId} linked to Task ${createdEscrowId}`)
+          }
         } catch (chatError) {
           log.error('TaskManager', 'Failed to create chat for task', chatError)
         }

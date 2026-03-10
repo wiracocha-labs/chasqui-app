@@ -115,7 +115,7 @@
       <div v-if="currentConversation" class="border-b border-bg-primary border-opacity-10 p-4 flex justify-between items-center">
         <div>
           <h2 class="text-xl font-bold flex items-center gap-2">
-            {{ currentConversation.conversation_type === 'group' ? '#' : '' }}
+            {{ currentConversation.conversation_type === 'Group' ? '#' : '' }}
             {{ currentConversation.name || getDirectConversationName(currentConversation) }}
           </h2>
           <div class="flex gap-3 text-xs mt-1">
@@ -333,7 +333,7 @@ type SurrealId = string | { tb: string, id: { String: string } }
 type Conversation = {
   id?: SurrealId
   participants: SurrealId[]
-  conversation_type: 'direct' | 'group'
+  conversation_type: 'Direct' | 'Group'
   name?: string
   created_at: string
   updated_at: string
@@ -494,8 +494,8 @@ const loadConversations = async () => {
     log.info('ChatView', `Received ${convs.length} conversations`, convs)
     
     // Split into Groups and Directs
-    userGroups.value = convs.filter(c => c.conversation_type === 'group')
-    userDirects.value = convs.filter(c => c.conversation_type === 'direct')
+    userGroups.value = convs.filter(c => c.conversation_type === 'Group')
+    userDirects.value = convs.filter(c => c.conversation_type === 'Direct')
     
     isConnected.value = true
 
@@ -574,18 +574,29 @@ const createConversation = async () => {
       .map(p => p.trim())
       .filter(p => p !== '')
     
-    // Ensure current user is in participants if needed
-    if (!parts.includes(authStore.address || '')) {
-      if (authStore.address) parts.push(authStore.address)
-    }
+    let payload: any = {}
 
-    const payload: any = {
-      participant_ids: parts,
-      conversation_type: modalType.value
-    }
+    if (modalType.value === 'direct' && parts.length === 1) {
+      // Use shorthand for direct chat
+      payload = {
+        target_wallet: parts[0],
+        conversation_type: 'Direct'
+      }
+    } else {
+      // Manual (Group/Direct with multiple or specific IDs)
+      // Ensure current user is in participants if needed
+      if (!parts.includes(authStore.address || '')) {
+        if (authStore.address) parts.push(authStore.address)
+      }
 
-    if (modalType.value === 'group') {
-      payload.name = newGroupName.value.trim()
+      payload = {
+        participant_ids: parts,
+        conversation_type: modalType.value === 'direct' ? 'Direct' : 'Group'
+      }
+
+      if (modalType.value === 'group') {
+        payload.name = newGroupName.value.trim()
+      }
     }
 
     const newConv = await import('../services/api').then(m => 
@@ -605,28 +616,28 @@ const createConversation = async () => {
   }
 }
 
-// Invite Guest
+// Add Participant (formerly Invite Guest)
 const handleInviteGuest = async () => {
   if (!inviteEmail.value || !currentConversation.value) return
   
   try {
     const fullId = getStrId(currentConversation.value.id)
-    const payload = { email: inviteEmail.value }
+    const payload = { identifier: inviteEmail.value }
     
-    log.info('ChatView', `Inviting guest ${inviteEmail.value} to ${fullId}`)
+    log.info('ChatView', `Adding participant ${inviteEmail.value} to ${fullId}`)
     
     const { apiPost } = await import('../services/api')
-    await apiPost(`/conversations/${fullId}/add-guest`, payload, authStore.token)
+    await apiPost(`/conversations/${fullId}/participants`, payload, authStore.token)
     
-    log.info('ChatView', 'Guest invited successfully')
+    log.info('ChatView', 'Participant added successfully')
     showInviteModal.value = false
     inviteEmail.value = ''
-    alert('Invitado agregado correctamente')
+    alert('Participante agregado correctamente')
     
     await loadConversations()
   } catch (err) {
-    log.error('ChatView', 'Error inviting guest', err)
-    alert('Error al invitar al usuario. Asegúrate de que el usuario exista en el sistema.')
+    log.error('ChatView', 'Error adding participant', err)
+    alert('Error al agregar al usuario. Asegúrate de que el usuario exista o la wallet sea válida.')
   }
 }
 
@@ -731,6 +742,13 @@ watch(() => route.params.id, (newId) => {
 // Lifecycle
 let pollInterval: any = null
 
+const setupSocket = () => {
+  if (!authStore.token || isSocketConnected.value) return
+  
+  log.info('ChatView', 'Connecting socket...')
+  connectSocket(authStore.token)
+}
+
 onMounted(async () => {
   try {
     // Start loading conversations immediately if auth is ready
@@ -742,71 +760,95 @@ onMounted(async () => {
         log.debug('ChatView', 'Polling for new conversations...')
         loadConversations()
       }
-    }, 15000) // Every 15 seconds
-    
-const setupSocket = () => {
-  if (!authStore.token || isSocketConnected.value) return
-  
-  log.info('ChatView', 'Connecting socket...')
-  connectSocket(authStore.token)
-}
+    }, 15000)
 
-// Always setup the listener, it will wait for the socket to be active
-onEvent((event) => {
-  log.info('ChatView', '📥 WS Event received:', event)
-  if (event.type === 'NewMessage' && event.message) {
-    log.info('ChatView', '✨ NewMessage event confirmed')
-    const msg = event.message
-    const senderIdStr = getStrId(msg.sender_id)
-    const cleanSenderAddr = senderIdStr.includes(':') ? senderIdStr.split(':')[1] : senderIdStr
-    
-    const isFromMe = (cleanSenderAddr.toLowerCase() === currentMatchId.value?.toLowerCase()) || 
-                     (authStore.address && cleanSenderAddr.toLowerCase() === authStore.address.toLowerCase())
-    
-    log.info('ChatView', `👤 Sender: ${cleanSenderAddr}. MyID: ${currentMatchId.value}. IsFromMe? ${isFromMe}`)
-    
-    if (!isFromMe) {
-      const currentFullId = currentConversation.value ? getStrId(currentConversation.value.id) : null
-      const currentBackendId = currentFullId ? getBackendId(currentFullId) : null
-      const messageConvId = getStrId(msg.conversation_id || '')
+    // Check for target_wallet in query params
+    if (route.query.target_wallet) {
+      const wallet = route.query.target_wallet as string
+      log.info('ChatView', `Direct chat requested from query param for wallet: ${wallet}`)
       
-      if (currentBackendId === messageConvId || (currentFullId && currentFullId === messageConvId)) {
-        log.info('ChatView', '✅ Appending message from another user to UI')
-        messages.value.push({
-          text: msg.content,
-          sender: formatAddress(cleanSenderAddr),
-          timestamp: new Date(msg.created_at).getTime()
-        })
-        setTimeout(scrollToBottom, 50)
+      // Try to find if we already have a direct chat with this person
+      const existingDirect = [...userGroups.value, ...userDirects.value].find(c => 
+        c.participants.some(p => getStrId(p).toLowerCase().includes(wallet.toLowerCase()))
+      )
+      
+      if (existingDirect) {
+        log.info('ChatView', 'Existing direct chat found, selecting it')
+        selectConversation(existingDirect)
       } else {
-        log.info('ChatView', '⏳ Message is for another conversation, ignoring.')
+        log.info('ChatView', 'No existing direct chat, creating one...')
+        const { apiPost } = await import('../services/api')
+        try {
+          const newConv = await apiPost<Conversation>('/conversations', {
+            target_wallet: wallet,
+            conversation_type: 'Direct'
+          }, authStore.token)
+          log.info('ChatView', 'Direct chat created successfully', newConv)
+          await loadConversations()
+          selectConversation(newConv)
+        } catch (err) {
+          log.error('ChatView', 'Error creating direct chat from query param', err)
+        }
       }
-    } else {
-      log.info('ChatView', '🙈 Message is from me, ignoring (already added locally).')
     }
-  }
-})
 
-// Watch for token to connect socket
-watch(() => authStore.token, (newToken) => {
-  if (newToken) {
-    setupSocket()
-  }
-}, { immediate: true })
+    // Always setup the listener, it will wait for the socket to be active
+    onEvent((event) => {
+      log.info('ChatView', '📥 WS Event received:', event)
+      if (event.type === 'NewMessage' && event.message) {
+        log.info('ChatView', '✨ NewMessage event confirmed')
+        const msg = event.message
+        const senderIdStr = getStrId(msg.sender_id)
+        const cleanSenderAddr = senderIdStr.includes(':') ? senderIdStr.split(':')[1] : senderIdStr
+        
+        const isFromMe = (cleanSenderAddr.toLowerCase() === currentMatchId.value?.toLowerCase()) || 
+                         (authStore.address && cleanSenderAddr.toLowerCase() === authStore.address.toLowerCase())
+        
+        log.info('ChatView', `👤 Sender: ${cleanSenderAddr}. MyID: ${currentMatchId.value}. IsFromMe? ${isFromMe}`)
+        
+        if (!isFromMe) {
+          const currentFullId = currentConversation.value ? getStrId(currentConversation.value.id) : null
+          const currentBackendId = currentFullId ? getBackendId(currentFullId) : null
+          const messageConvId = getStrId(msg.conversation_id || '')
+          
+          if (currentBackendId === messageConvId || (currentFullId && currentFullId === messageConvId)) {
+            log.info('ChatView', '✅ Appending message from another user to UI')
+            messages.value.push({
+              text: msg.content,
+              sender: formatAddress(cleanSenderAddr),
+              timestamp: new Date(msg.created_at).getTime()
+            })
+            setTimeout(scrollToBottom, 50)
+          } else {
+            log.info('ChatView', '⏳ Message is for another conversation, ignoring.')
+          }
+        } else {
+          log.info('ChatView', '🙈 Message is from me, ignoring (already added locally).')
+        }
+      }
+    })
 
-// Focus on input when component mounts
-nextTick(() => {
-  const inputElement = document.querySelector('input[type="text"]') as HTMLInputElement
-  if (inputElement) {
-    inputElement.focus()
-  }
-})
+    // Watch for token to connect socket
+    watch(() => authStore.token, (newToken) => {
+      if (newToken) {
+        setupSocket()
+      }
+    }, { immediate: true })
+
+    // Focus on input when component mounts
+    nextTick(() => {
+      const inputElement = document.querySelector('input[type="text"]') as HTMLInputElement
+      if (inputElement) {
+        inputElement.focus()
+      }
+    })
+
     // Cleanup
     const { onUnmounted } = await import('vue')
     onUnmounted(() => {
       if (pollInterval) clearInterval(pollInterval)
     })
-    
+
   } catch (err) {
     log.error('ChatView', 'Error setting up chat:', err)
     error.value = 'Error al inicializar el chat'
