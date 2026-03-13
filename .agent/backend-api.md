@@ -84,7 +84,7 @@ POST /api/login
   {"type": "Error", "message": "Reason for failure"}
   ```
 
-## �️ API Introspection
+## 🔗 API Introspection
 If you have access to the server codebase, you can run the following commands to see the full list of endpoints and schemas:
 
 ```bash
@@ -92,14 +92,78 @@ cargo run -- --list-api
 cargo run -- --list-ws
 ```
 
-## �📋 Available REST Endpoints
-- `GET /tasks`: List all tasks.
-- `POST /tasks`: Create a new task.
-- `PATCH /tasks/{uuid}`: Update completion status.
-- `GET /conversations`: List user's conversations.
-- `POST /conversations`: Create a new chat.
-  - **Shorthand (Direct):** `{"target_wallet": "0x...", "conversation_type": "direct"}` (Auto-includes you).
-  - **Manual (Group/Direct):** `{"participant_ids": ["uuid", "wallet"], "conversation_type": "direct|group"}`.
-- `GET /conversations/{id}/messages`: Retrieve chat history.
-- `POST /conversations/{id}/participants`: Add participant by wallet or ID.
-  - **Payload:** `{"identifier": "0x... atau tb:id"}`
+## 📋 Available REST Endpoints
+
+### Tasks Management
+- `GET /api/tasks`: List all tasks.
+  - **Response:** `[{"uuid": "...", "task_name": "..."}]`
+- `POST /api/tasks`: Create a new task.
+  - **Payload:** `{"task_name": "Task description"}`
+  - **Response:** `{"uuid": "...", "task_name": "..."}`
+- `PATCH /api/tasks/{uuid}`: Update task completion status.
+  - **Response:** Updated task object
+
+### Conversations & Chat
+- `GET /api/conversations`: List user's conversations.
+  - **Response:** Array of conversation objects with IDs in format `conversation:<uuid>`
+- `POST /api/conversations`: Create a new chat.
+  - **Direct Chat:** `{"target_wallet": "0x...", "conversation_type": "Direct"}`
+  - **Group Chat:** `{"participant_ids": ["uuid", "wallet"], "conversation_type": "Group", "name": "Group Name"}`
+  - **Note:** Creator is automatically included as participant
+- `GET /api/conversations/{id}/messages`: Retrieve chat history.
+  - **Query Params:** `?limit=50&offset=0`
+  - **ID Format:** `conversation:<uuid>`
+  - **Response:** Array of messages with pagination
+- `POST /api/conversations/{id}/participants`: Add participant by wallet or ID.
+  - **Payload:** `{"identifier": "0x... or user:uuid"}`
+  - **ID Format:** `conversation:<uuid>`
+
+## 🧠 Business Logic Details
+
+### Authentication Flow
+1. **Traditional Registration**: Requires `username`, `email`, `password`
+   - Username validation: letters only
+   - Email validation: basic format check
+   - Password: hashed with bcrypt
+2. **Wallet Registration**: Only requires `wallet` address
+   - Auto-generates username: `wallet_0x1234_uuid`
+   - No password required
+3. **Login Methods**:
+   - Traditional: `email/username + password`
+   - Wallet: `wallet` only (creates user if missing)
+4. **JWT Token**: Contains `sub` (user ID), `username`, `roles`, `exp`, `iat`
+
+### Task Management
+- **Current Model**: Simple structure with `uuid` and `task_name` only
+- **Creation**: Auto-generates UUID, validates task_name presence
+- **Updates**: Currently supports status changes via PATCH
+- **Note**: Blockchain integration fields mentioned in planning are not yet implemented
+
+### Chat System
+- **Conversation Types**: `Direct` (2 participants) or `Group` (2+ participants)
+- **ID Formats**: 
+  - Conversations: `conversation:<uuid>`
+  - Users: `user:<uuid>`
+  - Messages: `msg:<uuid>`
+- **Participant Resolution**: Supports wallet addresses, UUIDs, or Thing format
+- **WebSocket Events**: Real-time messaging with JSON protocol
+
+## 🔧 Implementation Notes
+
+### Error Handling
+- **400 Bad Request**: Validation errors, missing fields
+- **401 Unauthorized**: Invalid credentials, missing token
+- **404 Not Found**: Resource not found
+- **500 Internal Server Error**: Database or system errors
+
+### Database Schema
+- **Users**: Stores traditional and wallet-based users
+- **Conversations**: Links participants with conversation metadata
+- **Messages**: Stores chat history with timestamps
+- **Tasks**: Simple task tracking (currently minimal)
+
+### Security Features
+- JWT-based authentication
+- Password hashing with bcrypt
+- Token validation for all protected endpoints
+- WebSocket authentication via query parameter

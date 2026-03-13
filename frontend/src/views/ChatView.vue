@@ -590,7 +590,7 @@ const createConversation = async () => {
       // Use shorthand for direct chat
       payload = {
         target_wallet: parts[0],
-        conversation_type: 'direct'
+        conversation_type: 'Direct'  // Capitalized to match backend Enum
       }
     } else {
       // Manual (Group/Direct with multiple or specific IDs)
@@ -601,13 +601,16 @@ const createConversation = async () => {
 
       payload = {
         participant_ids: parts,
-        conversation_type: modalType.value === 'direct' ? 'direct' : 'group'
+        conversation_type: modalType.value === 'direct' ? 'Direct' : 'Group' // Capitalized
       }
 
       if (modalType.value === 'group') {
         payload.name = newGroupName.value.trim()
       }
     }
+
+    console.log('[Chat Debug] Payload a enviar para crear conversación:', JSON.stringify(payload))
+    log.info('ChatView', 'Sending payload to create conversation:', payload)
 
     const newConv = await import('../services/api').then(m => 
       m.apiPost<Conversation>('/conversations', payload, authStore.token)

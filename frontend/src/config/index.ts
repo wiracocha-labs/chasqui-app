@@ -10,6 +10,16 @@ export const ENV = {
   isTest: import.meta.env.MODE === 'test'
 } as const
 
+// Validate required environment variables
+if (!import.meta.env.VITE_API_BASE_URL) {
+  throw new Error(
+    `🚨 ERROR CRÍTICO DE CONFIGURACIÓN 🚨\n` +
+    `Falta la variable de entorno VITE_API_BASE_URL.\n` +
+    `Por favor, crea un archivo .env si no existe y define:\n` +
+    `VITE_API_BASE_URL=http://tu-backend-url/api`
+  )
+}
+
 // Debug configuration - Single source of truth
 export const DEBUG = {
   // Single debug flag from multiple sources
@@ -90,13 +100,12 @@ export const CONTRACT_CONFIG = {
 
 // Backend API (Chasqui Server)
 export const API_CONFIG = {
-  // Default backend base URL: updated to match backend dev server (port 8080).
-  // It can still be overridden with VITE_API_BASE_URL in your .env
-  baseUrl: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080/api',
+  // Always use VITE_API_BASE_URL - required for production reliability
+  baseUrl: import.meta.env.VITE_API_BASE_URL,
   timeout: 10000,
-  /** WebSocket URL for chat. Pass the JWT token. */
+  // WebSocket URL for chat. Pass the JWT token.
   wsChatUrl: (token: string) => {
-    const base = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:4040/api'
+    const base = import.meta.env.VITE_API_BASE_URL
     const wsBase = base.startsWith('http')
       ? base.replace(/^http/, 'ws')
       : `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}${base}`

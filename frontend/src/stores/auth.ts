@@ -218,6 +218,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const registerWithWallet = async (wallet: string) => {
     log.info('AuthStore', `Registering with wallet: ${wallet}`)
+    console.log('[Auth Debug] Exact wallet given to registerWithWallet:', wallet)
     const res = await apiPost<{ token?: string }>('/register', { wallet })
     // Some backend flows might return the token immediately on register
     if (res?.token) {
@@ -237,6 +238,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const loginWithWallet = async (wallet: string) => {
     log.info('AuthStore', `Logging in with wallet: ${wallet}`)
+    console.log('[Auth Debug] Exact wallet given to loginWithWallet:', wallet)
     const res = await apiPost<{ token: string }>('/login', { wallet })
     if (!res?.token) {
       throw new Error('Login con wallet exitoso, pero no se recibió token del servidor.')
