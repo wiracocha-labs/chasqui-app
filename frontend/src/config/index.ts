@@ -76,13 +76,16 @@ if (!CURRENT_NETWORK || !NETWORKS[CURRENT_NETWORK]) {
   )
 }
 
-// Debug: Log environment variables
-console.log('🔧 Debug - Environment Variables:')
-console.log('VITE_NETWORK:', import.meta.env.VITE_NETWORK)
-console.log('CURRENT_NETWORK:', CURRENT_NETWORK)
-console.log('VITE_FUJI_AUTH_CONTRACT:', import.meta.env.VITE_FUJI_AUTH_CONTRACT)
-console.log('VITE_FUJI_EERC20_CONTRACT:', import.meta.env.VITE_FUJI_EERC20_CONTRACT)
-console.log('VITE_FUJI_REGISTRAR_CONTRACT:', import.meta.env.VITE_FUJI_REGISTRAR_CONTRACT)
+// Log env vars solo cuando debug está activo (?debug=true o VITE_DEBUG=true)
+if (typeof window !== 'undefined' && DEBUG.enabled) {
+  console.log('🔧 Debug - Environment Variables:', {
+    VITE_NETWORK: import.meta.env.VITE_NETWORK,
+    CURRENT_NETWORK,
+    VITE_FUJI_AUTH_CONTRACT: import.meta.env.VITE_FUJI_AUTH_CONTRACT,
+    VITE_FUJI_EERC20_CONTRACT: import.meta.env.VITE_FUJI_EERC20_CONTRACT,
+    VITE_FUJI_REGISTRAR_CONTRACT: import.meta.env.VITE_FUJI_REGISTRAR_CONTRACT
+  })
+}
 
 // Contract addresses configuration
 export const CONTRACT_CONFIG = {
