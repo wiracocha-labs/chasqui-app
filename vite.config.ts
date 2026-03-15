@@ -18,6 +18,10 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [vue(), tailwindcss()],
     root: './frontend',
+    publicDir: 'public',
+    build: {
+      outDir: '../dist',
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, './frontend/src'),
