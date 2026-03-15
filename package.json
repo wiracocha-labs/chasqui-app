@@ -18,6 +18,10 @@
   ],
   "author": "Wiracocha Labs",
   "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
