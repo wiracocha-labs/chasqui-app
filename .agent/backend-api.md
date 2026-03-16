@@ -84,6 +84,21 @@ POST /api/login
   {"type": "Error", "message": "Reason for failure"}
   ```
 
+### GitHub notifications in chat (PR / merge)
+To show **PR opened** and **merge** notifications in the chat, the backend should post a message (via the same flow as any other message) with either:
+
+1. **Structured content (recommended):** `content` as JSON string:
+   ```json
+   {"event": "pull_request", "title": "feat: add GitHub webhooks", "url": "https://github.com/org/repo/pull/12", "author": "TincoNomad"}
+   ```
+   or for merges:
+   ```json
+   {"event": "merge", "title": "Merged dev into main", "url": "https://github.com/org/repo/commit/abc", "author": "Kalchaqui", "branch": "main"}
+   ```
+   Allowed `event` values: `pull_request`, `merge`, `push`.
+
+2. **Plain text from a bot user:** use a sender_id that contains `github` or `git-bot` (e.g. `user:github-bot`) and plain text as `content`. The frontend will render it as a notification card and will try to detect URLs and "merge" in the text.
+
 ## 🔗 API Introspection
 If you have access to the server codebase, you can run the following commands to see the full list of endpoints and schemas:
 
