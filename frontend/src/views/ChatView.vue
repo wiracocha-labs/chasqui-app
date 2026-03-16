@@ -187,18 +187,45 @@
             </div>
 
             <div v-else v-for="(message, index) in messages" :key="index" class="flex items-start gap-4">
-              <div class="w-12 h-12 rounded-xl bg-slate-700 flex-shrink-0 border-2 border-brand-20 overflow-hidden flex items-center justify-center">
-                 <div class="text-xl">👤</div>
-              </div>
-              <div class="flex-1">
-                <div class="flex items-baseline gap-2 mb-1">
-                  <span class="font-bold text-white text-[15px]">{{ message.sender }}</span>
-                  <span class="text-[12px] opacity-40">{{ formatTime(message.timestamp) }}</span>
+              <!-- GitHub / merge notification card -->
+              <template v-if="message.githubMeta">
+                <div class="w-12 h-12 rounded-xl flex-shrink-0 border-2 border-brand-20 overflow-hidden flex items-center justify-center bg-slate-800">
+                  <span class="text-xl">{{ message.githubMeta.event === 'merge' ? '🔀' : '📌' }}</span>
                 </div>
-                <div class="text-[15px] leading-relaxed text-gray-200">
-                  {{ message.text }}
+                <div class="flex-1 rounded-xl border border-brand-20 bg-brand-5 px-4 py-3">
+                  <div class="flex items-baseline gap-2 mb-1">
+                    <span class="font-bold text-brand text-[15px]">{{ message.githubMeta.event === 'merge' ? 'Merge exitoso' : 'Nuevo PR' }}</span>
+                    <span class="text-[12px] opacity-40">{{ formatTime(message.timestamp) }}</span>
+                    <span v-if="message.githubMeta.author" class="text-[12px] opacity-70">· {{ message.githubMeta.author }}</span>
+                  </div>
+                  <p class="text-[15px] leading-relaxed text-gray-200 mb-2">{{ message.text }}</p>
+                  <a
+                    v-if="message.githubMeta.url"
+                    :href="message.githubMeta.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1 text-sm text-brand hover:underline"
+                  >
+                    Ver en GitHub
+                    <span aria-hidden="true">→</span>
+                  </a>
                 </div>
-              </div>
+              </template>
+              <!-- Normal chat message -->
+              <template v-else>
+                <div class="w-12 h-12 rounded-xl bg-slate-700 flex-shrink-0 border-2 border-brand-20 overflow-hidden flex items-center justify-center">
+                  <div class="text-xl">👤</div>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-baseline gap-2 mb-1">
+                    <span class="font-bold text-white text-[15px]">{{ message.sender }}</span>
+                    <span class="text-[12px] opacity-40">{{ formatTime(message.timestamp) }}</span>
+                  </div>
+                  <div class="text-[15px] leading-relaxed text-gray-200">
+                    {{ message.text }}
+                  </div>
+                </div>
+              </template>
             </div>
 
           </div>
@@ -339,10 +366,21 @@ type Conversation = {
   updated_at: string
 }
 
+/** Metadata when the message is a GitHub notification (PR opened, merge, etc.) */
+type GitHubNotificationMeta = {
+  event: 'pull_request' | 'merge' | 'push'
+  title?: string
+  url?: string
+  author?: string
+  branch?: string
+}
+
 type Message = {
   text: string
   sender: string
   timestamp: number
+  /** Set when the backend sends a GitHub webhook notification */
+  githubMeta?: GitHubNotificationMeta | null
 }
 
 // Auth & Router
@@ -437,6 +475,34 @@ const formatTime = (timestamp: number) => {
     hour: '2-digit', 
     minute: '2-digit' 
   })
+}
+
+/** Detect and parse GitHub notification from backend (sender name or JSON content). */
+function parseGitHubNotification(content: string, senderIdStr: string): GitHubNotificationMeta | null {
+  const fromGitHubBot = /github|git-bot|webhook/i.test(senderIdStr)
+  try {
+    const parsed = JSON.parse(content) as Record<string, unknown>
+    if (parsed && typeof parsed.event === 'string' && ['pull_request', 'merge', 'push'].includes(parsed.event)) {
+      return {
+        event: parsed.event as GitHubNotificationMeta['event'],
+        title: typeof parsed.title === 'string' ? parsed.title : undefined,
+        url: typeof parsed.url === 'string' ? parsed.url : undefined,
+        author: typeof parsed.author === 'string' ? parsed.author : undefined,
+        branch: typeof parsed.branch === 'string' ? parsed.branch : undefined
+      }
+    }
+  } catch {
+    // content is plain text
+  }
+  if (fromGitHubBot && content.trim()) {
+    const urlMatch = content.match(/https?:\/\/[^\s]+/i)
+    return {
+      event: content.toLowerCase().includes('merge') ? 'merge' : 'pull_request',
+      title: content.slice(0, 120) + (content.length > 120 ? '…' : ''),
+      url: urlMatch ? urlMatch[0] : undefined
+    }
+  }
+  return null
 }
 
 const getConversationId = (conv: Conversation): string => {
@@ -725,12 +791,19 @@ const selectConversation = async (conv: Conversation) => {
 
     const msgs = await apiGet<any[]>(`/conversations/${fullId}/messages`, authStore.token)
     
-    // Map backend messages to UI structure
-    messages.value = msgs.map(m => ({
-      text: m.content || '',
-      sender: formatAddress(getStrId(m.sender_id)),
-      timestamp: new Date(m.created_at || Date.now()).getTime()
-    })).sort((a, b) => a.timestamp - b.timestamp)
+    // Map backend messages to UI structure (incl. GitHub notifications)
+    const senderStr = (m: any) => getStrId(m.sender_id)
+    messages.value = msgs.map(m => {
+      const content = m.content || ''
+      const sender = formatAddress(senderStr(m))
+      const githubMeta = parseGitHubNotification(content, senderStr(m))
+      return {
+        text: githubMeta ? (githubMeta.title || content) : content,
+        sender,
+        timestamp: new Date(m.created_at || Date.now()).getTime(),
+        githubMeta: githubMeta || undefined
+      }
+    }).sort((a, b) => a.timestamp - b.timestamp)
     
     setTimeout(scrollToBottom, 50)
   } catch (err) {
@@ -826,10 +899,12 @@ onMounted(async () => {
           
           if (currentBackendId === messageConvId || (currentFullId && currentFullId === messageConvId)) {
             log.info('ChatView', '✅ Appending message from another user to UI')
+            const githubMeta = parseGitHubNotification(msg.content, senderIdStr)
             messages.value.push({
-              text: msg.content,
+              text: githubMeta ? (githubMeta.title || msg.content) : msg.content,
               sender: formatAddress(cleanSenderAddr),
-              timestamp: new Date(msg.created_at).getTime()
+              timestamp: new Date(msg.created_at).getTime(),
+              githubMeta: githubMeta || undefined
             })
             setTimeout(scrollToBottom, 50)
           } else {
