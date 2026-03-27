@@ -321,6 +321,7 @@
               class="w-full bg-secondary border border-brand-20 rounded-lg px-4 py-2 text-white outline-none focus:border-brand transition-colors resize-none"
             ></textarea>
             <p v-if="modalType === 'group'" class="text-[10px] text-color-textSecondary mt-1 italic">Separa las direcciones por comas.</p>
+            <p class="text-[10px] text-color-textSecondary mt-0.5">Cada participante debe haber iniciado sesión al menos una vez con esa wallet en la app.</p>
           </div>
         </div>
         
@@ -350,7 +351,7 @@ import AppSidebar from '../components/ui/AppSidebar.vue'
 import { ref, onMounted, nextTick, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import { apiGet } from '../services/api'
+import { apiGet, ApiError } from '../services/api'
 import { log } from '../services/logger'
 import { useChatSocket } from '../composables/useChatSocket'
 
@@ -653,23 +654,15 @@ const createConversation = async () => {
     let payload: any = {}
 
     if (modalType.value === 'direct' && parts.length === 1) {
-      // Use shorthand for direct chat
       payload = {
         target_wallet: parts[0],
-        conversation_type: 'Direct'  // Capitalized to match backend Enum
+        conversation_type: 'direct'
       }
     } else {
-      // Manual (Group/Direct with multiple or specific IDs)
-      // Ensure current user is in participants if needed
-      if (!parts.includes(authStore.address || '')) {
-        if (authStore.address) parts.push(authStore.address)
-      }
-
       payload = {
         participant_ids: parts,
-        conversation_type: modalType.value === 'direct' ? 'Direct' : 'Group' // Capitalized
+        conversation_type: modalType.value === 'direct' ? 'direct' : 'group'
       }
-
       if (modalType.value === 'group') {
         payload.name = newGroupName.value.trim()
       }
@@ -678,9 +671,20 @@ const createConversation = async () => {
     console.log('[Chat Debug] Payload a enviar para crear conversación:', JSON.stringify(payload))
     log.info('ChatView', 'Sending payload to create conversation:', payload)
 
-    const newConv = await import('../services/api').then(m => 
-      m.apiPost<Conversation>('/conversations', payload, authStore.token)
-    )
+    const { apiPost } = await import('../services/api')
+    let newConv: Conversation
+    try {
+      newConv = await apiPost<Conversation>('/conversations', payload, authStore.token)
+    } catch (firstErr: unknown) {
+      // Si 400, reintentar con conversation_type en PascalCase (algunos backends Rust lo esperan así)
+      if (firstErr instanceof ApiError && firstErr.status === 400 && payload.conversation_type) {
+        const retry = { ...payload, conversation_type: payload.conversation_type === 'group' ? 'Group' : 'Direct' }
+        log.info('ChatView', 'Retrying with PascalCase conversation_type', retry)
+        newConv = await apiPost<Conversation>('/conversations', retry, authStore.token)
+      } else {
+        throw firstErr
+      }
+    }
 
     log.info('ChatView', 'Conversation created successfully', newConv)
     
@@ -691,7 +695,22 @@ const createConversation = async () => {
     await loadConversations()
   } catch (err) {
     log.error('ChatView', 'Error creating conversation', err)
-    alert('Error al crear la conversación')
+    let msg = 'Error al crear la conversación'
+    if (err instanceof ApiError) {
+      const b = err.body
+      console.warn('[ChatView] Backend response:', err.status, b)
+      if (b && typeof b === 'object') {
+        const o = b as Record<string, unknown>
+        if (o.message != null) msg = String(o.message)
+        else if (o.detail != null) msg = Array.isArray(o.detail) ? (o.detail as string[]).join('. ') : String(o.detail)
+        else if (o.error != null) msg = String(o.error)
+      } else if (typeof b === 'string' && b) {
+        msg = b
+      } else {
+        msg = err.message || `Error ${err.status}`
+      }
+    }
+    alert(msg)
   }
 }
 
@@ -733,12 +752,14 @@ const sendMessage = async () => {
     const urlId = getStrId(currentConversation.value.id)
     if (!urlId) return
 
-    // 1. Add to UI immediately (Optimistic Update)
+    // 1. Add to UI immediately (Optimistic Update). Si el texto es JSON de notificación GitHub, mostramos tarjeta.
+    const githubMeta = parseGitHubNotification(text, authStore.address || '')
     log.info('ChatView', 'Adding message to UI locally...')
     messages.value.push({
-      text,
+      text: githubMeta ? (githubMeta.title || text) : text,
       sender: formatAddress(currentUserEmail.value),
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      githubMeta: githubMeta || undefined
     })
     setTimeout(scrollToBottom, 50)
 
@@ -837,6 +858,28 @@ const setupSocket = () => {
 
 onMounted(async () => {
   try {
+    // Si hay billetera conectada pero no hay JWT, obtenerlo (el backend exige token para /conversations)
+    if (authStore.address && !authStore.token) {
+      try {
+        await authStore.loginWithWallet(authStore.address)
+        log.info('ChatView', 'JWT obtenido con billetera')
+      } catch (loginErr: unknown) {
+        const status = (loginErr as { status?: number })?.status
+        const msg = (loginErr as Error)?.message ?? ''
+        if (status === 401 || status === 404 || /not found|unauthorized/i.test(msg)) {
+          try {
+            await authStore.registerWithWallet(authStore.address)
+            await authStore.loginWithWallet(authStore.address)
+            log.info('ChatView', 'Usuario registrado y JWT obtenido')
+          } catch (e) {
+            log.warn('ChatView', 'No se pudo registrar/iniciar sesión con billetera', e)
+          }
+        } else {
+          log.warn('ChatView', 'Login con billetera falló', loginErr)
+        }
+      }
+    }
+
     // Start loading conversations immediately if auth is ready
     await loadConversations()
     
