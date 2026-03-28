@@ -9,6 +9,7 @@ import TaskCreateForm from '../components/task/TaskCreateForm.vue'
 import TaskList from '../components/task/TaskList.vue'
 import { useTaskManager } from '../composables/useTaskManager'
 import { useAuthStore } from '../stores/auth'
+import { DEBUG } from '../config'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -90,6 +91,9 @@ const handleCreateEscrow = async () => {
               Desconectar
             </button>
           </div>
+        </div>
+        <div v-if="DEBUG.enabled" class="mb-4 rounded-lg border border-amber-500/50 bg-amber-500/10 px-4 py-2 text-sm text-amber-700 dark:text-amber-300">
+          <strong>Modo debug activo.</strong> Abre la consola (F12 → Console) para ver logs de tareas y por qué se muestra u oculta &quot;Completar y liberar pago&quot;. Para activar: <code class="rounded bg-amber-200/50 px-1">?debug=true</code> en la URL o <code class="rounded bg-amber-200/50 px-1">VITE_DEBUG=true</code> en .env.
         </div>
         <AlertMessage v-if="alert.message" :type="alert.type" :message="alert.message" class="mb-4" />
         <WalletConnectCard v-if="!account" :connecting="connecting" @connect="connectWallet" class="mb-8" />

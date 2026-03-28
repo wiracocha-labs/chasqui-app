@@ -1458,3 +1458,46 @@ section li {
   background-position: center;
   background-repeat: no-repeat;
 }
+
+/* Landing home: menos aire vertical entre secciones (solo móvil; desktop sigue con 6em en section) */
+@media (max-width: 768px) {
+  .home section {
+    padding: 2.5rem 1rem;
+  }
+
+  .home section h2 {
+    margin-bottom: 1rem;
+  }
+
+  .home .section-header.mb-12 {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .home #faq h2.mb-12 {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .home .bento-grid--features.mb-8 {
+    margin-bottom: 1.25rem !important;
+  }
+
+  .home .content-background-wrapper {
+    padding-bottom: 1.25rem;
+  }
+
+  .home .future-section {
+    padding-bottom: 2.5rem;
+  }
+
+  .home .cta-block {
+    padding: 2.5rem 1.25rem;
+  }
+
+  .home .cta-buttons {
+    margin-top: 1.5rem;
+  }
+
+  .home .vision-bento {
+    gap: 1.25rem;
+  }
+}
