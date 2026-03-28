@@ -79,11 +79,16 @@ export async function apiFetch<T = unknown>(
     }
 
     if (!res.ok) {
-      throw new ApiError(
-        (data && typeof data === 'object' && 'message' in data ? String((data as { message: unknown }).message) : res.statusText) || `HTTP ${res.status}`,
-        res.status,
-        data
-      )
+      const msg =
+        data && typeof data === 'object'
+          ? String(
+              (data as { message?: unknown }).message ??
+              (data as { detail?: unknown }).detail ??
+              (data as { error?: unknown }).error ??
+              res.statusText
+            )
+          : res.statusText
+      throw new ApiError(msg || `HTTP ${res.status}`, res.status, data)
     }
     return data
   } catch (err) {

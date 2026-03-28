@@ -187,18 +187,45 @@
             </div>
 
             <div v-else v-for="(message, index) in messages" :key="index" class="flex items-start gap-4">
-              <div class="w-12 h-12 rounded-xl bg-slate-700 flex-shrink-0 border-2 border-brand-20 overflow-hidden flex items-center justify-center">
-                 <div class="text-xl">👤</div>
-              </div>
-              <div class="flex-1">
-                <div class="flex items-baseline gap-2 mb-1">
-                  <span class="font-bold text-white text-[15px]">{{ message.sender }}</span>
-                  <span class="text-[12px] opacity-40">{{ formatTime(message.timestamp) }}</span>
+              <!-- GitHub / merge notification card -->
+              <template v-if="message.githubMeta">
+                <div class="w-12 h-12 rounded-xl flex-shrink-0 border-2 border-brand-20 overflow-hidden flex items-center justify-center bg-slate-800">
+                  <span class="text-xl">{{ message.githubMeta.event === 'merge' ? '🔀' : '📌' }}</span>
                 </div>
-                <div class="text-[15px] leading-relaxed text-gray-200">
-                  {{ message.text }}
+                <div class="flex-1 rounded-xl border border-brand-20 bg-brand-5 px-4 py-3">
+                  <div class="flex items-baseline gap-2 mb-1">
+                    <span class="font-bold text-brand text-[15px]">{{ message.githubMeta.event === 'merge' ? 'Merge exitoso' : 'Nuevo PR' }}</span>
+                    <span class="text-[12px] opacity-40">{{ formatTime(message.timestamp) }}</span>
+                    <span v-if="message.githubMeta.author" class="text-[12px] opacity-70">· {{ message.githubMeta.author }}</span>
+                  </div>
+                  <p class="text-[15px] leading-relaxed text-gray-200 mb-2">{{ message.text }}</p>
+                  <a
+                    v-if="message.githubMeta.url"
+                    :href="message.githubMeta.url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1 text-sm text-brand hover:underline"
+                  >
+                    Ver en GitHub
+                    <span aria-hidden="true">→</span>
+                  </a>
                 </div>
-              </div>
+              </template>
+              <!-- Normal chat message -->
+              <template v-else>
+                <div class="w-12 h-12 rounded-xl bg-slate-700 flex-shrink-0 border-2 border-brand-20 overflow-hidden flex items-center justify-center">
+                  <div class="text-xl">👤</div>
+                </div>
+                <div class="flex-1">
+                  <div class="flex items-baseline gap-2 mb-1">
+                    <span class="font-bold text-white text-[15px]">{{ message.sender }}</span>
+                    <span class="text-[12px] opacity-40">{{ formatTime(message.timestamp) }}</span>
+                  </div>
+                  <div class="text-[15px] leading-relaxed text-gray-200">
+                    {{ message.text }}
+                  </div>
+                </div>
+              </template>
             </div>
 
           </div>
@@ -294,6 +321,7 @@
               class="w-full bg-secondary border border-brand-20 rounded-lg px-4 py-2 text-white outline-none focus:border-brand transition-colors resize-none"
             ></textarea>
             <p v-if="modalType === 'group'" class="text-[10px] text-color-textSecondary mt-1 italic">Separa las direcciones por comas.</p>
+            <p class="text-[10px] text-color-textSecondary mt-0.5">Cada participante debe haber iniciado sesión al menos una vez con esa wallet en la app.</p>
           </div>
         </div>
         
@@ -323,7 +351,7 @@ import AppSidebar from '../components/ui/AppSidebar.vue'
 import { ref, onMounted, nextTick, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import { apiGet } from '../services/api'
+import { apiGet, ApiError } from '../services/api'
 import { log } from '../services/logger'
 import { useChatSocket } from '../composables/useChatSocket'
 
@@ -339,10 +367,21 @@ type Conversation = {
   updated_at: string
 }
 
+/** Metadata when the message is a GitHub notification (PR opened, merge, etc.) */
+type GitHubNotificationMeta = {
+  event: 'pull_request' | 'merge' | 'push'
+  title?: string
+  url?: string
+  author?: string
+  branch?: string
+}
+
 type Message = {
   text: string
   sender: string
   timestamp: number
+  /** Set when the backend sends a GitHub webhook notification */
+  githubMeta?: GitHubNotificationMeta | null
 }
 
 // Auth & Router
@@ -437,6 +476,34 @@ const formatTime = (timestamp: number) => {
     hour: '2-digit', 
     minute: '2-digit' 
   })
+}
+
+/** Detect and parse GitHub notification from backend (sender name or JSON content). */
+function parseGitHubNotification(content: string, senderIdStr: string): GitHubNotificationMeta | null {
+  const fromGitHubBot = /github|git-bot|webhook/i.test(senderIdStr)
+  try {
+    const parsed = JSON.parse(content) as Record<string, unknown>
+    if (parsed && typeof parsed.event === 'string' && ['pull_request', 'merge', 'push'].includes(parsed.event)) {
+      return {
+        event: parsed.event as GitHubNotificationMeta['event'],
+        title: typeof parsed.title === 'string' ? parsed.title : undefined,
+        url: typeof parsed.url === 'string' ? parsed.url : undefined,
+        author: typeof parsed.author === 'string' ? parsed.author : undefined,
+        branch: typeof parsed.branch === 'string' ? parsed.branch : undefined
+      }
+    }
+  } catch {
+    // content is plain text
+  }
+  if (fromGitHubBot && content.trim()) {
+    const urlMatch = content.match(/https?:\/\/[^\s]+/i)
+    return {
+      event: content.toLowerCase().includes('merge') ? 'merge' : 'pull_request',
+      title: content.slice(0, 120) + (content.length > 120 ? '…' : ''),
+      url: urlMatch ? urlMatch[0] : undefined
+    }
+  }
+  return null
 }
 
 const getConversationId = (conv: Conversation): string => {
@@ -587,23 +654,15 @@ const createConversation = async () => {
     let payload: any = {}
 
     if (modalType.value === 'direct' && parts.length === 1) {
-      // Use shorthand for direct chat
       payload = {
         target_wallet: parts[0],
-        conversation_type: 'Direct'  // Capitalized to match backend Enum
+        conversation_type: 'direct'
       }
     } else {
-      // Manual (Group/Direct with multiple or specific IDs)
-      // Ensure current user is in participants if needed
-      if (!parts.includes(authStore.address || '')) {
-        if (authStore.address) parts.push(authStore.address)
-      }
-
       payload = {
         participant_ids: parts,
-        conversation_type: modalType.value === 'direct' ? 'Direct' : 'Group' // Capitalized
+        conversation_type: modalType.value === 'direct' ? 'direct' : 'group'
       }
-
       if (modalType.value === 'group') {
         payload.name = newGroupName.value.trim()
       }
@@ -612,9 +671,20 @@ const createConversation = async () => {
     console.log('[Chat Debug] Payload a enviar para crear conversación:', JSON.stringify(payload))
     log.info('ChatView', 'Sending payload to create conversation:', payload)
 
-    const newConv = await import('../services/api').then(m => 
-      m.apiPost<Conversation>('/conversations', payload, authStore.token)
-    )
+    const { apiPost } = await import('../services/api')
+    let newConv: Conversation
+    try {
+      newConv = await apiPost<Conversation>('/conversations', payload, authStore.token)
+    } catch (firstErr: unknown) {
+      // Si 400, reintentar con conversation_type en PascalCase (algunos backends Rust lo esperan así)
+      if (firstErr instanceof ApiError && firstErr.status === 400 && payload.conversation_type) {
+        const retry = { ...payload, conversation_type: payload.conversation_type === 'group' ? 'Group' : 'Direct' }
+        log.info('ChatView', 'Retrying with PascalCase conversation_type', retry)
+        newConv = await apiPost<Conversation>('/conversations', retry, authStore.token)
+      } else {
+        throw firstErr
+      }
+    }
 
     log.info('ChatView', 'Conversation created successfully', newConv)
     
@@ -625,7 +695,22 @@ const createConversation = async () => {
     await loadConversations()
   } catch (err) {
     log.error('ChatView', 'Error creating conversation', err)
-    alert('Error al crear la conversación')
+    let msg = 'Error al crear la conversación'
+    if (err instanceof ApiError) {
+      const b = err.body
+      console.warn('[ChatView] Backend response:', err.status, b)
+      if (b && typeof b === 'object') {
+        const o = b as Record<string, unknown>
+        if (o.message != null) msg = String(o.message)
+        else if (o.detail != null) msg = Array.isArray(o.detail) ? (o.detail as string[]).join('. ') : String(o.detail)
+        else if (o.error != null) msg = String(o.error)
+      } else if (typeof b === 'string' && b) {
+        msg = b
+      } else {
+        msg = err.message || `Error ${err.status}`
+      }
+    }
+    alert(msg)
   }
 }
 
@@ -667,12 +752,14 @@ const sendMessage = async () => {
     const urlId = getStrId(currentConversation.value.id)
     if (!urlId) return
 
-    // 1. Add to UI immediately (Optimistic Update)
+    // 1. Add to UI immediately (Optimistic Update). Si el texto es JSON de notificación GitHub, mostramos tarjeta.
+    const githubMeta = parseGitHubNotification(text, authStore.address || '')
     log.info('ChatView', 'Adding message to UI locally...')
     messages.value.push({
-      text,
+      text: githubMeta ? (githubMeta.title || text) : text,
       sender: formatAddress(currentUserEmail.value),
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      githubMeta: githubMeta || undefined
     })
     setTimeout(scrollToBottom, 50)
 
@@ -725,12 +812,19 @@ const selectConversation = async (conv: Conversation) => {
 
     const msgs = await apiGet<any[]>(`/conversations/${fullId}/messages`, authStore.token)
     
-    // Map backend messages to UI structure
-    messages.value = msgs.map(m => ({
-      text: m.content || '',
-      sender: formatAddress(getStrId(m.sender_id)),
-      timestamp: new Date(m.created_at || Date.now()).getTime()
-    })).sort((a, b) => a.timestamp - b.timestamp)
+    // Map backend messages to UI structure (incl. GitHub notifications)
+    const senderStr = (m: any) => getStrId(m.sender_id)
+    messages.value = msgs.map(m => {
+      const content = m.content || ''
+      const sender = formatAddress(senderStr(m))
+      const githubMeta = parseGitHubNotification(content, senderStr(m))
+      return {
+        text: githubMeta ? (githubMeta.title || content) : content,
+        sender,
+        timestamp: new Date(m.created_at || Date.now()).getTime(),
+        githubMeta: githubMeta || undefined
+      }
+    }).sort((a, b) => a.timestamp - b.timestamp)
     
     setTimeout(scrollToBottom, 50)
   } catch (err) {
@@ -764,6 +858,28 @@ const setupSocket = () => {
 
 onMounted(async () => {
   try {
+    // Si hay billetera conectada pero no hay JWT, obtenerlo (el backend exige token para /conversations)
+    if (authStore.address && !authStore.token) {
+      try {
+        await authStore.loginWithWallet(authStore.address)
+        log.info('ChatView', 'JWT obtenido con billetera')
+      } catch (loginErr: unknown) {
+        const status = (loginErr as { status?: number })?.status
+        const msg = (loginErr as Error)?.message ?? ''
+        if (status === 401 || status === 404 || /not found|unauthorized/i.test(msg)) {
+          try {
+            await authStore.registerWithWallet(authStore.address)
+            await authStore.loginWithWallet(authStore.address)
+            log.info('ChatView', 'Usuario registrado y JWT obtenido')
+          } catch (e) {
+            log.warn('ChatView', 'No se pudo registrar/iniciar sesión con billetera', e)
+          }
+        } else {
+          log.warn('ChatView', 'Login con billetera falló', loginErr)
+        }
+      }
+    }
+
     // Start loading conversations immediately if auth is ready
     await loadConversations()
     
@@ -826,10 +942,12 @@ onMounted(async () => {
           
           if (currentBackendId === messageConvId || (currentFullId && currentFullId === messageConvId)) {
             log.info('ChatView', '✅ Appending message from another user to UI')
+            const githubMeta = parseGitHubNotification(msg.content, senderIdStr)
             messages.value.push({
-              text: msg.content,
+              text: githubMeta ? (githubMeta.title || msg.content) : msg.content,
               sender: formatAddress(cleanSenderAddr),
-              timestamp: new Date(msg.created_at).getTime()
+              timestamp: new Date(msg.created_at).getTime(),
+              githubMeta: githubMeta || undefined
             })
             setTimeout(scrollToBottom, 50)
           } else {
