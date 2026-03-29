@@ -234,24 +234,57 @@ import portadaUrl from '@/assets/images/chasqui_portada.webp'
 
 @media (max-width: 768px) {
   .footer {
-    padding: 30px 20px 60px;
-  }
-  
-  .footer-brand-info {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+    padding: 28px 14px 48px;
   }
 
+  /* Misma estructura de 3 columnas que desktop; un poco más compacta, sin miniatura extrema */
   .footer-links-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.85rem 0.65rem;
+    align-items: start;
   }
-  
+
+  .footer-nav-col {
+    min-width: 0;
+  }
+
+  .footer-col-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.7rem;
+    line-height: 1.15;
+  }
+
+  .footer-links li {
+    margin-bottom: 0.7rem;
+  }
+
+  .footer-links li:last-child {
+    margin-bottom: 0;
+  }
+
+  .footer-links a {
+    font-size: 1.125rem;
+    line-height: 1.3;
+    word-break: break-word;
+  }
+
+  /* Imagen / badge: encajar en pantalla sin achicar tanto como antes */
+  .footer-brand-img {
+    height: min(360px, 62vw);
+    max-width: 100%;
+  }
+
+  .footer-description-badge {
+    min-width: unset;
+    max-width: 94%;
+    padding: 11px 18px;
+  }
+
   .footer-legal-row {
     flex-direction: column;
     text-align: center;
-    gap: 1rem;
+    gap: 0.85rem;
+    font-size: 0.82rem;
   }
 }
 </style>
