@@ -15,9 +15,13 @@
         <a href="#precios" class="nav-link" :class="{ active: activeSection === 'precios' }" @click="closeMenu">Precios</a>
         <a href="#faq" class="nav-link" :class="{ active: activeSection === 'faq' }" @click="closeMenu">FAQ</a>
         <a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" @click="closeMenu" class="nav-link">Documentación</a>
+      </div>
+
+      <div class="navbar-actions">
+        <!-- Móvil: CTA visible en el header (no duplicado en el menú lateral) -->
         <button
           v-if="!authStore.address"
-          class="btn btn--primary mobile-only"
+          class="btn btn--primary mobile-header-cta"
           :disabled="isConnecting"
           @click="startFromNavbar"
         >
@@ -25,14 +29,12 @@
         </button>
         <button
           v-else
-          class="btn btn--outline mobile-only"
-          @click="goToTasksAndClose"
+          class="btn btn--outline mobile-header-cta"
+          @click="goToTasks"
         >
           {{ shortAddress }}
         </button>
-      </div>
 
-      <div class="navbar-actions">
         <button
           v-if="!authStore.address"
           class="btn btn--primary desktop-only"
@@ -99,11 +101,6 @@ const closeMenu = () => {
 const goToTasks = async () => {
   isWalletMenuOpen.value = false
   await router.push('/tasks')
-}
-
-const goToTasksAndClose = async () => {
-  closeMenu()
-  await goToTasks()
 }
 
 const goToTasksFromMenu = async () => {
@@ -302,7 +299,7 @@ onUnmounted(() => {
   transform: scale(0.9);
 }
 
-.mobile-only {
+.mobile-header-cta {
   display: none;
 }
 
@@ -369,7 +366,22 @@ onUnmounted(() => {
   .navbar {
     padding: 1rem 0;
   }
-  
+
+  /* Mismo margen horizontal que el logo (simétrico respecto al borde de pantalla) */
+  .navbar-container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .navbar-actions {
+    gap: 0.5rem;
+    flex-shrink: 1;
+    min-width: 0;
+  }
+
   .navbar-links {
     position: fixed;
     top: 0;
@@ -407,10 +419,34 @@ onUnmounted(() => {
     display: none;
   }
 
-  .mobile-only {
-    display: block;
-    width: 100%;
-    margin-top: 1rem;
+  .mobile-header-cta {
+    display: inline-flex;
+    width: auto;
+    margin: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 0.95rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    white-space: nowrap;
+    font-family: var(--font-display, inherit);
+    letter-spacing: 0.03em;
+  }
+
+  /* Mismo dorado que "Chasqui"; sin relleno naranja del .btn--primary global */
+  .mobile-header-cta.btn--primary {
+    background: transparent;
+    color: var(--color-brand);
+    border: 1px solid var(--color-brand);
+  }
+
+  .mobile-header-cta.btn--primary:hover:not(:disabled) {
+    background: var(--color-brand-10);
+    opacity: 1;
+  }
+
+  .mobile-header-cta.btn--primary:disabled {
+    opacity: 0.65;
   }
 }
 </style>

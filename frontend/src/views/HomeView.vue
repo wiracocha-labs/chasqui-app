@@ -1,6 +1,6 @@
 <template>
+  <Navbar />
   <div class="home">
-    <Navbar />
     <!-- Fixed Background -->
     <div class="fixed-background" :style="{ backgroundImage: `url('${heroBg}')` }"></div>
 
@@ -259,7 +259,7 @@
       <section id="faq" class="faq-section reveal">
         <div class="bento-container">
           <h2 class="text-center mb-12">Preguntas Frecuentes</h2>
-          <div class="faq-accordion" style="max-width: 800px; margin: 0 auto;">
+          <div class="faq-accordion">
             <div 
               class="faq-item" 
               v-for="(item, index) in faqs" 
