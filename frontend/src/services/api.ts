@@ -4,6 +4,7 @@
  */
 
 import { API_CONFIG } from '../config'
+import { log } from './logger'
 
 export type ApiMethod = 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE'
 
@@ -79,22 +80,22 @@ export async function apiFetch<T = unknown>(
     }
 
     if (!res.ok) {
-      throw new ApiError(
-        (data && typeof data === 'object' && 'message' in data ? String((data as { message: unknown }).message) : res.statusText) || `HTTP ${res.status}`,
-        res.status,
-        data
-      )
+      const message = (data && typeof data === 'object' && 'message' in data ? String((data as { message: unknown }).message) : res.statusText) || `HTTP ${res.status}`
+      log.warn('API', `${method} ${path} → ${res.status}: ${message}`)
+      throw new ApiError(message, res.status, data)
     }
+    log.debug('API', `${method} ${path} → ${res.status}`)
     return data
   } catch (err) {
     clearTimeout(timeoutId)
     if (err instanceof ApiError) throw err
-    if (err instanceof SyntaxError) throw err
-    throw new ApiError(
-      err instanceof Error ? err.message : 'Network or request failed',
-      0,
-      undefined
-    )
+    if (err instanceof SyntaxError) {
+      log.warn('API', `${method} ${path} → invalid JSON response`)
+      throw err
+    }
+    const message = err instanceof Error ? err.message : 'Network or request failed'
+    log.error('API', `${method} ${path} → request failed: ${message}`)
+    throw new ApiError(message, 0, undefined)
   }
 }
 
@@ -116,15 +117,11 @@ export function apiPatch<T = unknown>(path: string, body: unknown, token?: strin
 export async function testBackendConnection(): Promise<{ ok: boolean; data?: unknown; error?: string }> {
   try {
     const data = await apiGet<unknown>('/tasks')
-    if (import.meta.env.DEV) {
-      console.log('🔌 Backend OK:', API_CONFIG.baseUrl, '→', data)
-    }
+    log.info('API', `Backend OK: ${API_CONFIG.baseUrl} →`, data)
     return { ok: true, data }
   } catch (e) {
     const error = e instanceof ApiError ? `${e.status}: ${e.message}` : String(e)
-    if (import.meta.env.DEV) {
-      console.warn('🔌 Backend unreachable:', error)
-    }
+    log.warn('API', `Backend unreachable: ${error}`)
     return { ok: false, error }
   }
 }

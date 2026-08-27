@@ -309,14 +309,30 @@ import { apiPost } from '../services/api'
 // Props
 interface Props {
   isOpen: boolean
+  /**
+   * Ruta a la que navegar tras un login/registro exitoso. `false` = no navegar
+   * (el caller se encarga, ej. para reanudar una acción en la página actual).
+   * Por defecto '/chat', para no cambiar el comportamiento existente.
+   */
+  redirectOnSuccess?: string | false
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  redirectOnSuccess: '/chat'
+})
 
 // Emits
 const emit = defineEmits<{
   close: []
+  success: []
 }>()
+
+const handleSuccess = () => {
+  emit('success')
+  if (props.redirectOnSuccess !== false) {
+    router.push(props.redirectOnSuccess)
+  }
+}
 
 type WalletType = 'metamask' | 'walletconnect' | 'coinbase'
 
@@ -352,9 +368,9 @@ const handleEmailLogin = async () => {
 
     await authStore.loginWithEmail(email.value, password.value)
     closeModal()
-    router.push('/chat')
+    handleSuccess()
   } catch (err) {
-    console.error('Error en login con email:', err)
+    log.error('LoginModal', 'Error en login con email:', err)
     error.value = err instanceof Error ? err.message : 'Error al iniciar sesión. Por favor, inténtalo de nuevo.'
   } finally {
     isConnecting.value = false
@@ -386,9 +402,9 @@ const handleEmailRegister = async () => {
     // Login automático post-registro (el backend solo especifica token en /login)
     await authStore.loginWithEmail(email.value.trim(), password.value)
     closeModal()
-    router.push('/chat')
+    handleSuccess()
   } catch (err) {
-    console.error('Error en registro:', err)
+    log.error('LoginModal', 'Error en registro:', err)
     error.value = err instanceof Error ? err.message : 'Error al crear cuenta. Por favor, inténtalo de nuevo.'
   } finally {
     isConnecting.value = false
@@ -402,32 +418,7 @@ const connectWallet = async (walletType: WalletType) => {
     await authStore.connectWallet()
     if (authStore.address) {
       log.info('LoginModal', `Wallet connected: ${authStore.address}`)
-
-      // Clear any potentially stale token before authenticating
-      authStore.logout()
-
-      // Try to login with wallet first (should work for existing users)
-      try {
-        await authStore.loginWithWallet(authStore.address)
-        log.info('LoginModal', 'Wallet login succeeded, token obtained')
-      } catch (loginErr: any) {
-        const status = loginErr?.status ?? 0
-        if (status === 401 || status === 404) {
-          // User doesn't exist → register first, then login
-          log.info('LoginModal', 'User not found, attempting registration...')
-          try {
-            await authStore.registerWithWallet(authStore.address)
-            log.info('LoginModal', 'Registration succeeded, now logging in...')
-            await authStore.loginWithWallet(authStore.address)
-          } catch (regErr) {
-            log.error('LoginModal', 'Registration failed', regErr)
-            throw regErr
-          }
-        } else {
-          log.error('LoginModal', 'Wallet login failed', loginErr)
-          throw loginErr
-        }
-      }
+      // authStore.connectWallet() already ensures a backend JWT (login/register fallback).
 
       // Verificar contrato en paralelo (solo warning, no blocker)
       authStore.checkAuthorization(authStore.address).then(ok => {
@@ -437,13 +428,13 @@ const connectWallet = async (walletType: WalletType) => {
       if (authStore.token) {
         localStorage.setItem('connectedWallet', walletType)
         closeModal()
-        router.push('/chat')
+        handleSuccess()
       } else {
         error.value = 'No se pudo obtener un token del backend. Asegúrate que el servidor esté corriendo en localhost:8080.'
       }
     }
   } catch (err) {
-    console.error(`Error conectando con ${walletType}:`, err)
+    log.error('LoginModal', `Error conectando con ${walletType}:`, err)
     error.value = `Error al conectar con ${walletType}. Por favor, inténtalo de nuevo.`
   } finally {
     isConnecting.value = false

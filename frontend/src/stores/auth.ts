@@ -1,12 +1,12 @@
 import { defineStore } from 'pinia'
-import { ref, computed, readonly } from 'vue'
+import { ref, computed, readonly, markRaw } from 'vue'
 import { ethers } from 'ethers'
 import { getContractAddress } from '../config/contracts'
 import { AUTHORIZATION_SIMPLE_ABI } from '../config/abi'
 import { log } from '../services/logger'
 import { Web3Error, AuthError, handleError } from '../services/errors'
 import { CURRENT_NETWORK, NETWORKS } from '../config/index'
-import { apiPost, ApiError } from '../services/api'
+import { apiGet, apiPost, ApiError } from '../services/api'
 
 declare global {
   interface Window {
@@ -23,6 +23,17 @@ export const useAuthStore = defineStore('auth', () => {
   const token = ref<string | null>(null)
   const loginMethod = ref<'wallet' | 'email' | null>(null)
 
+  // MetaMask no revoca el permiso del sitio solo porque el usuario haga logout
+  // en la app: eth_accounts seguiría devolviendo la cuenta. Esta bandera evita
+  // que checkConnectedWallet() la reconecte sola hasta que el usuario vuelva a
+  // conectar explícitamente.
+  const disconnectedByUser = ref(false)
+
+  // Controla el LoginModal global montado en App.vue (independiente de las
+  // instancias locales de cada vista), para poder forzarlo desde cualquier
+  // lugar de la app, p. ej. al detectar un cambio de cuenta en MetaMask.
+  const showLoginModal = ref(false)
+
   const isAuthenticated = computed(() => !!address.value || !!token.value)
   const targetNetwork = NETWORKS[CURRENT_NETWORK]
   const toHexChainId = (chainId: number) => `0x${chainId.toString(16)}`
@@ -35,12 +46,14 @@ export const useAuthStore = defineStore('auth', () => {
         // Create a simple provider for basic operations
         log.debug('AuthStore', 'Creating BrowserProvider for basic operations')
         const web3Provider = new ethers.BrowserProvider(window.ethereum)
-        provider.value = web3Provider
+        provider.value = markRaw(web3Provider)
 
         log.info('AuthStore', 'Provider initialized successfully')
 
-        // Do not auto-connect on refresh: user must click "Empezar"/connect
-        address.value = null
+        // Restore the address silently if MetaMask still has this site authorized
+        // (eth_accounts never prompts, unlike eth_requestAccounts). This avoids
+        // forcing the user through "Empezar"/connect again on every page reload.
+        await checkConnectedWallet()
 
         // Listen for account changes (only add listener once)
         if (!window.ethereum._listenersAdded) {
@@ -49,7 +62,14 @@ export const useAuthStore = defineStore('auth', () => {
             if (!address.value) {
               return
             }
-            address.value = accounts[0] || null
+            const newAddress = accounts[0]?.toLowerCase() ?? null
+            if (newAddress === address.value.toLowerCase()) {
+              return
+            }
+            log.info('AuthStore', 'Wallet account switched or disconnected; clearing session, reconnection required')
+            disconnect()
+            window.alert('Se cambió la billetera. Debés iniciar sesión nuevamente.')
+            showLoginModal.value = true
           })
           window.ethereum._listenersAdded = true
         }
@@ -68,6 +88,10 @@ export const useAuthStore = defineStore('auth', () => {
       log.warn('AuthStore', 'No window.ethereum available')
       return
     }
+    if (disconnectedByUser.value) {
+      log.debug('AuthStore', 'User previously disconnected; skipping auto-reconnect')
+      return
+    }
 
     try {
       log.debug('AuthStore', 'Requesting eth_accounts')
@@ -78,7 +102,9 @@ export const useAuthStore = defineStore('auth', () => {
         address.value = accounts[0]
         log.info('AuthStore', `Connected wallet found: ${address.value}`)
       } else {
-        log.debug('AuthStore', 'No connected accounts found')
+        log.debug('AuthStore', 'No connected accounts found; clearing stale session')
+        address.value = null
+        clearToken()
       }
     } catch (error) {
       log.error('AuthStore', 'Error checking connected wallet', error)
@@ -100,6 +126,10 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     try {
+      // The user is explicitly (re)connecting: lift any previous "disconnected"
+      // preference so future page loads auto-restore this session again.
+      disconnectedByUser.value = false
+
       // 1. First request account access (authorization)
       // We must do this before trying to change the network, otherwise MetaMask throws 4100 (Unauthorized)
       log.debug('AuthStore', 'Requesting account access')
@@ -157,7 +187,7 @@ export const useAuthStore = defineStore('auth', () => {
       // Update provider and contract for future transactions
       log.debug('AuthStore', 'Updating provider')
       const web3Provider = new ethers.BrowserProvider(window.ethereum)
-      provider.value = web3Provider
+      provider.value = markRaw(web3Provider)
 
       // Test the provider immediately
       try {
@@ -167,6 +197,11 @@ export const useAuthStore = defineStore('auth', () => {
         log.error('AuthStore', 'Provider test failed', providerError)
       }
 
+      // 3. Ensure we have a backend JWT for this wallet. Non-blocking: if this
+      // fails the wallet is still considered "connected" (on-chain features
+      // keep working), but token-gated actions (chat, public tasks) won't.
+      await ensureBackendToken(accounts[0])
+
     } catch (error) {
       const chasquiError = handleError(error, 'AuthStore')
       log.error('AuthStore', 'Error connecting wallet', chasquiError)
@@ -174,11 +209,37 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  /**
+   * Gets a backend JWT for a wallet by proving ownership of it: fetches a
+   * single-use challenge from the server, asks the wallet to sign it (MetaMask
+   * popup), then sends the signature to /login. The backend recovers the
+   * signing address and rejects the request if it doesn't match `walletAddress`
+   * — without this, anyone could obtain a token for any wallet just by knowing
+   * its public address.
+   * Clears any stale token first, since it may belong to a previously connected wallet.
+   */
+  const ensureBackendToken = async (walletAddress: string) => {
+    token.value = null
+    loginMethod.value = null
+    try {
+      const message = await apiGet<{ message: string }>(`/auth/wallet-nonce/${walletAddress}`)
+      if (!provider.value) {
+        throw new Error('No hay provider de wallet inicializado')
+      }
+      const signer = await provider.value.getSigner()
+      const signature = await signer.signMessage(message.message)
+      await loginWithWallet(walletAddress, signature, message.message)
+      log.info('AuthStore', 'Backend login successful (signature verified)')
+    } catch (err) {
+      log.warn('AuthStore', 'Backend login failed', err)
+    }
+  }
+
   const disconnect = () => {
     address.value = null
-    if (loginMethod.value === 'wallet') {
-      loginMethod.value = null
-    }
+    clearToken()
+    loginMethod.value = null
+    disconnectedByUser.value = true
   }
 
   const setToken = (newToken: string) => {
@@ -218,7 +279,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const registerWithWallet = async (wallet: string) => {
     log.info('AuthStore', `Registering with wallet: ${wallet}`)
-    console.log('[Auth Debug] Exact wallet given to registerWithWallet:', wallet)
+    log.debug('AuthStore', `Exact wallet given to registerWithWallet: ${wallet}`)
     const res = await apiPost<{ token?: string }>('/register', { wallet })
     // Some backend flows might return the token immediately on register
     if (res?.token) {
@@ -236,10 +297,10 @@ export const useAuthStore = defineStore('auth', () => {
     return res.token
   }
 
-  const loginWithWallet = async (wallet: string) => {
+  const loginWithWallet = async (wallet: string, signature?: string, message?: string) => {
     log.info('AuthStore', `Logging in with wallet: ${wallet}`)
-    console.log('[Auth Debug] Exact wallet given to loginWithWallet:', wallet)
-    const res = await apiPost<{ token: string }>('/login', { wallet })
+    log.debug('AuthStore', `Exact wallet given to loginWithWallet: ${wallet}`)
+    const res = await apiPost<{ token: string }>('/login', { wallet, signature, message })
     if (!res?.token) {
       throw new Error('Login con wallet exitoso, pero no se recibió token del servidor.')
     }
@@ -369,8 +430,10 @@ export const useAuthStore = defineStore('auth', () => {
     token,
     loginMethod,
     isAuthenticated,
+    showLoginModal,
     initializeProvider,
     connectWallet,
+    ensureBackendToken,
     disconnect,
     logout,
     registerWithEmail,
@@ -385,6 +448,6 @@ export const useAuthStore = defineStore('auth', () => {
   {
     persist: {
       // Evita intentar serializar ethers providers/contracts en localStorage.
-      pick: ['address', 'token', 'loginMethod']
+      pick: ['address', 'token', 'loginMethod', 'disconnectedByUser']
     }
   })

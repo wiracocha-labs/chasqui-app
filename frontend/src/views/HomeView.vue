@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <Navbar />
+    <Navbar @open-login="openLoginModal" />
     <!-- Fixed Background -->
     <div class="fixed-background" :style="{ backgroundImage: `url('${heroBg}')` }"></div>
 
@@ -108,6 +108,19 @@
           <!-- Personaje flotante al final de la sección -->
           <div class="floating-character floating-character--hero reveal">
             <img :src="chasquiCharacter" alt="Chasqui Hero" />
+          </div>
+        </div>
+      </section>
+
+      <!-- Franja: Marketplace de tareas públicas -->
+      <section class="marketplace-strip-section reveal">
+        <div class="bento-container">
+          <div class="marketplace-strip">
+            <div class="marketplace-strip-text">
+              <h3>💼 ¿Buscás trabajo? Hay tareas públicas abiertas</h3>
+              <p>Cualquiera puede ver las tareas publicadas y postularse, sin necesidad de cuenta.</p>
+            </div>
+            <a href="/marketplace" @click="goToMarketplace" class="btn btn--outline">Ver tareas públicas →</a>
           </div>
         </div>
       </section>
@@ -286,6 +299,7 @@
             <p>Autonomía para el equipo. Claridad en los pagos.</p>
             <div class="cta-buttons">
               <a href="https://tally.so/r/YOUR_ID" target="_blank" rel="noopener noreferrer" class="btn btn--primary">Unirse a la Beta</a>
+              <a href="/marketplace" @click="goToMarketplace" class="btn btn--outline">Ver tareas públicas</a>
               <a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" rel="noopener noreferrer" class="btn btn--outline">👉 Visítanos en GitHub</a>
             </div>
             <!-- Personaje saltando sobre el CTA ahora dentro del bloque -->
@@ -399,14 +413,20 @@ const faqs = [
 ];
 
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import Navbar from '../components/ui/Navbar.vue'
 import LoginModal from '../components/LoginModal.vue'
 import Footer from '../components/ui/Footer.vue'
 
 const route = useRoute();
+const router = useRouter();
 const openFaqIndex = ref(null);
 const isLoginModalOpen = ref(false);
+
+const goToMarketplace = (event) => {
+  event.preventDefault();
+  router.push('/marketplace');
+};
 
 const openLoginModal = () => {
   isLoginModalOpen.value = true;

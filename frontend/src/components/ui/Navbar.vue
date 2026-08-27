@@ -14,14 +14,14 @@
         <a href="#vision" class="nav-link" :class="{ active: activeSection === 'vision' }" @click="closeMenu">Visión</a>
         <a href="#precios" class="nav-link" :class="{ active: activeSection === 'precios' }" @click="closeMenu">Precios</a>
         <a href="#faq" class="nav-link" :class="{ active: activeSection === 'faq' }" @click="closeMenu">FAQ</a>
+        <a href="/marketplace" class="nav-link" @click="goToMarketplaceAndClose">Tareas Públicas</a>
         <a href="https://github.com/wiracocha-labs/chasqui-app" target="_blank" @click="closeMenu" class="nav-link">Documentación</a>
         <button
           v-if="!authStore.address"
           class="btn btn--primary mobile-only"
-          :disabled="isConnecting"
-          @click="startFromNavbar"
+          @click="openLogin"
         >
-          {{ isConnecting ? 'Conectando...' : 'Ingresar' }}
+          Ingresar
         </button>
         <button
           v-else
@@ -36,10 +36,9 @@
         <button
           v-if="!authStore.address"
           class="btn btn--primary desktop-only"
-          :disabled="isConnecting"
-          @click="startFromNavbar"
+          @click="openLogin"
         >
-          {{ isConnecting ? 'Conectando...' : 'Ingresar' }}
+          Ingresar
         </button>
         <div v-else class="wallet-menu desktop-only" ref="walletMenuRef">
           <button
@@ -72,10 +71,11 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
 import logoUrl from '../../assets/images/logo.webp'
 
+const emit = defineEmits<{ 'open-login': [] }>()
+
 const isMenuOpen = ref(false)
 const isScrolled = ref(false)
 const activeSection = ref('inicio')
-const isConnecting = ref(false)
 const authStore = useAuthStore()
 const router = useRouter()
 const isWalletMenuOpen = ref(false)
@@ -110,6 +110,12 @@ const goToTasksFromMenu = async () => {
   await goToTasks()
 }
 
+const goToMarketplaceAndClose = async (event: MouseEvent) => {
+  event.preventDefault()
+  closeMenu()
+  await router.push('/marketplace')
+}
+
 const toggleWalletMenu = () => {
   isWalletMenuOpen.value = !isWalletMenuOpen.value
 }
@@ -128,18 +134,9 @@ const handleDocumentClick = (event: MouseEvent) => {
   }
 }
 
-const startFromNavbar = async () => {
-  if (isConnecting.value) return
-  isConnecting.value = true
-  try {
-    await authStore.connectWallet()
-    closeMenu()
-    await goToTasks()
-  } catch (error) {
-    console.error('[Navbar] Error conectando wallet desde Empezar', error)
-  } finally {
-    isConnecting.value = false
-  }
+const openLogin = () => {
+  closeMenu()
+  emit('open-login')
 }
 
 const handleScroll = () => {

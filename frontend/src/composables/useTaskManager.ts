@@ -4,9 +4,47 @@ import { web3Service, type EscrowDetails } from '../services/web3'
 import { log } from '../services/logger'
 import { TaskError } from '../services/errors'
 import { CURRENT_NETWORK, NETWORKS, DEBUG } from '../config/index'
-import { apiPost } from '../services/api'
+import { apiGet, apiPost } from '../services/api'
 
 const MAX_DEADLINE_UPDATES_PER_TASK = 2
+
+/** SurrealDB Thing tal como llega serializado en JSON: {tb, id: {String}} */
+export interface SurrealThingRef {
+  tb: string
+  id: { String: string }
+}
+
+/** Tarea pública del marketplace (backend, off-chain) — ver GET /api/tasks/public/mine */
+export interface PublicTask {
+  uuid: string
+  task_name: string
+  description?: string
+  owner_id?: string | SurrealThingRef
+  status: 'open' | 'assigned' | 'closed'
+  reward?: string
+  is_public: boolean
+  created_at: string
+}
+
+/** Postulación a una tarea pública — ver GET /api/tasks/public/{uuid}/applications */
+export interface TaskApplication {
+  id: string | SurrealThingRef
+  task_uuid: string
+  applicant_id: string | SurrealThingRef
+  message?: string
+  status: 'pending' | 'accepted' | 'rejected'
+  created_at: string
+}
+
+/** Extrae el uuid "plano" de un id de SurrealDB, venga como string 'tabla:uuid' o como Thing serializado */
+export const extractRecordUuid = (thing: string | SurrealThingRef | undefined | null): string => {
+  if (!thing) return ''
+  if (typeof thing === 'string') {
+    const parts = thing.split(':')
+    return parts.length === 2 ? parts[1] : thing
+  }
+  return thing.id?.String ?? ''
+}
 
 interface TaskMeta {
   timeValue: number
@@ -69,7 +107,7 @@ export function useTaskManager() {
     return `${y}-${m}-${day}`
   }
 
-  const createForm = ref({
+  const emptyCreateForm = () => ({
     beneficiary: '',
     amount: '',
     encryptedAmount: '',
@@ -79,8 +117,13 @@ export function useTaskManager() {
     timeValue: 1,
     timeUnit: 'days' as 'hours' | 'days',
     zkProof: '',
-    isPrivate: false
+    isPrivate: false,
+    openToApplicants: false,
+    taskName: '',
+    reward: ''
   })
+
+  const createForm = ref(emptyCreateForm())
 
   let skipDatesSync = false
   let skipTimeSync = false
@@ -129,6 +172,8 @@ export function useTaskManager() {
   // Data
   const userEscrows = ref<EscrowDetails[]>([])
   const taskMeta = ref<Record<number, TaskMeta>>({})
+  const publicTasks = ref<PublicTask[]>([])
+  const loadingPublicTasks = ref(false)
 
   const TASK_META_KEY = 'chasqui_task_meta_v1'
   const AVAX_PRICE_CACHE_KEY = 'chasqui_avax_usd_price_v1'
@@ -147,7 +192,8 @@ export function useTaskManager() {
   // Tabs
   const tabs = [
     { id: 'create', label: 'Crear Tarea', icon: 'fas fa-plus' },
-    { id: 'list', label: 'Mis Tareas', icon: 'fas fa-list' }
+    { id: 'list', label: 'Mis Tareas', icon: 'fas fa-list' },
+    { id: 'myPublic', label: 'Tareas Públicas', icon: 'fas fa-bullhorn' }
   ]
 
   const normalizeAddress = (value?: string | null) => String(value || '').toLowerCase()
@@ -251,19 +297,7 @@ export function useTaskManager() {
       networkName.value = connection.network
       avaxBalance.value = await authStore.getBalance()
 
-      // Also register/login in backend to get JWT for chat creation
-      if (authStore.address && !authStore.token) {
-        try {
-          await authStore.registerWithWallet(authStore.address)
-          log.info('TaskManager', 'Backend registration/login successful')
-        } catch (regErr: any) {
-          // 409 = ya existe, no es error
-          if ((regErr?.status ?? 0) !== 409) {
-            log.warn('TaskManager', 'Backend registration skipped', regErr)
-          }
-        }
-      }
-
+      // authStore.connectWallet() already ensures a backend JWT (login/register fallback).
       await loadUserEscrows()
       log.info('TaskManager', 'Wallet connected successfully')
       showAlert('success', 'Wallet conectada')
@@ -441,18 +475,7 @@ export function useTaskManager() {
         }
       }
       // Reset form
-      createForm.value = {
-        beneficiary: '',
-        amount: '',
-        encryptedAmount: '',
-        taskDescription: '',
-        startDate: todayIso(),
-        endDate: addDays(todayIso(), 1),
-        timeValue: 1,
-        timeUnit: 'days',
-        zkProof: '',
-        isPrivate: false
-      }
+      createForm.value = emptyCreateForm()
 
       await updateBalance()
       await loadUserEscrows()
@@ -473,7 +496,96 @@ export function useTaskManager() {
     }
   }
 
-  // Manage Task
+  // Publish a public marketplace task: no beneficiary/escrow yet, awaits applicants.
+  const createPublicTask = async () => {
+    if (!createForm.value.taskName || !createForm.value.taskDescription) {
+      const error = new TaskError('Missing required fields for public task creation', 'VALIDATION_ERROR')
+      showAlert('error', 'Complete el título y la descripción')
+      throw error
+    }
+    if (!authStore.token) {
+      const error = new TaskError('Not authenticated', 'UNAUTHORIZED')
+      showAlert('error', 'Necesitas iniciar sesión para publicar una tarea')
+      throw error
+    }
+
+    creating.value = true
+    try {
+      log.info('TaskManager', `Publishing public task: ${createForm.value.taskName}`)
+      await apiPost('/tasks/public', {
+        task_name: createForm.value.taskName,
+        description: createForm.value.taskDescription,
+        reward: createForm.value.reward || undefined
+      }, authStore.token)
+
+      createForm.value = emptyCreateForm()
+      await loadMyPublicTasks()
+      log.info('TaskManager', 'Public task published successfully')
+      showAlert('success', 'Tarea pública publicada. Aparecerá en el marketplace hasta que asignes un postulante.')
+      activeTab.value = 'list'
+    } catch (error) {
+      log.error('TaskManager', 'Failed to publish public task', error)
+      showAlert('error', 'Error al publicar la tarea')
+      throw error
+    } finally {
+      creating.value = false
+    }
+  }
+
+  // My own public tasks (any status), for the creator's workspace view
+  const loadMyPublicTasks = async () => {
+    if (!authStore.token) {
+      publicTasks.value = []
+      return
+    }
+    loadingPublicTasks.value = true
+    try {
+      publicTasks.value = await apiGet<PublicTask[]>('/tasks/public/mine', authStore.token)
+    } catch (error) {
+      log.error('TaskManager', 'Failed to load my public tasks', error)
+    } finally {
+      loadingPublicTasks.value = false
+    }
+  }
+
+  // List applicants for one of my own public tasks (owner-only on the backend)
+  const getTaskApplications = async (taskUuid: string): Promise<TaskApplication[]> => {
+    if (!authStore.token) return []
+    try {
+      return await apiGet<TaskApplication[]>(`/tasks/public/${taskUuid}/applications`, authStore.token)
+    } catch (error) {
+      log.error('TaskManager', `Failed to load applications for task ${taskUuid}`, error)
+      showAlert('error', 'Error al cargar los postulantes')
+      return []
+    }
+  }
+
+  // Accept an applicant: marks the task Assigned server-side and returns their wallet
+  // (if any) so the caller can pre-fill the existing escrow-creation flow. Does NOT
+  // create an on-chain escrow itself.
+  const assignTaskToApplicant = async (
+    taskUuid: string,
+    applicationId: string
+  ): Promise<{ task: PublicTask; applicant_wallet: string | null } | null> => {
+    if (!authStore.token) {
+      showAlert('error', 'Necesitas iniciar sesión')
+      return null
+    }
+    try {
+      const result = await apiPost<{ task: PublicTask; applicant_wallet: string | null }>(
+        `/tasks/public/${taskUuid}/assign`,
+        { application_id: applicationId },
+        authStore.token
+      )
+      await loadMyPublicTasks()
+      return result
+    } catch (error) {
+      log.error('TaskManager', `Failed to assign task ${taskUuid}`, error)
+      showAlert('error', 'Error al asignar la tarea')
+      return null
+    }
+  }
+
   // Manage Task
   const markCompleted = async ({ escrowId }: { escrowId: string }) => {
     if (!escrowId) {
@@ -865,11 +977,19 @@ export function useTaskManager() {
         const connection = await web3Service.connect()
         networkName.value = connection.network
         avaxBalance.value = await authStore.getBalance()
+        if (!authStore.token) {
+          log.info('TaskManager', 'Address restored without backend token, authenticating')
+          await authStore.ensureBackendToken(authStore.address)
+        }
         await loadUserEscrows()
         log.info('TaskManager', 'Auto-connection successful')
       } catch (error) {
         log.warn('TaskManager', 'Auto-connection failed', error)
       }
+    }
+
+    if (authStore.token) {
+      await loadMyPublicTasks()
     }
 
     const cachedPrice = Number(localStorage.getItem(AVAX_PRICE_CACHE_KEY) || '')
@@ -938,9 +1058,15 @@ export function useTaskManager() {
     refreshAvaxUsdPrice,
     userEscrows,
     taskMeta,
+    publicTasks,
+    loadingPublicTasks,
     connectWallet,
     registerForPrivacy,
     createEscrow,
+    createPublicTask,
+    loadMyPublicTasks,
+    getTaskApplications,
+    assignTaskToApplicant,
     markCompleted,
     releaseFunds,
     cancelEscrow,

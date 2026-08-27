@@ -1378,6 +1378,38 @@ section li {
   border: 2px solid var(--color-action);
 }
 
+.marketplace-strip-section {
+  padding: 1rem 0 3rem;
+}
+
+.marketplace-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 2rem 2.5rem;
+  background: var(--color-terciary);
+  border: 2px solid var(--color-brand);
+}
+
+.marketplace-strip-text h3 {
+  margin-bottom: 0.35rem;
+}
+
+.marketplace-strip-text p {
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .marketplace-strip {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+  }
+}
+
 .cta-buttons {
   display: flex;
   gap: 1rem;
@@ -1440,7 +1472,8 @@ section li {
 /* Base tile/box styles (Keeping approved borders/shadows) */
 .bento-tile,
 .tech-card,
-.cta-block {
+.cta-block,
+.marketplace-strip {
   border-radius: 32px !important;
   border-width: 3px !important;
   box-shadow: 10px 10px 0px #000000;

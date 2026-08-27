@@ -8,14 +8,17 @@ import './assets/styles/index.css'
 import App from './App.vue'
 import ChatView from './views/ChatView.vue'
 import TaskManagerView from './views/TaskManagerView.vue'
+import PublicTaskBoardView from './views/PublicTaskBoardView.vue'
 import ColorShowcase from './components/common/ColorShowcase.vue'
 import HomeView from './views/HomeView.vue'
 import { useAuthStore } from './stores/auth'
+import { log } from './services/logger'
 
 const routes = [
   { path: '/', component: HomeView, name: 'Home' },
   { path: '/chat/:id?', component: ChatView, name: 'Chat', meta: { requiresAuth: true } },
-  { path: '/tasks', component: TaskManagerView, name: 'Tasks' },
+  { path: '/tasks', component: TaskManagerView, name: 'Tasks', meta: { requiresAuth: true } },
+  { path: '/marketplace', component: PublicTaskBoardView, name: 'Marketplace' },
   { path: '/colors', component: ColorShowcase, name: 'Colors' }, // Ruta de desarrollo
 ]
 
@@ -58,9 +61,15 @@ authStore.initializeProvider()
 if (import.meta.env.DEV) {
   import('./services/api').then(({ testBackendConnection }) => {
     testBackendConnection().then((result) => {
-      if (result.ok) console.log('🔌 Paso 1 OK: frontend habla con el backend')
-      else console.warn('🔌 Paso 1: backend no alcanzable:', result.error)
+      if (result.ok) log.info('Main', 'Paso 1 OK: frontend habla con el backend')
+      else log.warn('Main', `Paso 1: backend no alcanzable: ${result.error}`)
     })
       ; (window as any).chasquiApiTest = testBackendConnection
+  })
+  
+  // Logger testing utility
+  import('./utils/logger-test').then(({ testLoggerBehavior }) => {
+    ; (window as any).testLogger = testLoggerBehavior
+    log.info('Main', 'Logger test utility available as window.testLogger()')
   })
 }

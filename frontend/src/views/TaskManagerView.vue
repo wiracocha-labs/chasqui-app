@@ -4,10 +4,10 @@ import { useRouter } from 'vue-router'
 import AppHeader from '../components/ui/AppHeader.vue'
 import AppSidebar from '../components/ui/AppSidebar.vue'
 import AlertMessage from '../components/ui/AlertMessage.vue'
-import WalletConnectCard from '../components/ui/WalletConnectCard.vue'
 import TaskCreateForm from '../components/task/TaskCreateForm.vue'
 import TaskList from '../components/task/TaskList.vue'
-import { useTaskManager } from '../composables/useTaskManager'
+import PublicTaskOwnerList from '../components/task/PublicTaskOwnerList.vue'
+import { useTaskManager, type PublicTask } from '../composables/useTaskManager'
 import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
@@ -17,12 +17,12 @@ const {
   account,
   networkName,
   avaxBalance,
-  connecting,
   loading,
   creating,
   activeTab,
   isRegisteredForPrivacy,
   alert,
+  showAlert,
   tabs,
   createForm,
   amountUsdEquivalent,
@@ -30,9 +30,14 @@ const {
   usdPriceSource,
   userEscrows,
   taskMeta,
-  connectWallet,
+  publicTasks,
+  loadingPublicTasks,
   registerForPrivacy,
   createEscrow,
+  createPublicTask,
+  loadMyPublicTasks,
+  getTaskApplications,
+  assignTaskToApplicant,
   updateTaskDate,
   cancelEscrow,
   requestTaskFinished,
@@ -53,10 +58,26 @@ const handleDisconnect = async () => {
 
 const handleCreateEscrow = async () => {
   try {
-    await createEscrow()
+    if (createForm.value.openToApplicants) {
+      await createPublicTask()
+    } else {
+      await createEscrow()
+    }
   } catch {
     // Los mensajes de error UX ya se manejan en el composable
   }
+}
+
+const handleApplicantAssigned = (payload: { task: PublicTask; wallet: string | null }) => {
+  if (!payload.wallet) {
+    showAlert('error', 'El postulante elegido no tiene una wallet vinculada todavía; no se puede crear el escrow. Pedile que conecte una wallet a su cuenta.')
+    return
+  }
+  createForm.value.openToApplicants = false
+  createForm.value.beneficiary = payload.wallet
+  createForm.value.taskDescription = payload.task.description || payload.task.task_name
+  activeTab.value = 'create'
+  showAlert('success', `Postulante asignado. Completá el monto y confirmá para crear el escrow de "${payload.task.task_name}".`)
 }
 
 </script>
@@ -92,10 +113,8 @@ const handleCreateEscrow = async () => {
           </div>
         </div>
         <AlertMessage v-if="alert.message" :type="alert.type" :message="alert.message" class="mb-4" />
-        <WalletConnectCard v-if="!account" :connecting="connecting" @connect="connectWallet" class="mb-8" />
-        <div v-else>
-          <div class="bg-secondary rounded-2xl shadow-lg mb-6">
-            <div class="flex bg-secondary rounded-t-2xl">
+        <div class="bg-secondary rounded-2xl shadow-lg mb-6">
+          <div class="flex bg-secondary rounded-t-2xl">
               <button v-for="tab in tabs" :key="tab.id"
                   class="flex-1 px-6 py-4 text-center font-medium transition-all duration-300 first:rounded-tl-2xl last:rounded-tr-2xl"
                   :class="activeTab === tab.id
@@ -129,10 +148,19 @@ const handleCreateEscrow = async () => {
                 @updateDate="updateTaskDate"
                 @cancelEscrow="(id: number) => cancelEscrow({ escrowId: String(id) })"
               />
+              <PublicTaskOwnerList
+                v-if="activeTab === 'myPublic'"
+                :tasks="publicTasks"
+                :loading="loadingPublicTasks"
+                :get-applications="getTaskApplications"
+                :assign="assignTaskToApplicant"
+                @refresh="loadMyPublicTasks"
+                @assigned="handleApplicantAssigned"
+              />
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 </template>
+
